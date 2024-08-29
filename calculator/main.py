@@ -1,4 +1,4 @@
-from .src import calculator
+from src import calculator
 
 
 def main():
@@ -9,4 +9,4 @@ def main():
     print(f"El resultado es: {result}")
 
 if __name__ == "__main__": 
-    main()
+    main() 
