@@ -1,0 +1,35 @@
+html, body {
+  height: 100%;
+}
+
+/* Estilos generales */
+body {
+  font-family: 'Merriweather', serif; /* Fuente formal para todo el cuerpo */
+  background-color: #f4f4f4;
+  color: #333;
+  /*font-size: 16px; /* Tamaño de fuente base */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilo de los enlaces */
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.error-code {
+  font-size: 7.5em;
+  margin: 15px 0px;
+  font-weight:bold;
+}
+
+.error-message {
+  font-weight:bold;
+}
