@@ -33,8 +33,8 @@ def reset():
         Resetea la base de datos.
     """
 
-    print("Eliminando base de datos...🐋")
+    print("Eliminando base de datos...")
     db.drop_all()
-    print("Creando base nuevamente... 🐼")
+    print("Creando base nuevamente... ")
     db.create_all()
-    print("Base creada correctamente ✅")
+    print("Base creada correctamente ")
