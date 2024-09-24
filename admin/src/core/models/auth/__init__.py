@@ -1,6 +1,6 @@
 from src.core.database import db
 from src.core.models.auth.user import User
-from src.core.models.auth.roles_and_permissions import Role, Permisions
+from src.core.models.auth.roles_and_permissions import Role, Permision
 
 def list_users():
     users = User.query.all()
@@ -22,7 +22,7 @@ def create_role(**kwargs):
     return role
 
 def create_permission(**kwargs):
-    permission = Permisions(**kwargs)
+    permission = Permision(**kwargs)
     db.session.add(permission)
     db.session.commit()
 

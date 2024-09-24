@@ -13,6 +13,7 @@ class User(db.Model):
     active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.now)
     is_blocked = db.Column(db.Boolean, default=False)
+    # person_id = db.Column(db.Integer, db.ForeignKey("roles.id")) Debería estar este atributo y que pueda tomar valor null?
 
     def __repr__(self):
         return f'<User #{self.id} email="{self.email}">'
