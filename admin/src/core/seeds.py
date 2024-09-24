@@ -13,6 +13,7 @@ from src.core.models.persons import (
 
 def run():
 
+    print("Creando objetos en la base de datos.... \U0000231B")
     permission1 = create_permission(
         name="Escribir",
     )
@@ -122,4 +123,4 @@ def run():
         created_at=datetime.now()
     )
 
-   
+    print("Objetos creados correctamente \U0001F680")
