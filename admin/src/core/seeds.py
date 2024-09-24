@@ -1,10 +1,14 @@
 
 from datetime import datetime
+from src.core.models.persons.person import Profession, Diagnosis
 from src.core.models.auth import create_user, create_role, create_permission
 from src.core.models.horses import create_horse
 from src.core.models.institutions import create_institutional_work, create_school
 from src.core.models.payments import create_payment, create_billing
-from src.core.models.persons import create_employee, create_employee, create_JyA, create_family_member_or_tutor, create_address, create_emergency_contact, create_healthcare_plan
+from src.core.models.persons import (
+    create_person, create_employee, create_JyA, create_family_member_or_tutor, create_address, create_emergency_contact, 
+    create_healthcare_plan)
+
 
 
 def run():
@@ -15,7 +19,6 @@ def run():
 
     role1 = create_role(
         name="Administración",
-
     )
 
     address1 = create_address (
@@ -39,44 +42,57 @@ def run():
         observation = "Se vence en 1 mes",
     )
 
-    person1 = create_person (
-        name = "Ramiro",
-        last_name = "Alvarez",
-        DNI = "123456",
-        age = 32,
-        phone_number = "222",
-        address_id = address1.id
-    )
-
     employee1 = create_employee(
-        id = person1.id,
-        profession = "Medico",
-        job_position = "Jefe",
-        emergency_contact_id = emergency_contact1.id,
-        condition = "Voluntario",
-        healthcare_plan_id = healthcare_plan1.id,
+        name="Ramiro",
+        last_name="Alvarez",
+        DNI="123456",
+        age=32,
+        phone_number="222",
+        address_id=address1.id,  # Atributos heredados de Person
+        profession=Profession.MEDICO,  # Atributo específico de Employee
+        job_position="Jefe",
+        emergency_contact_id_employee=emergency_contact1.id,
+        condition="Voluntario",
+        healthcare_plan_id_employee=healthcare_plan1.id
     )
 
     horse1 = create_horse(
-
         name = "Mancha",
-        date_of_birth = "12/06/2023",
+        date_of_birth = datetime.now(),
         gender = "Macho",
         race = "Mustang",
         fur = "Blanco y marron",
         purchase_or_donation = "Donacion",
+        date_of_entry = datetime.now(),
         type_jya_assigned = "Hipoterapia"
     )
 
     JyA1 = create_JyA(
-        birthdate = datetime.now,
+        name="Joaquina",
+        last_name="Saadi",
+        DNI="987654",
+        age=20,
+        phone_number="333",
+        address_id=address1.id,
+        birthdate = datetime.now(),
         birth_place = "La Plata",
         current_phone = "7777",
-        emergency_contact_id = emergency_contact1.id,
-        attending_professionals = "Ramiro",
-        healthcare_plan_id = healthcare_plan1.id,
-        diagnosis = "LESION_POST_TRAUMATICA",
+        emergency_contact_id_jya = emergency_contact1.id,
+        attending_professionals = "Lucia",
+        healthcare_plan_id_jya = healthcare_plan1.id,
+        diagnosis = Diagnosis.ESCLEROSIS_MULTIPLE,
         type_of_disability = "Mental"
+    )
+
+    institutional_work1 = create_institutional_work(
+        condicion="Regular",
+        proposal = "Hipoterapia",
+        location = "La Plata",
+        days = ["1","2","3"],
+        professional = employee1.id,
+        rider = employee1.id,
+        horse = horse1.id,
+        auxiliar = employee1.id,
     )
 
     admin_user = create_user(

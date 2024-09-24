@@ -1,10 +1,11 @@
 from src.core.database import db 
+from src.core.models.persons.person import Employee
 
-"""horse_employee = db.Table(
+horse_employee = db.Table(
     "horse_employee",
-    db.Column("horse_id", db.Integer, db.ForeignKey("horses.id")),
-    db.Column("employee_id", db.Integer, db.ForeignKey("employees.id"))
-)"""
+    db.Column("horses_id", db.Integer, db.ForeignKey("horses.id")),
+    db.Column("employee_id", db.Integer, db.ForeignKey("persons.id")),
+)
 
 
 class Horse(db.Model):
@@ -22,6 +23,17 @@ class Horse(db.Model):
     type_jya_assigned = db.Column(db.Enum("Hipoterapia", "Monta Terapeutica", "Deporte Ecuestre Adaptado", 
                                           "Actividades Recreativas", "Equitacion", name="type_jya_assigned"), nullable=False) 
     
-    #employees = db.relationship("Employee", secondary=horse_employee, backref="horse")  
+    employees = db.relationship("Employee", secondary=horse_employee, backref="horse")  
 
+    def __init__(self, id=None, name=None, date_of_birth=None, gender=None, race=None, fur=None, purchase_or_donation=None, date_of_entry=None, type_jya_assigned=None):
+
+        self.id = id 
+        self.name = name
+        self.date_of_birth = date_of_birth
+        self.gender = gender
+        self.race = race
+        self.fur = fur
+        self.purchase_or_donation = purchase_or_donation
+        self.date_of_entry = date_of_entry
+        self.type_jya_assigned = type_jya_assigned
 

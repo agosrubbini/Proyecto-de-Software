@@ -19,11 +19,11 @@ def create_employee(**kwargs):
     return employee
 
 def create_JyA(**kwargs):
-    JyA = JyA(**kwargs)
-    db.session.add(JyA)
+    jya = JyA(**kwargs)
+    db.session.add(jya)
     db.session.commit()
 
-    return JyA
+    return jya
 
 def create_family_member_or_tutor(**kwargs):
     family_member_or_tutor = FamilyMemberOrTutor(**kwargs)
