@@ -1,6 +1,7 @@
 from src.core.database import db
-from src.core.models.auth.user import User
-from src.core.models.auth.roles_and_permissions import Role, Permision
+from src.core.bcrypt import bcrypt
+from src.core.auth.models.user import User
+from src.core.auth.models.roles_and_permissions import Role, Permision
 
 def list_users():
     users = User.query.all()
@@ -8,11 +9,14 @@ def list_users():
     return users
 
 def create_user(**kwargs):
+    hash = bcrypt.generate_password_hash(kwargs['password'].encode('utf-8'))
+    kwargs['password'] = hash.decode('utf-8')
     user = User(**kwargs)
     db.session.add(user)
     db.session.commit()
 
     return user
+
 
 def create_role(**kwargs):
     role = Role(**kwargs)

@@ -1,5 +1,5 @@
 from src.core.database import db
-from src.core.models.institutions.institution import School, InstitutionalWork
+from src.core.institutions.models.institution import School, InstitutionalWork
 
 
 def create_institutional_work(**kwargs):

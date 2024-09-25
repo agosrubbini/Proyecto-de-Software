@@ -1,11 +1,11 @@
 
 from datetime import datetime
-from src.core.models.persons.person import Profession, Diagnosis
-from src.core.models.auth import create_user, create_role, create_permission
-from src.core.models.horses import create_horse
-from src.core.models.institutions import create_institutional_work, create_school
-from src.core.models.payments import create_payment, create_billing
-from src.core.models.persons import (
+from src.core.persons.models.person import Profession, Diagnosis
+from src.core.auth import create_user, create_role, create_permission
+from src.core.horses import create_horse
+from src.core.institutions import create_institutional_work, create_school
+from src.core.payments import create_payment, create_billing
+from src.core.persons import (
     create_person, create_employee, create_JyA, create_family_member_or_tutor, create_address, create_emergency_contact, 
     create_healthcare_plan)
 
@@ -18,8 +18,24 @@ def run():
         name="Escribir",
     )
 
-    role1 = create_role(
+    tecnica = create_role(
+        name="Técnica",
+    )
+
+    ecuestre = create_role(
+        name="Ecuestre",
+    )
+
+    voluntariado = create_role(
+        name="Voluntariado",
+    )
+
+    administracion = create_role(
         name="Administración",
+    )
+
+    sin_rol = create_role(
+        name="Sin rol",
     )
 
     address1 = create_address (

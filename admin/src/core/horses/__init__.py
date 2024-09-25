@@ -1,5 +1,5 @@
 from src.core.database import db
-from src.core.models.horses.horse import Horse
+from src.core.horses.models.horse import Horse
 
 
 def create_horse(**kwargs):

@@ -1,8 +1,8 @@
 from src.core.database import db
-from src.core.models.persons.person import Person, Employee, JyA, FamilyMemberOrTutor
-from src.core.models.persons.address import Address
-from src.core.models.persons.emergency_contact import EmergencyContact
-from src.core.models.persons.healthcare_plan import HealthcarePlan
+from src.core.persons.models.person import Person, Employee, JyA, FamilyMemberOrTutor
+from src.core.persons.models.address import Address
+from src.core.persons.models.emergency_contact import EmergencyContact
+from src.core.persons.models.healthcare_plan import HealthcarePlan
 
 def create_person(**kwargs):
     person = Person(**kwargs)
