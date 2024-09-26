@@ -6,11 +6,15 @@
         <link
           rel="stylesheet"
           href="{{ url_for('static', filename='styles/style.css') }}"
-        >
+        />
+        <link
+          rel="stylesheet"
+          href="{{ url_for('static', filename='flash.css') }}"
+        />
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"
-        >
+        />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <title>{% block title %}{% endblock %}</title>
         {% endblock %}
@@ -22,7 +26,7 @@
             }
         
             :root {
-                background-color: white !important;
+                background-color: var(--secondary-color) !important;
             }
             
             
@@ -31,10 +35,10 @@
     <body>
         <div>
             {% block navbar %} 
-            <nav class="navbar is-white" role="navigation" aria-label="main navigation">
+            <nav class="navbar is-white" style="background-color: white;" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <a href="{{ url_for('home') }}">
-                        <img class="navbar-item navbar-logo" src="{{ url_for('static', filename='logos/cedica.jpg') }}">
+                        <img class="navbar-item navbar-logo" src="{{ url_for('static', filename='logos/cedica.png') }}">
                     </a>
         
               
@@ -72,7 +76,7 @@
         <div class="container">
           {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
-                  <div class="notification">
+
                       {% for category, message in messages %}
                           <div class="notification is-{{ category }}">
                               <button class="delete"></button>

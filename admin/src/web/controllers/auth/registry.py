@@ -23,7 +23,8 @@ def registry_function():
         print("El usuario existe:", find_user_by_email(form.email.data))
         if (find_user_by_email(form.email.data)):
             print("Entre a donde no debo entrar")
-            flash("El mail ingresado ya se encuentra registrado en el sistema", "error")
+            flash("Usuario o contraseña incorrecta", "error")
+            flash("La sesión se inició correctamente!", "success")
             return redirect(url_for("registry.registry_function"))
 
         print("SELECT: ", form.role.data)
