@@ -1,46 +1,9 @@
-/* Estilos generales */
-body {
-    font-family: 'Merriweather', serif; /* Fuente formal para todo el cuerpo */
-    background-color: #f4f4f4;
-    color: #333;
-    font-size: 16px; /* Tamaño de fuente base */
+  :root {
+    --primary-color: rgba(120,185,190,255);
+    --secondary-color: rgba(247,189,105,255);
+    --color-text: #abb5b7;
   }
-  
-  /* Navbar */
-  .navbar {
-    margin-bottom: 20px;
-  }
-  
-  /* Container principal */
-  #main-content {
-    margin-top: 20px;
-  }
-  
-  /* Encabezados */
-  h1 {
-    font-size: 3.5rem; /* Tamaño grande para h1 */
-    font-weight: 700; /* Más negrita para encabezados */
-    color: #007bff;
-  }
-  
-  h2 {
-    font-size: 2rem; /* Tamaño grande para h2 */
-    font-weight: 700; /* Más negrita para encabezados */
-    color: #007bff;
-  }
-  
-  h3 {
-    font-size: 1.75rem; /* Tamaño moderado para h3 */
-    font-weight: 700; /* Más negrita para encabezados */
-    color: #007bff;
-  }
-  
-  /* Párrafos */
-  p {
-    font-size: 1.8rem; /* Tamaño de fuente más grande para párrafos */
-    line-height: 1.6;
-  }
-  
+
   /* Footer */
   .footer {
     background-color: #343a40;

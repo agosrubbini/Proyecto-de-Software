@@ -56,6 +56,12 @@ def assign_user(user, role):
 
 def find_user_by_email(email):
 
-    """Devuelve al usuario con el email dado"""
+    """Devuelve al usuario con el email pasado por parámetro"""
 
     return User.query.filter_by(email=email).first()
+
+def find_role_id_by_name(name):
+
+    """Devuelve el id del rol con el nombre pasado por parámetro"""
+
+    return Role.query.filter_by(name=name).first().id
