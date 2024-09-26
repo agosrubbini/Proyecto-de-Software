@@ -4,10 +4,10 @@ from src.core.database import db
 from src.core.auth.forms import registryForm
 from src.core.auth import find_user_by_email, find_role_id_by_name
 
-bp_registry = Blueprint('registry', __name__, url_prefix='/registry')
+bp = Blueprint('registry', __name__, url_prefix='/registry')
 
 
-@bp_registry.route('/', methods=['GET','POST'])
+@bp.route('/', methods=['GET','POST'])
 def registry_function():
 
     """

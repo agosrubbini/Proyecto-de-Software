@@ -68,10 +68,50 @@
               </nav>
             {% endblock %}
         </div>
+        <!-- bloque para los mensajes flash -->
+        <div class="container">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                  <div class="notification">
+                      {% for category, message in messages %}
+                          <div class="notification is-{{ category }}">
+                              <button class="delete"></button>
+                              {{ message }}
+                          </div>
+                      {% endfor %}
+                  </div>
+              {% endif %}
+          {% endwith %}
+      </div>
         <div id="container">
             {% block content %}
             {% endblock %}
         </div>
         <div>{% block footer %} {% endblock %}</div>
+         <!-- Script para ocultar los mensajes flash automáticamente -->
+         <script>
+          document.addEventListener('DOMContentLoaded', () => {
+              // Encuentra todas las notificaciones flash
+              const notifications = document.querySelectorAll('.notification');
+
+              // Establecer el tiempo de desaparición (en milisegundos)
+              const timeout = 3000; // 3 segundos
+
+              notifications.forEach(notification => {
+                  // Ocultar la notificación después de 3 segundos
+                  setTimeout(() => {
+                      notification.style.display = 'none';
+                  }, timeout);
+
+                  // Opción para cerrar manualmente
+                  const deleteButton = notification.querySelector('.delete');
+                  if (deleteButton) {
+                      deleteButton.addEventListener('click', () => {
+                          notification.style.display = 'none';
+                      });
+                  }
+              });
+          });
+      </script>
     </body>
 </html>
