@@ -2,7 +2,7 @@ from flask import Flask
 from flask import render_template
 from src.core.bcrypt import bcrypt
 from src.web.handlers import error
-from src.web.controllers.registry import bp_registry
+from src.web.controllers.auth.registry import bp_registry
 from src.core import database
 from src.core import seeds
 from src.core.config import config
@@ -22,7 +22,7 @@ def create_app(env="development", static_folder="../../static"):
     
     @app.route("/registry")
     def registry():
-        return render_template("registry.html")
+        return render_template("auth/registry.html")
     
     app.register_error_handler(404, error.error_not_found)
 

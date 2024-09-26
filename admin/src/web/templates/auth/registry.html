@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+
+{% block title %}Registrarse{% endblock %}
+
+{% block content %}
+
+<style>
+    
+    div[bisskinchecked] {
+    display: none; /* Oculta el div inyectado */
+    }
+
+    h1{
+        padding-top: 20px;
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    #label-email{
+        padding-top: 15px !important;
+    }
+    
+    .div-titulo {
+        width: fit-content;
+    }
+
+    .linea-titulo{
+        border: none;
+        border: 2px solid hsla(171deg, 100%, 41%,1);
+        margin-top: 0px;
+        width: 100%;
+    }
+
+    form {
+        display:block;
+        width: 30%;
+        margin: 60px auto;
+        height: 500px;
+        background-color: white;
+        padding: 0 20px;
+        border-radius: 10px;
+    }
+    
+    hr{
+        margin-top:-10px;
+    }
+
+    input{
+        margin-bottom: 10px;
+        border: none;
+        outline: none;
+        width: 100%;
+        height: 30px;
+    }
+
+    .label {
+        color: grey;
+    }
+
+    button{
+        border-radius: 20px;
+        background-color: hsla(171deg, 100%, 41%,1);
+        width: 300px;
+        height: 30px;
+        color: grey;
+        font-style: bold;
+        font-weight: 600;
+        display: block;
+        margin: 20px auto;
+    }
+
+    :root {
+        background-color: hsla(171deg, 100%, 41%,1) !important;
+    }
+
+    
+</style>
+
+<form class="from-registro" method="POST" action="{{ url_for('registry.registry_function') }}">
+    
+    {{ form.csrf_token }}
+    <div class="div-titulo">
+        <h1 class="label" >Registrate</h1>
+        <hr class="linea-titulo">
+    </div>
+    <label class="label" id="label-email">Correo Electronico</label>
+    <div class="control">
+        <input type="email" id="email" name="{{ form.email.name }}" placeholder="Ingrese su correo electronico" value="{{ form.email.value }}">
+    </div>  
+    <hr>
+    <label class="label">Alias</label>
+    <div class="control">
+        <input type="text" id="alias" name="{{ form.alias.name }}" placeholder="Ingrese su alias" value="{{ form.alias.value }}">
+    </div>
+    <hr>
+    <label class="label">Contraseña</label>
+    <div class="control">
+        <input type="password" id="password" name="{{ form.password.name}}" placeholder="Ingrese su contraseña" value="{{ form.password.value}}">
+    </div> 
+    <hr> 
+    <label class="label">Repita la contraseña</label>
+    <div class="control">
+        <input type="password" id="confirm_password" name="{{ form.confirm.name}}", placeholder="Ingrese la contraseña nuevamente" value="{{ form.confirm.value}}">
+    </div>
+    <hr>
+    <button type="submit" >Registrarse</button>
+</form>
+{% endblock %}
