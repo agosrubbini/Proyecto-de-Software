@@ -6,7 +6,17 @@
     {{ super() }}
 {% endblock %}
 
-{% block content %}
-    <h1>Inicio</h1>
-    <p>Página de inicio de la aplicación</p>
+{% block navbar_buttons %}
+<div class="navbar-end">
+    <div class="navbar-item">
+      <div class="buttons">
+        <a class="button is-primary" href="{{ url_for('registry.registry_function') }}">
+          <strong>Registrarse</strong>
+        </a>
+        <a class="button is-light">
+          Iniciar Sesión
+        </a>
+      </div>
+    </div>
+</div>
 {% endblock %}

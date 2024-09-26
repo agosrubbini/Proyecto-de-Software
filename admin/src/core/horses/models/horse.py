@@ -1,5 +1,4 @@
 from src.core.database import db 
-from src.core.models.persons.person import Employee
 
 horse_employee = db.Table(
     "horse_employee",

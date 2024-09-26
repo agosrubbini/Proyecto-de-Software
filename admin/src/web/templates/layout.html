@@ -1,16 +1,68 @@
 <!DOCTYPE html>
+
 <html lang="en">
     <head>
         {% block head %}
         <link
           rel="stylesheet"
-          href="{{ url_for('static', filename='styles/style.css') }}"
-        />
+          href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"
+        >
         <title>{% block title %}{% endblock %}</title>
         {% endblock %}
+
+        <style>
+            .navbar-logo {
+                max-height: 50px; /* Ajusta el valor según el tamaño deseado */
+                width: auto; /* Mantiene la proporción de la imagen */
+            }
+        
+            :root {
+                background-color: white !important;
+            }
+            
+            
+        </style>
     </head>
     <body>
-        <div>{% block navbar %} {% endblock %}</div>
+        <div>
+            {% block navbar %} 
+            <nav class="navbar is-white" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <a href="{{ url_for('home') }}">
+                        <img class="navbar-item navbar-logo" src="{{ url_for('static', filename='logos/cedica.jpg') }}">
+                    </a>
+        
+              
+                  <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                  </a>
+                </div>
+              
+                <div id="navbarBasicExample" class="navbar-menu">
+                  <div class="navbar-start">
+                    <a class="navbar-item">
+                      J&A
+                    </a>
+              
+                    <a class="navbar-item">
+                      Ecuestre
+                    </a>
+
+                    <a class="navbar-item">
+                        Equipo
+                    </a>
+                  </div>
+              
+                  {% block navbar_buttons %}
+                  {% endblock %}
+
+                </div>
+              </nav>
+            {% endblock %}
+        </div>
         <div id="container">
             {% block content %}
             {% endblock %}

@@ -1,6 +1,6 @@
 from src.core.database import db
-from src.core.models.payments.payment import Payment
-from src.core.models.payments.billing import Billing
+from src.core.payments.models.payment import Payment
+from src.core.payments.models.billing import Billing
 
 def create_payment(**kwargs):
     payment = Payment(**kwargs)
