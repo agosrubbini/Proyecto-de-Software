@@ -9,7 +9,7 @@
         />
         <link
           rel="stylesheet"
-          href="{{ url_for('static', filename='flash.css') }}"
+          href="{{ url_for('static', filename='styles/flash.css') }}"
         />
         <link
           rel="stylesheet"
@@ -78,9 +78,9 @@
               {% if messages %}
 
                       {% for category, message in messages %}
-                          <div class="notification is-{{ category }}">
-                              <button class="delete"></button>
-                              {{ message }}
+                          <div class="flash {{ category }}">
+                            <span class="message">{{ message }}</span>
+                            <button class="delete"></button>
                           </div>
                       {% endfor %}
                   </div>
@@ -96,7 +96,7 @@
          <script>
           document.addEventListener('DOMContentLoaded', () => {
               // Encuentra todas las notificaciones flash
-              const notifications = document.querySelectorAll('.notification');
+              const notifications = document.querySelectorAll('.flash');
 
               // Establecer el tiempo de desaparición (en milisegundos)
               const timeout = 3000; // 3 segundos
@@ -106,7 +106,7 @@
                   setTimeout(() => {
                       notification.style.display = 'none';
                   }, timeout);
-
+            
                   // Opción para cerrar manualmente
                   const deleteButton = notification.querySelector('.delete');
                   if (deleteButton) {

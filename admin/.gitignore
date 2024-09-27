@@ -162,3 +162,5 @@ cython_debug/
 #.idea/
 .envrc
 .vscode
+__pycache__
+flask_session

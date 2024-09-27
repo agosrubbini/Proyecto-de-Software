@@ -19,15 +19,10 @@ def registry_function():
     print("El formulario es valido: ", form.validate_on_submit())
     if (form.validate_on_submit()):
         
-        print("Entre")
-        print("El usuario existe:", find_user_by_email(form.email.data))
         if (find_user_by_email(form.email.data)):
-            print("Entre a donde no debo entrar")
-            flash("Usuario o contraseña incorrecta", "error")
-            flash("La sesión se inició correctamente!", "success")
+            flash("Ya existe un usuario con el mail ingresado", "error")
             return redirect(url_for("registry.registry_function"))
 
-        print("SELECT: ", form.role.data)
         create_user(
             email = form.email.data,
             alias = form.alias.data,
@@ -35,7 +30,7 @@ def registry_function():
             role_id = find_role_id_by_name(form.role.data),
         )
 
-        print("Cree el user")
+        print("Usuario creado correctamente", "success")
         return render_template("home.html")
     
     return render_template("auth/registry.html", form=form)

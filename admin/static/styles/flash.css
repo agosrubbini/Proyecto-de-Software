@@ -1,8 +1,21 @@
 .flash {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
     border: 2px solid #ccc;
-    padding: 1rem;
     border-radius: 5px;
-    margin-bottom: 1rem;
+}
+
+span.message {
+    margin: 0 !important;
+    padding:0 !important;
+    padding-left: 6px !important;
+    padding-bottom: 6px !important;
+    color: black;
+}
+
+button.delete{
+    padding-right: 5px !important;
 }
 
 .flash.success{
@@ -12,9 +25,9 @@
 }
 
 .flash.error{
-    border-color: #D9534F;
-    background-color: #F2DEDE;
-    color: #A94442;
+    border-color: #D9534F !important;
+    background-color: #F2DEDE !important;
+    color: #A94442 !important;
 }
 
 .flash.warning{
@@ -36,7 +49,7 @@
 
 .flash {
     opacity: 0;
-    animation: fadeIn 100s forwards;
+    animation: fadeIn 1s forwards;
 }
 
 @keyframes fadeIn{
