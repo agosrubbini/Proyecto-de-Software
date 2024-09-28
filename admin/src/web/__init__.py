@@ -22,10 +22,6 @@ def create_app(env="development", static_folder="../../static"):
     def home():
         return render_template("home.html")
     
-    @app.route("/registry")
-    def registry():
-        return render_template("auth/registry.html")
-    
     app.register_error_handler(404, error.error_not_found)
 
     @app.cli.command(name="reset-db")

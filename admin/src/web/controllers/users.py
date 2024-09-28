@@ -1,5 +1,5 @@
 from flask import Blueprint
-from flask import redirect
+from flask import render_template
 from flask import url_for
 from src.core.auth.models.user import User
 
@@ -12,4 +12,4 @@ def list_users():
     context = {
         'users': users
     }
-    return redirect(url_for('users.list_users', context=context))
+    return render_template('users.html', context=context)

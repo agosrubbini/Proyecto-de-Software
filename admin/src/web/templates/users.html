@@ -13,7 +13,7 @@
         <th>Alias</th>
         <th>Rol</th>
     </tr>
-    {% if context.users%}
+    {% if not context.users == None %}
     {% for user in context.users %}
     <tr>
         <td>{{ context.user.email }}</td>
