@@ -21,4 +21,3 @@ class registryForm(FlaskForm):
         validators=[InputRequired()],
         choices=["SuperAdministrador", "Administración", "Técnica", "Ecuestre", "Sin rol"],
     )
-

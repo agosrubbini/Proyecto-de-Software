@@ -1,0 +1,83 @@
+    
+    h1{
+        padding-top: 20px;
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+
+    .input, form{
+        background-color: white;
+    }
+    
+    .div-titulo {
+        width: fit-content;
+    }
+
+    .linea-titulo{
+        border: none;
+        border: 2px solid var(--primary-color);
+        margin-top: 0px;
+        width: 100%;
+    }
+
+    form {
+        display:block;
+        width: 30%;
+        margin: 60px auto;
+        height: 80%;
+        padding: 20px 40px;;
+        border-radius: 10px;
+    }
+    
+    hr{
+        margin-top:-10px;
+        border: 1x solid black;
+    }
+
+    input{
+        margin-bottom: 10px;
+        border: none;
+        outline: none;
+        width: 100%;
+        height: 30px;
+    }
+
+    button{
+        background-color: var(--primary-color);
+        width: 300px;
+        height: 30px;
+        color: black;
+        font-style: bold;
+        font-weight: 600;
+        display: block;
+        margin: 20px auto;
+    }
+    
+    .input, .input:focus{
+        box-shadow: none;
+        border: none;
+        outline: none;
+    }
+
+    .input, .input::placeholder, .label, .button{
+        color: black;
+        font-weight: 600;
+        font-style: bold;
+    }
+    
+    i {
+        color:black;
+    }
+
+    select{
+        border-radius: 20px;
+        background-color: hsl(221, 14%,calc(9% + 0%));
+        width: 175px;
+        height: 25px;
+        text-align: center;
+        color: hsl(221, 14%, 93%);
+        font-family: Inter, SF Pro, Segoe UI, Roboto, Oxygen, Ubuntu, Helvetica Neue, Helvetica, Arial, sans-serif;
+        margin-bottom: 15px;
+        border-color: hsl(221, 14%,calc(24% + 0%));
+        padding-inline-end: 2px;
+    }
