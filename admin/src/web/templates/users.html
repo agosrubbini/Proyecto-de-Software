@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}Usuarios{% endblock %}
+
+{% block content%}
+<h1>Usuarios</h1>
+<a class="" href="{{ url_for('registry.registry_function') }}">
+   <strong>Crear usuario</strong>
+</a>
+<table>
+    <tr>
+        <th>Email</th>
+        <th>Alias</th>
+        <th>Rol</th>
+    </tr>
+    {% if context.users%}
+    {% for user in context.users %}
+    <tr>
+        <td>{{ context.user.email }}</td>
+        <td>{{ context.user.alias }}</td>
+        <td>{{ context.user.role.name }}</td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+</table>
+{% endblock %}
