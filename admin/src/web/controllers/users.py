@@ -8,7 +8,7 @@ bp = Blueprint('users', __name__, url_prefix='/users')
 @bp.route('/')
 def list_users():
     users = None
-    #users = User.query.all()
+    users = User.query.all()
     context = {
         'users': users
     }

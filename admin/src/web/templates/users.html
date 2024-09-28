@@ -13,12 +13,12 @@
         <th>Alias</th>
         <th>Rol</th>
     </tr>
-    {% if not context.users == None %}
+    {% if context.users %}
     {% for user in context.users %}
     <tr>
-        <td>{{ context.user.email }}</td>
-        <td>{{ context.user.alias }}</td>
-        <td>{{ context.user.role.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.alias }}</td>
+        <td>{{ user.role.name }}</td>
     </tr>
     {% endfor %}
     {% endif %}
