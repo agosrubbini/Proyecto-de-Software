@@ -1,0 +1,20 @@
+.navbar-logo {
+    max-height: 50px; /* Ajusta el valor según el tamaño deseado */
+    width: auto; /* Mantiene la proporción de la imagen */
+}
+
+:root {
+    background-color: var(--secondary-color) !important;
+}
+
+#icono-usuario {
+    font-size: 24px; /* Ajusta el tamaño del ícono aquí */
+    width: 35px;      /* Ancho del contenedor */
+    height: 35px;     /* Alto del contenedor */
+    border: 1px solid black; 
+    border-radius: 50%; 
+    padding: 4px;     /* Espaciado interno para el borde */
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+}

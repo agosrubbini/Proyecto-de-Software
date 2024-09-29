@@ -13,7 +13,7 @@ from src.web import routes
 from src.web.handlers.auth import is_authenticated
 
 
-session1 = Session()
+session = Session()
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
 
