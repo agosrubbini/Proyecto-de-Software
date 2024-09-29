@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template
+from flask import render_template, session
 from src.core.bcrypt import bcrypt
 from src.web.handlers import error
 from web.controllers.auth.registry import bp as bp_registry
@@ -9,7 +9,7 @@ from src.core.config import config
 from web.controllers.auth.login import bp as bp_login
 from flask_session import Session
 
-session = Session()
+session1 = Session()
 
 
 def create_app(env="development", static_folder="../../static"):
@@ -19,11 +19,11 @@ def create_app(env="development", static_folder="../../static"):
     database.init_app(app)
     bcrypt.init_app(app)
 
-    session.init_app(app)
+    session1.init_app(app)
 
     @app.route("/")
     def home():
-        return render_template("home.html")
+        return render_template("home.html", user=session.get("user"))
     
     app.register_blueprint(bp_registry)
     app.register_blueprint(bp_login)

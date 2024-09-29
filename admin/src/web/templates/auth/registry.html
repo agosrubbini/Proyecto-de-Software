@@ -2,31 +2,39 @@
 
 {% block title %}Registrarse{% endblock %}
 
-
 {% block content %}
 
 <style>
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
     
-    h1{
+    h1 {
         padding-top: 20px;
-        font-size: 20px !important;
+        font-size: 24px !important;
         margin-bottom: 0 !important;
+        font-weight: 600;
     }
 
-    select{
-        border-radius: 20px;
-        background-color: hsl(221, 14%,calc(9% + 0%));
+    select {
+        border-radius: 10px;
+        background-color: hsl(221, 14%, 20%);
         width: 175px;
-        height: 25px;
+        height: 40px;
         text-align: center;
         color: hsl(221, 14%, 93%);
-        font-family: Inter, SF Pro, Segoe UI, Roboto, Oxygen, Ubuntu, Helvetica Neue, Helvetica, Arial, sans-serif;
+        font-family: 'Poppins', sans-serif;
         margin-bottom: 15px;
-        border-color: hsl(221, 14%,calc(24% + 0%));
+        border-color: hsl(221, 14%, 50%);
         padding-inline-end: 2px;
+        transition: background-color 0.3s ease;
     }
     
-    .input, form{
+    select:hover {
+        background-color: hsl(221, 14%, 15%);
+    }
+
+    .input, form {
         background-color: white;
     }
     
@@ -34,7 +42,7 @@
         width: fit-content;
     }
 
-    .linea-titulo{
+    .linea-titulo {
         border: none;
         border: 2px solid var(--primary-color);
         margin-top: 0px;
@@ -42,52 +50,64 @@
     }
 
     form {
-        display:block;
+        display: block;
         width: 30%;
         margin: 60px auto;
         height: 80%;
-        padding: 20px 40px;;
+        padding: 30px 50px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        background-color: white;
+    }
+
+    hr {
+        margin-top: -10px;
+        border: 1px solid black;
+    }
+
+    input {
+        margin-bottom: 15px;
         border-radius: 10px;
-    }
-    
-    hr{
-        margin-top:-10px;
-        border: 1x solid black;
-    }
-
-    input{
-        margin-bottom: 10px;
-        border: none;
-        outline: none;
+        border: 1px solid hsl(221, 14%, 80%);
+        padding: 10px;
+        height: 40px;
+        transition: box-shadow 0.2s ease, border-color 0.2s ease;
         width: 100%;
-        height: 30px;
     }
 
-    button{
+    input:focus {
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        border-color: hsl(221, 14%, 50%);
+        outline: none;
+    }
+
+    button {
         background-color: var(--primary-color);
         width: 300px;
-        height: 30px;
-        color: black;
-        font-style: bold;
-        font-weight: 600;
+        height: 40px;
+        color: white;
+        font-weight: bold;
         display: block;
         margin: 20px auto;
-    }
-    
-    .input, .input:focus{
-        box-shadow: none;
+        border-radius: 20px;
         border: none;
-        outline: none;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, transform 0.3s ease;
     }
 
-    .input, .input::placeholder, .label, .button{
+    button:hover {
+        background-color: hsl(221, 14%, 40%);
+        transform: scale(1.05);
+    }
+    
+    .input, .input::placeholder, .label, .button {
         color: black;
         font-weight: 600;
         font-style: bold;
     }
     
     i {
-        color:black;
+        color: black;
     }
 </style>
 
@@ -95,17 +115,19 @@
     
     {{ form.csrf_token }}
     <div class="div-titulo">
-        <h1 class="label" >Registrar usuario</h1>
+        <h1 class="label">Registrar usuario</h1>
         <hr class="linea-titulo">
     </div>
-    <label class="label">Correo Electronico</label>
-    <div class="control has-icons-left ">
+    
+    <label class="label">Correo Electrónico</label>
+    <div class="control has-icons-left">
         <span class="icon is-small is-left">
             <i class="fas fa-envelope"></i>
         </span>
-        <input class="input" type="email" id="email" name="{{ form.email.name }}" placeholder="Ingrese su correo electronico" value="{{ form.email.value }}">
+        <input class="input" type="email" id="email" name="{{ form.email.name }}" placeholder="Ingrese su correo electrónico" value="{{ form.email.value }}">
     </div>  
     <hr>
+    
     <label class="label">Alias</label>
     <div class="control has-icons-left">
         <span class="icon is-small is-left">
@@ -114,34 +136,39 @@
         <input class="input" type="text" id="alias" name="{{ form.alias.name }}" placeholder="Ingrese su alias" value="{{ form.alias.value }}">
     </div>
     <hr>
+    
     <label class="label">Contraseña</label>
     <div class="control has-icons-left">
         <span class="icon is-small is-left">
             <i class="fas fa-lock"></i>
         </span>
-        <input class="input" type="password" id="password" name="{{ form.password.name}}" placeholder="Ingrese su contraseña" value="{{ form.password.value}}">
+        <input class="input" type="password" id="password" name="{{ form.password.name }}" placeholder="Ingrese su contraseña" value="{{ form.password.value }}">
     </div> 
     <hr> 
+    
     <label class="label">Repita la contraseña</label>
     <div class="control has-icons-left">
         <span class="icon is-small is-left">
             <i class="fas fa-lock"></i>
         </span>
-        <input class="input" type="password" id="confirm_password" name="{{ form.confirm.name}}" placeholder="Ingrese la contraseña nuevamente" value="{{ form.confirm.value}}">
+        <input class="input" type="password" id="confirm_password" name="{{ form.confirm.name }}" placeholder="Ingrese la contraseña nuevamente" value="{{ form.confirm.value }}">
     </div>
     <hr>
+    
     <label class="label">Rol</label>
     <div class="control">
-        <select id="role" name="{{ form.role.name}}" value="{{ form.role.value }}">
-          <option>Selecciona un rol</option>
-          <option>Super Administrador</option>
-          <option>Administración</option>
-          <option>Ecuestre</option>
-          <option>Técnica</option>
-          <option>Sin Rol</option>
+        <select id="role" name="{{ form.role.name }}" value="{{ form.role.value }}">
+            <option>Selecciona un rol</option>
+            <option>Super Administrador</option>
+            <option>Administración</option>
+            <option>Ecuestre</option>
+            <option>Técnica</option>
+            <option>Sin Rol</option>
         </select>
     </div>
     <hr>
-    <button type="submit" >Registrar usuario</button>
+    
+    <button type="submit">Registrar usuario</button>
 </form>
+
 {% endblock %}
