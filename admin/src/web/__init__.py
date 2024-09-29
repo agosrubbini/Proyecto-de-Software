@@ -1,14 +1,17 @@
 import logging
 from flask import Flask
+from flask_session import Session
+from web.controllers.auth.registry import bp as bp_registry
+from web.controllers.auth.login import bp as bp_login
+from web.controllers.auth.users import bp as bp_users
+from src.core import database
+from src.core.config import config
 from src.core.bcrypt import bcrypt
 from src.web.handlers import error
-from web.controllers.auth.registry import bp as bp_registry
-from src.core import database
 from src.web import commands
 from src.web import routes
-from src.core.config import config
-from web.controllers.auth.login import bp as bp_login
-from flask_session import Session
+from src.web.handlers.auth import is_authenticated
+
 
 session = Session()
 
@@ -29,9 +32,12 @@ def create_app(env="development", static_folder="../../static"):
     # Register blueprints
     app.register_blueprint(bp_registry)
     app.register_blueprint(bp_login)
+    app.register_blueprint(bp_users)
     # Register error handlers
     app.register_error_handler(404, error.error_not_found)
     app.register_error_handler(401, error.unautorized)
+    # Register jinja filters
+    app.jinja_env.globals.update(is_authenticated=is_authenticated)
     # Commands
     commands.register(app)
     # Routes

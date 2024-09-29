@@ -39,5 +39,14 @@ def authenticate():
 
 @bp.get("/logout")
 def logout():
-    pass
+    app.logger.info("Call to logout method")
+    if session.get("user"):
+        app.logger.info("Deleting session of: %s",session.get("user"))
+        del session["user"]
+        session.clear()
+        flash("Sesión cerrada correctamente", "success")
+    else:
+        flash("No hay una sesión activa", "error")
+    app.logger.info("End of call to logout method")
+    return redirect(url_for("home"))
 
