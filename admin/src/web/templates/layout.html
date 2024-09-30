@@ -5,8 +5,17 @@
         {% block head %}
         <link
           rel="stylesheet"
+          href="{{ url_for('static', filename='styles/style.css') }}"
+        />
+        <link
+          rel="stylesheet"
+          href="{{ url_for('static', filename='styles/flash.css') }}"
+        />
+        <link
+          rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"
-        >
+        />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <title>{% block title %}{% endblock %}</title>
         {% endblock %}
 
@@ -17,7 +26,7 @@
             }
         
             :root {
-                background-color: white !important;
+                background-color: var(--secondary-color) !important;
             }
             
             
@@ -26,13 +35,12 @@
     <body>
         <div>
             {% block navbar %} 
-            <nav class="navbar is-white" role="navigation" aria-label="main navigation">
+            <nav class="navbar is-white" style="background-color: white;" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <a href="{{ url_for('home') }}">
-                        <img class="navbar-item navbar-logo" src="{{ url_for('static', filename='logos/cedica.jpg') }}">
+                        <img class="navbar-item navbar-logo" src="{{ url_for('static', filename='logos/cedica.png') }}">
                     </a>
         
-              
                   <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
@@ -55,18 +63,93 @@
                         Equipo
                     </a>
                   </div>
-              
-                  {% block navbar_buttons %}
-                  {% endblock %}
-
+                </div>
+                <div class="navbar-end">
+                  <div class="navbar-item">
+                    <div class="buttons">
+                      {% if is_authenticated(session) %}
+                        <a class="button is-light" style="background-color: var(--primary-color) !important" href=" {{ url_for('login.logout') }}">
+                          Cerrar Sesión
+                        </a>
+                      {% else %}
+                        <a class="button is-light" style="background-color: var(--primary-color) !important" href=" {{ url_for('login.login') }}">
+                          Iniciar Sesión
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
                 </div>
               </nav>
             {% endblock %}
         </div>
+        <!-- bloque para los mensajes flash -->
+        <div class="container">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+
+                      {% for category, message in messages %}
+                          <div class="flash {{ category }}">
+                            <span class="message">{{ message }}</span>
+                            <button class="delete"></button>
+                          </div>
+                      {% endfor %}
+                  </div>
+              {% endif %}
+          {% endwith %}
+      </div>
         <div id="container">
             {% block content %}
             {% endblock %}
         </div>
         <div>{% block footer %} {% endblock %}</div>
+         <!-- Script para ocultar los mensajes flash automáticamente -->
+         <script>
+          document.addEventListener('DOMContentLoaded', () => {
+              // Encuentra todas las notificaciones flash
+              const notifications = document.querySelectorAll('.flash');
+
+              // Establecer el tiempo de desaparición (en milisegundos)
+              const timeout = 3000; // 3 segundos
+
+              notifications.forEach(notification => {
+                  // Ocultar la notificación después de 3 segundos
+                  setTimeout(() => {
+                      notification.style.display = 'none';
+                  }, timeout);
+            
+                  // Opción para cerrar manualmente
+                  const deleteButton = notification.querySelector('.delete');
+                  if (deleteButton) {
+                      deleteButton.addEventListener('click', () => {
+                          notification.style.display = 'none';
+                      });
+                  }
+              });
+          });
+      </script>
+      <!-- Script para el navbar burger -->
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    
+          // Get all "navbar-burger" elements
+          const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+    
+          // Add a click event on each of them
+          $navbarBurgers.forEach( el => {
+            el.addEventListener('click', () => {
+    
+              // Get the target from the "data-target" attribute
+              const target = el.dataset.target;
+              const $target = document.getElementById(target);
+    
+              // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+              el.classList.toggle('is-active');
+              $target.classList.toggle('is-active');
+    
+            });
+          });
+    
+        });
+    </script>
     </body>
 </html>

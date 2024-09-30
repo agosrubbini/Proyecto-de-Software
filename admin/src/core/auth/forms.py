@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, PasswordField
+from wtforms import EmailField, StringField, PasswordField, SelectField
 from wtforms.validators import InputRequired, Length, EqualTo
 
 
@@ -16,4 +16,8 @@ class registryForm(FlaskForm):
         ],
     )
     confirm = PasswordField("Repetir contraseña")
-
+    role = SelectField(
+        "Role",
+        validators=[InputRequired()],
+        choices=["SuperAdministrador", "Administración", "Técnica", "Ecuestre", "Sin rol"],
+    )

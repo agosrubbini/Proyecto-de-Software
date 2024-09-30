@@ -1,0 +1,62 @@
+.flash {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
+
+span.message {
+    margin: 0 !important;
+    padding:0 !important;
+    padding-left: 6px !important;
+    padding-bottom: 6px !important;
+    color: black;
+}
+
+button.delete{
+    padding-right: 5px !important;
+}
+
+.flash.success{
+    border-color: #2D762D;
+    background-color: #DFF0D8;
+    color:#3C763D;
+}
+
+.flash.error{
+    border-color: #D9534F !important;
+    background-color: #F2DEDE !important;
+    color: #A94442 !important;
+}
+
+.flash.warning{
+    border-color: #F0AD4E;
+    background-color: #FCF8E3;
+    color: #8A6D3B;
+}
+
+.flash.info{
+    border-color: #31708F;
+    background-color: #D9EDF7;
+    color: #31708F;
+}
+
+.flash headear strong{
+    font-weight: bold;
+    text-transform: uppercase;   
+}
+
+.flash {
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+@keyframes fadeIn{
+    from { 
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

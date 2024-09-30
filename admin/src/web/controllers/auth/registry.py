@@ -1,39 +1,37 @@
-from flask import Blueprint, render_template, request, redirect, flash, url_for
-from src.core.auth import create_user
-from src.core.database import db   
+from flask import Blueprint, render_template, redirect, flash, url_for
+from src.core.auth import create_user 
 from src.core.auth.forms import registryForm
-from src.core.auth import find_user_by_email 
+from flask import current_app as app
+from src.core.auth import find_user_by_email, find_role_id_by_name
 
-bp_registry = Blueprint('registry', __name__, url_prefix='/registry')
+bp = Blueprint('registry', __name__, url_prefix='/registry')
 
 
-@bp_registry.route('/', methods=['GET','POST'])
+@bp.route('/', methods=['GET','POST'])
 def registry_function():
 
     """
     Muestra la vista del registro, además valida los parametros, y guarda al usuario en la base de datos si
-    se recibió el formulario.
+    se recibió el formulario y el mismo es válido.
     """
-
+    app.logger.info("Call to registry_function")
     form = registryForm()
-    print(form)
-    print(form.validate_on_submit())
+    app.logger.info("El formulario es valido: %s", form.validate_on_submit())
     if (form.validate_on_submit()):
         
-        print("Entre")
-        print("El usuario existe:", find_user_by_email(form.email.data))
         if (find_user_by_email(form.email.data)):
-            print("Entre a donde no debo entrar")
-            flash("El mail ingresado ya se encuentra registrado en el sistema", "error")
+            app.logger.error("The following email is already registered: %s ", form.email.data)
+            flash("Ya existe un usuario con el mail ingresado", "error")
             return redirect(url_for("registry.registry_function"))
 
         create_user(
             email = form.email.data,
             alias = form.alias.data,
             password = form.password.data,
+            role_id = find_role_id_by_name(form.role.data),
         )
-
-        print("Cree el user")
+        app.logger.info("End of call to registry_function")
+        flash("Usuario creado correctamente", "success")
         return render_template("home.html")
     
     return render_template("auth/registry.html", form=form)
