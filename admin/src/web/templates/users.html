@@ -1,26 +1,32 @@
 {% extends "layout.html" %}
-
 {% block title %}Usuarios{% endblock %}
-
 {% block content%}
-<h1>Usuarios</h1>
-<a class="" href="{{ url_for('registry.registry_function') }}">
-   <strong>Crear usuario</strong>
-</a>
-<table>
-    <tr>
-        <th>Email</th>
-        <th>Alias</th>
-        <th>Rol</th>
-    </tr>
-    {% if context.users %}
-    {% for user in context.users %}
-    <tr>
-        <td>{{ user.email }}</td>
-        <td>{{ user.alias }}</td>
-        <td>{{ user.role.name }}</td>
-    </tr>
-    {% endfor %}
-    {% endif %}
-</table>
+<div class="container">
+    <h1 class="title is-size-2 has-text-centered  has-text-info mt-5">Usuarios</h1>
+    <a class="has-text-primary  is-size-5" href="{{ url_for('registry.registry_function') }}">
+    <strong>Crear usuario</strong>
+    </a>
+    <table class="table is-striped is-bordered is-fullwidth">
+        <tr>
+            <th>Email</th>
+            <th>Alias</th>
+            <th>Rol</th>
+            <th>Bloquear usuario</th>
+        </tr>
+        {% if context.users %}
+        {% for user in context.users %}
+        <tr>
+            <td>{{ user.email }}</td>
+            <td>{{ user.alias }}</td>
+            <td>{{ user.role.name }}</td>
+            <td>
+                <form method="POST" action="{{url_for(users.block_user)}}">
+                <button class="button is-dark is-danger">Bloquear</button>
+            </td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+    </table>
+</div>
+
 {% endblock %}
