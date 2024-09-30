@@ -2,28 +2,55 @@
 {% block title %}Usuarios{% endblock %}
 {% block content%}
 <div class="container">
-    <h1 class="title is-size-2 has-text-centered  has-text-info mt-5">Usuarios</h1>
-    <a class="has-text-primary  is-size-5" href="{{ url_for('registry.registry_function') }}">
-    <strong>Crear usuario</strong>
-    </a>
+    <h1 class="title is-size-2 has-text-centered  has-text-black-bis mt-5">Usuarios</h1>
+    <div class="container">
+        <a class="has-text-link  is-size-4" href="{{ url_for('registry.registry_function') }}">
+            <strong>Crear usuario</strong>
+        </a>
+        <form method="Post" action="{{url_for('users.order_by')}}">
+            <div class="select">
+                <select name="order_option" onchange="this.form.submit()">
+                  <option value="default">Ordenar por:</option>
+                  <option value="email_asc">Email: Orden ascendente</option>
+                  <option value="email_desc">Email: Orden descendente</option>
+                  <option value="creation_date_asc">Fecha creación: Orden ascendente</option>
+                  <option value="creation_date_desc">Fecha creación: Orden descendente</option>
+                </select>
+              </div>
+        </form>
+    </div>
     <table class="table is-striped is-bordered is-fullwidth">
-        <tr>
-            <th>Email</th>
-            <th>Alias</th>
-            <th>Rol</th>
-            <th>Bloquear usuario</th>
-        </tr>
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Alias</th>
+                <th>Rol</th>
+                <th>Bloquear usuario</th>
+            </tr>
+        </thead>
         {% if context.users %}
         {% for user in context.users %}
-        <tr>
-            <td>{{ user.email }}</td>
-            <td>{{ user.alias }}</td>
-            <td>{{ user.role.name }}</td>
-            <td>
-                <form method="POST" action="{{url_for(users.block_user)}}">
-                <button class="button is-dark is-danger">Bloquear</button>
-            </td>
-        </tr>
+        <tbody>
+            <tr>
+                <td>{{ user.email }}</td>
+                <td>{{ user.alias }}</td>
+                <td>{{ user.role.name }}</td>
+                <td>
+                    {% if not user.system_admin %}
+                    <form method="POST" action="{{url_for('users.block_user')}}">
+                        <input type="hidden" name="user_email" value="{{ user.email }}">
+                        <button type="submit" class="button is-dark {% if user.is_blocked %}is-success{% else %}is-danger{% endif %}">
+                            {% if user.is_blocked %}
+                                Desbloquear
+                            {% else %}
+                                Bloquear
+                            {% endif %}
+                        </button>
+                    </form>
+                    {%endif%}
+                </td>
+            </tr>
+        </tbody>
         {% endfor %}
         {% endif %}
     </table>
