@@ -7,33 +7,6 @@
     background-color: var(--secondary-color) !important;
 }
 
-#icono-usuario {
-    font-size: 24px; /* Ajusta el tamaño del ícono aquí */
-    width: 35px;      /* Ancho del contenedor */
-    height: 35px;     /* Alto del contenedor */
-    border: 1px solid black; 
-    border-radius: 50%; 
-    padding: 4px;     /* Espaciado interno para el borde */
-    display: inline-flex; 
-    align-items: center; 
-    justify-content: center;
-    margin-right: 30px;
-}
-
-#user-dropdown {
-    border-top: white !important;
-    position: absolute;
-    top: 100%; /* Debajo del icono */
-    right: 10px; /* Desplazado ligeramente hacia la izquierda para evitar colisión */
-    z-index: 1000; /* Para que quede por encima de otros elementos */
-    overflow: visible; /* Asegura que no corte contenido */
-}
-
-#user-dropdown, .item-user-dropdown, .divider-user-dropdown{
-    background-color: white !important;
-    color: hsl(221deg, 14%, 4%) !important;
-}
-
 div.navbar-item {
     padding: 0 !important;
 }
@@ -46,3 +19,84 @@ div.navbar-item {
     margin-left: 8px; /* Agrego margen al botón de iniciar sesión solo cuando está dentro del menú burger*/
 }
 
+.user-dropdown {
+    position: relative;
+    padding: 0.5rem 1rem;
+}
+
+.user-icon {
+    font-size: 2rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.user-icon:hover {
+    color: #2c65b1;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    width: 220px;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-item {
+    padding: 0.75rem 1rem;
+    color: var(--text-color);
+    background-color: white !important;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background-color: var(--hover-color);
+}
+
+.dropdown-item i {
+    margin-right: 0.75rem;
+    color: var(--primary-color);
+    width: 20px;
+    text-align: center;
+}
+
+.show {
+    display: block;
+}
+
+.user-info {
+    padding: 1rem;
+    background-color: antiquewhite;
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+    color: black;
+}
+
+.user-name {
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.user-email {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: bold;
+}
+
+.navbar-end {
+    margin-right: 20px;
+}

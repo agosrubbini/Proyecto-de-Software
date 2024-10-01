@@ -58,41 +58,59 @@
                 
                 <div class="navbar-end">
                   <div class="navbar-item">
-                    <div class="buttons">
-                      {% if is_authenticated(session) %}
-                        <div class="navbar-item has-dropdown is-hidden-touch item-user-dropdown">
-                            <i id="icono-usuario" class="fa-solid fa-user " alt="Icono de usuario" ></i>
-                            <div class="navbar-dropdown is-right" id="user-dropdown" >
-                              <a class="navbar-item item-user-dropdown" href="/perfil">
-                                Perfil
-                              </a>
-                              <a class="navbar-item item-user-dropdown" href="/configuracion">
-                                  Configuración
-                              </a>
-                              <hr class="navbar-divider divider-user-dropdown">
-                              <a class="navbar-item item-user-dropdown" href="{{ url_for('login.logout') }}">
-                                  Cerrar sesión
-                              </a> 
-                            </div>
-                        </div> 
-                        <div class="is-hidden-desktop">
-                          <a class="navbar-item" href="/perfil">
-                            Perfil
+                    {% if is_authenticated(session) %}
+                      <div class="navbar-item user-dropdown is-hidden-touch">
+                        <i class="fas fa-user-circle user-icon" id="userIcon"></i>
+                        <div class="dropdown-content" id="userDropdown">
+                          <div class="user-info">
+                            <div class="user-alias"> {{ user(session).alias}}</div>
+                            <div class="user-email"> {{ user(session).email }} </div>
+                          </div>
+                          <a class="dropdown-item" href="/perfil">
+                            <i class="fas fa-user"></i>
+                            <span>Mi Perfil</span>
                           </a>
-                          <a class="navbar-item" href="/configuracion">
-                              Configuración
+                          <a class="dropdown-item" href="/configuracion">
+                            <i class="fas fa-cog"></i>
+                            <span>Configuración</span>
                           </a>
-                          <hr class="navbar-divider">
-                          <a class="navbar-item" href="{{ url_for('login.logout') }}">
-                              Cerrar sesión
+                          <a class="dropdown-item" href="{{ url_for('login.logout') }}" >
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Cerrar Sesión</span>
                           </a>
                         </div>
-                        <script>
-                          document.getElementById('icono-usuario').addEventListener('click', function() {
-                            var dropdown = document.getElementById('user-dropdown');
-                            dropdown.style.display = (dropdown.style.display === 'none' || dropdown.style.display === '') ? 'block' : 'none';
+                      </div>
+                    </div>
+                  </div>
+                      <div class="is-hidden-desktop">
+                        <a class="navbar-item" href="/perfil">
+                          Perfil
+                        </a>
+                        <a class="navbar-item" href="/configuracion">
+                          Configuración
+                        </a>
+                        <hr class="navbar-divider">
+                        <a class="navbar-item" href="{{ url_for('login.logout') }}">
+                          Cerrar sesión
+                        </a>
+                      </div>
+                      <script>
+                          document.addEventListener('DOMContentLoaded', () => {
+                              const userIcon = document.getElementById('userIcon');
+                              const userDropdown = document.getElementById('userDropdown');
+                  
+                              userIcon.addEventListener('click', (e) => {
+                                  e.stopPropagation();
+                                  userDropdown.classList.toggle('show');
+                              });
+                  
+                              document.addEventListener('click', (e) => {
+                                  if (!userDropdown.contains(e.target) && !userIcon.contains(e.target)) {
+                                      userDropdown.classList.remove('show');
+                                  }
+                              });
                           });
-                        </script>
+                      </script>
                       {% else %}
                         <a class="button is-light login-button" style="background-color: var(--primary-color) !important" href=" {{ url_for('login.login') }}">
                           Iniciar Sesión
