@@ -33,15 +33,15 @@
                         <img class="navbar-item navbar-logo" src="{{ url_for('static', filename='logos/cedica.png') }}">
                     </a>
         
-                  <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                  <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarElement">
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                   </a>
                 </div>
-              
-                <div id="navbarBasicExample" class="navbar-menu">
+                
+                <div id="navbarElement" class="navbar-menu">
                   <div class="navbar-start">
                     <a class="navbar-item">
                       J&A
@@ -55,57 +55,77 @@
                         Equipo
                     </a>
                   </div>
-                </div>
+                
                 <div class="navbar-end">
                   <div class="navbar-item">
                     <div class="buttons">
                       {% if is_authenticated(session) %}
-                        <i id="icono-usuario" class="fa-solid fa-user " alt="Icono de usuario" ></i>
-                        <div class="navbar-dropdown" id="user-dropdown" >
+                        <div class="navbar-item has-dropdown is-hidden-touch item-user-dropdown">
+                            <i id="icono-usuario" class="fa-solid fa-user " alt="Icono de usuario" ></i>
+                            <div class="navbar-dropdown is-right" id="user-dropdown" >
+                              <a class="navbar-item item-user-dropdown" href="/perfil">
+                                Perfil
+                              </a>
+                              <a class="navbar-item item-user-dropdown" href="/configuracion">
+                                  Configuración
+                              </a>
+                              <hr class="navbar-divider divider-user-dropdown">
+                              <a class="navbar-item item-user-dropdown" href="{{ url_for('login.logout') }}">
+                                  Cerrar sesión
+                              </a> 
+                            </div>
+                        </div> 
+                        <div class="is-hidden-desktop">
                           <a class="navbar-item" href="/perfil">
                             Perfil
                           </a>
                           <a class="navbar-item" href="/configuracion">
-                            Configuración
+                              Configuración
                           </a>
                           <hr class="navbar-divider">
-                          <a class="navbar-item" href=" {{ url_for('login.logout') }}">
-                            Cerrar sesión
+                          <a class="navbar-item" href="{{ url_for('login.logout') }}">
+                              Cerrar sesión
                           </a>
                         </div>
-        
                         <script>
                           document.getElementById('icono-usuario').addEventListener('click', function() {
                             var dropdown = document.getElementById('user-dropdown');
                             dropdown.style.display = (dropdown.style.display === 'none' || dropdown.style.display === '') ? 'block' : 'none';
                           });
                         </script>
-                        <a class="button is-light" style="background-color: var(--primary-color) !important" href=" {{ url_for('login.logout') }}">
-                          Cerrar Sesión
-                        </a>
                       {% else %}
-                        <a class="button is-light" style="background-color: var(--primary-color) !important" href=" {{ url_for('login.login') }}">
+                        <a class="button is-light login-button" style="background-color: var(--primary-color) !important" href=" {{ url_for('login.login') }}">
                           Iniciar Sesión
                         </a>
                       {% endif %}
                     </div>
                   </div>
                 </div>
-              </nav>
+              </div>
+            </nav>
             {% endblock %}
         </div>
         <!-- bloque para los mensajes flash -->
-        <div class="container">
+      <div class="container">
           {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
-
-                      {% for category, message in messages %}
-                          <div class="flash {{ category }}">
-                            <span class="message">{{ message }}</span>
-                            <button class="delete"></button>
-                          </div>
-                      {% endfor %}
-                  </div>
+                  {% for category, message in messages %}
+                      <div class="notification is-{{ category }} is-flex is-allign-items-center">
+                        <div class="content-wrapper">
+                          <span class="icon">
+                              <i class="icon-notification fas 
+                                {% if category == 'info' %} fa-info-circle has-text-info 
+                                {% elif category == 'success' %} fa-check-square has-text-success
+                                {% elif category == 'warning' %} fa-exclamation-triangle has-text-warning
+                                {% elif category == 'danger' %} fa-ban has-text-danger
+                                {% endif %}">
+                              </i>
+                            </span>
+                          <span class="message">{{ message }}</span>
+                        </div>
+                        <button class="delete"></button>
+                      </div>
+                  {% endfor %}
               {% endif %}
           {% endwith %}
       </div>
@@ -118,22 +138,25 @@
          <script>
           document.addEventListener('DOMContentLoaded', () => {
               // Encuentra todas las notificaciones flash
-              const notifications = document.querySelectorAll('.flash');
+              const notifications = document.querySelectorAll('.notification');
 
+              console.log(notifications)
               // Establecer el tiempo de desaparición (en milisegundos)
               const timeout = 3000; // 3 segundos
 
               notifications.forEach(notification => {
                   // Ocultar la notificación después de 3 segundos
                   setTimeout(() => {
-                      notification.style.display = 'none';
+                      notification.remove();
+                      console.log("Entre en el timeout")
                   }, timeout);
             
                   // Opción para cerrar manualmente
                   const deleteButton = notification.querySelector('.delete');
                   if (deleteButton) {
+                      console.log("Entre en el delete")
                       deleteButton.addEventListener('click', () => {
-                          notification.style.display = 'none';
+                          notification.remove();
                       });
                   }
               });

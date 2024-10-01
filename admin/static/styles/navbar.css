@@ -17,4 +17,32 @@
     display: inline-flex; 
     align-items: center; 
     justify-content: center;
+    margin-right: 30px;
 }
+
+#user-dropdown {
+    border-top: white !important;
+    position: absolute;
+    top: 100%; /* Debajo del icono */
+    right: 10px; /* Desplazado ligeramente hacia la izquierda para evitar colisión */
+    z-index: 1000; /* Para que quede por encima de otros elementos */
+    overflow: visible; /* Asegura que no corte contenido */
+}
+
+#user-dropdown, .item-user-dropdown, .divider-user-dropdown{
+    background-color: white !important;
+    color: hsl(221deg, 14%, 4%) !important;
+}
+
+div.navbar-item {
+    padding: 0 !important;
+}
+
+.login-button{
+    margin-right: 5px;
+}
+
+.navbar-menu.is-active .login-button {
+    margin-left: 8px; /* Agrego margen al botón de iniciar sesión solo cuando está dentro del menú burger*/
+}
+

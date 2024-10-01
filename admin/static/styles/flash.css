@@ -1,9 +1,10 @@
-.flash {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    border: 2px solid #ccc;
-    border-radius: 5px;
+.icon-notification{
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Sombra oscura */
+    padding: 2px; /* Opcional, para un mejor ajuste */
+}
+
+.icon {
+    margin-right: 10px;
 }
 
 span.message {
@@ -14,40 +15,12 @@ span.message {
     color: black;
 }
 
-button.delete{
-    padding-right: 5px !important;
+.notification.button{
+    margin-top: 25rem !important;
 }
 
-.flash.success{
-    border-color: #2D762D;
-    background-color: #DFF0D8;
-    color:#3C763D;
-}
 
-.flash.error{
-    border-color: #D9534F !important;
-    background-color: #F2DEDE !important;
-    color: #A94442 !important;
-}
-
-.flash.warning{
-    border-color: #F0AD4E;
-    background-color: #FCF8E3;
-    color: #8A6D3B;
-}
-
-.flash.info{
-    border-color: #31708F;
-    background-color: #D9EDF7;
-    color: #31708F;
-}
-
-.flash headear strong{
-    font-weight: bold;
-    text-transform: uppercase;   
-}
-
-.flash {
+.notification {
     opacity: 0;
     animation: fadeIn 1s forwards;
 }
