@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+
+{% block title %}Listado de jinetes y amazonas{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link
+          rel="stylesheet"
+          href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_info.css') }}"
+    />
+    <link
+          rel="stylesheet"
+          href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_list.css') }}"
+    />
+{% endblock %}
+{% block content %}
+
+    <div class="encabezado">
+        <button id="info">
+            Información General 
+        </button>
+        <button id="docs">
+            Documentos
+        </button>
+    </div>
+    <hr class="separador">
+    <div id="contenedor">
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+                const user = JSON.parse({{ user_jya | tojson | safe }});
+                console.log(user);
+
+                const buttonInfo = document.getElementById('info');
+                const buttonDocs = document.getElementById('docs');
+                const contenedor = document.getElementById('contenedor');
+
+                            // Función para cargar la tabla de información
+                function cargarInformacion() {
+                    buttonInfo.classList.add('clicked');
+                    buttonDocs.classList.remove('clicked');
+
+                    let table = `<table class="table is-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Campo</th>
+                                        <th>Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>Nombre</td>
+                                            <td>${user.name}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Apellido</td>
+                                            <td>${user.last_name}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>DNI</td>
+                                            <td>${user.DNI}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Edad</td>
+                                            <td>${user.age}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Número de Teléfono</td>
+                                            <td>${user.phone_number}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Dirección</td>
+                                            <td>${user.address}</td>
+                                        </tr>
+                                </tbody>
+                            </table>`;
+
+                    contenedor.innerHTML = table;
+                }
+
+                // Mostrar la información general por defecto
+                cargarInformacion();
+
+                // Evento del botón de Información General
+                buttonInfo.addEventListener('click', (e) => {
+                    cargarInformacion();
+                });
+
+                
+                buttonDocs.addEventListener('click', (e) => {
+                    buttonDocs.classList.add('clicked');
+                    buttonInfo.classList.remove('clicked')
+
+                    contenedor.innerHTML = "";
+                });
+                    
+                });
+                  
+    </script>
+{% endblock %}

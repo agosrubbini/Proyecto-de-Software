@@ -1,0 +1,28 @@
+table, table th, table td{
+    margin: auto;
+    background-color: white !important;
+}
+
+table, table th, table td {
+    color:black !important;
+}
+
+.separador{
+    margin: auto;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-bottom: solid 2px black;
+    max-width: 400px;
+}
+
+.encabezado {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    padding: 0 10px;
+    width: 100%;
+}
+
+h1 {
+    font-size: 2rem;
+}

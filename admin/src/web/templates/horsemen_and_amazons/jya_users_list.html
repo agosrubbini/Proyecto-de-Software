@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}Listado de jinetes y amazonas{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_list.css') }}"
+    />
+{% endblock %}
+
+{% block content %}
+
+    <div class="encabezado">
+        <h1>Listado de Jinetes y Amazonas</h1>
+    </div>
+    <hr class="separador">
+    <table class="table is-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>DNI</th>
+                <th>Edad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <a href="url_for('jya_users.list_info_by_jya')">
+                    <tr onclick="window.location.href='{{ url_for('jya_users.list_info_by_jya', user_id=user.id) }}'">
+                        <td> {{user.name}} </td>
+                        <td> {{user.last_name}} </td>
+                        <td> {{user.DNI}} </td>
+                        <td> {{user.age}} </td>
+                    </tr>
+                </a>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

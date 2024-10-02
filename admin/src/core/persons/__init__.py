@@ -52,3 +52,21 @@ def create_healthcare_plan(**kwargs):
     db.session.commit()
 
     return healthcare_plan
+
+def get_jya_users():
+
+    """ Devuelve la lista de jinetes y amazonas registrados en el sistema """
+    
+    return JyA.query.all()
+
+def find_jya_by_id(id):
+
+    """Devuelve el jinete o amazona con el id pasado por parámetro"""
+
+    return JyA.query.filter_by(id=id).first()
+
+def find_adress_by_id(id):
+
+    """Devuelve la dirección con el id pasado por parámetro"""
+
+    return Address.query.filter_by(id=id).first()

@@ -1,0 +1,10 @@
+
+
+#info {
+    margin-right: 40px;
+}
+
+.clicked {
+    border-bottom: solid 2px var(--primary-color);
+    color: grey;
+}

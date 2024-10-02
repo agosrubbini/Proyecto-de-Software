@@ -4,6 +4,7 @@ from flask_session import Session
 from web.controllers.auth.registry import bp as bp_registry
 from web.controllers.auth.login import bp as bp_login
 from web.controllers.auth.users import bp as bp_users
+from web.controllers.horsemen_and_amazons.jya_users import bp as bp_jya
 from src.core import database
 from src.core.config import config
 from src.core.bcrypt import bcrypt
@@ -33,6 +34,7 @@ def create_app(env="development", static_folder="../../static"):
     app.register_blueprint(bp_registry)
     app.register_blueprint(bp_login)
     app.register_blueprint(bp_users)
+    app.register_blueprint(bp_jya)
     # Register error handlers
     app.register_error_handler(404, error.error_not_found)
     app.register_error_handler(401, error.unautorized)

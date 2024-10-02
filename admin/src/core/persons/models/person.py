@@ -169,6 +169,16 @@ class JyA(Person):
         self.is_beneficiary_of_pension = is_beneficiary_of_pension
         self.pension = pension
         self.school_id = school_id
+    
+    def to_dict(self, addres):
+        return {
+            "name": self.name,
+            "last_name": self.last_name,
+            "DNI": self.DNI,
+            "age": self.age,
+            "phone_number": self.phone_number,
+            "address": addres,
+        }
 
 class FamilyMemberOrTutor(Person):
 
