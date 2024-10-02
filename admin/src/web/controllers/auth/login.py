@@ -23,6 +23,11 @@ def authenticate():
         app.logger.error("Incorrect user mail")
         flash("Usuario o contraseña incorrecta", "error")
         return redirect(url_for("login.login"))
+    
+    if user.is_blocked:
+        app.logger.error("User is blocked")
+        flash("El usuario se encuentra bloqueado", "error")
+        return redirect(url_for("login.login"))
 
     # 2. Verificar si la contraseña ingresada coincide con el hash almacenado
     if not bcrypt.check_password_hash(user.password, params["password"]):
