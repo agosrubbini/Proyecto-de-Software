@@ -3,6 +3,7 @@ from src.core.persons.models.person import Person, Employee, JyA, FamilyMemberOr
 from src.core.persons.models.address import Address
 from src.core.persons.models.emergency_contact import EmergencyContact
 from src.core.persons.models.healthcare_plan import HealthcarePlan
+from src.core.persons.models.file import File
 
 def create_person(**kwargs):
     person = Person(**kwargs)
@@ -52,6 +53,13 @@ def create_healthcare_plan(**kwargs):
     db.session.commit()
 
     return healthcare_plan
+
+def create_file(**kwargs):
+    file = File(**kwargs)
+    db.session.add(file)
+    db.session.commit()
+
+    return file
 
 def get_jya_users():
 

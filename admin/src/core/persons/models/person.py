@@ -140,6 +140,7 @@ class JyA(Person):
     # school = db.relationship("School", backref="school") Creo que no seria necesario porque ya tengo el id
 
     billings = db.relationship("Billing", backref="billings_jya", foreign_keys="Billing.jya_id")
+    files = db.relationship("File", backref="files")
 
     __mapper_args__ = {
         'polymorphic_identity': 'jya',
