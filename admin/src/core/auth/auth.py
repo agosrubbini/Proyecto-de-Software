@@ -15,7 +15,7 @@ def permission_required(permission):
             user = User.query.filter_by(email=user_mail).first()
             user_permissions = {perm.name for perm in user.role.permissions}
 
-            if permission not in user_permissions:
+            if permission not in user_permissions and not user.system_admin:
                 abort(401)  # Acceso prohibido si no encuentra el permiso
 
             return f(*args, **kwargs)

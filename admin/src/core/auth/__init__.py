@@ -127,4 +127,4 @@ def get_user_permissions(user_mail):
     else:
         user_permissions = set()  # Usuario no autenticado, sin permisos
     
-    return user_permissions
+    return user_permissions, user.system_admin
