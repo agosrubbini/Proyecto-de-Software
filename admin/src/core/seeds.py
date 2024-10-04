@@ -106,8 +106,17 @@ def run():
         file_type = "Link",
         document_type = "Entrevista",
         horsemen_and_amazons_id = JyA1.id,
+        title = "LINK DE PRUEBA",
+    )
+
+    file2 = create_file(
+        file_url = "chau",
+        file_type = "Documento",
+        document_type = "Evaluacion",
+        horsemen_and_amazons_id = JyA1.id,
         title = "ARCHIVO DE PRUEBA",
     )
+
 
     institutional_work1 = create_institutional_work(
         condicion="Regular",

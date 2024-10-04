@@ -4,9 +4,7 @@ def is_authenticated(session):
     return session.get("user") is not None
 
 def get_user_info(session):
-    
+
     user = find_user_by_email(session.get("user"))
-    
-    print(user)
-    
-    return {"email": user.email, "alias": user.alias}
+
+    return {"email": user.email, "alias": user.alias} is not None

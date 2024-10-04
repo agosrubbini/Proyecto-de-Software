@@ -29,8 +29,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-                const user = JSON.parse({{ user_jya | tojson | safe }});
-                const files = Array(JSON.parse({{ files | tojson | safe }}));
+                const user = {{ user_jya | tojson | safe }};
+                const files = {{ files | tojson | safe }};
 
                 
                 console.log(files);
@@ -158,6 +158,8 @@
                                 <tbody>
                         `;
                         files.forEach(file => {
+                            console.log(file);
+                            console.log(file.title);
                             table_docs += `
                                 <tr>
                                     <td>${file.title}</td>
@@ -165,7 +167,7 @@
                                     <td>${file.document_type}</td>
                                     <td>
                                         <select class="operations" data-file-type="${file.file_type}">
-                                            ${file.file_type === 'Archivo' ? `
+                                            ${file.file_type === 'Documento' ? `
                                                 <option value="edit">Editar</option>
                                                 <option value="delete">Eliminar</option>
                                                 <option value="download">Descargar</option>

@@ -25,17 +25,11 @@ def list_info_by_jya(user_id):
     jya = find_jya_by_id(user_id)
     jya_address = find_adress_by_id(jya.address_id).string()
     files = get_files_by_horseman_id(jya.id)
-    jya_json = json.dumps(jya.to_dict(jya_address))
+    jya_json = jya.to_dict(jya_address)
     files_json = []
 
-    print("Archivos", files)
-    print("ID", jya.id)
-
     if files:
-        for file in files:
-            print("TO DICT DE FILES", file.to_dict())
-            print("JSON DUMPS", json.dumps(file.to_dict()))
-            files_json.append(json.dumps(file.to_dict()))
-            print("JSON DE ARCHIVOS", files_json)
+        for file in files:    
+            files_json.append(file.to_dict())
 
     return render_template("horsemen_and_amazons/jya_user_info.html", user_jya = jya_json, files=files_json)
