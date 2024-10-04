@@ -7,6 +7,13 @@ table, table th, table td {
     color:black !important;
 }
 
+
+table.users tbody tr:hover {
+    cursor: pointer; /* Cambia el puntero a mano */
+    transform: scale(1.05); /* Cambia el color de fondo al pasar el mouse */
+    transition: background-color 0.3s; /* Suaviza el cambio de color */
+}
+
 .separador{
     margin: auto;
     margin-top: 15px;
