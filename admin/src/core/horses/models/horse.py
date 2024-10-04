@@ -25,7 +25,7 @@ class Horse(db.Model):
     
     employees = db.relationship("Employee", secondary=horse_employee, backref="horse")  
 
-    def __init__(self, id=None, name=None, date_of_birth=None, gender=None, race=None, fur=None, purchase_or_donation=None, date_of_entry=None, type_jya_assigned=None):
+    def __init__(self, id=None, name=None, date_of_birth=None, gender=None, race=None, fur=None, purchase_or_donation=None, date_of_entry=None, sede=None,type_jya_assigned=None):
 
         self.id = id 
         self.name = name
@@ -35,5 +35,6 @@ class Horse(db.Model):
         self.fur = fur
         self.purchase_or_donation = purchase_or_donation
         self.date_of_entry = date_of_entry
+        self.sede = sede
         self.type_jya_assigned = type_jya_assigned
 
