@@ -7,7 +7,7 @@ from src.core.institutions import create_institutional_work, create_school
 from src.core.payments import create_payment, create_billing
 from src.core.persons import (
     create_person, create_employee, create_JyA, create_family_member_or_tutor, create_address, create_emergency_contact, 
-    create_healthcare_plan)
+    create_healthcare_plan, create_file)
 
 
 
@@ -99,6 +99,14 @@ def run():
         healthcare_plan_id_jya = healthcare_plan1.id,
         diagnosis = Diagnosis.ESCLEROSIS_MULTIPLE,
         type_of_disability = "Mental"
+    )
+
+    file1 = create_file(
+        file_url = "hola",
+        file_type = "Link",
+        document_type = "Entrevista",
+        horsemen_and_amazons_id = JyA1.id,
+        title = "ARCHIVO DE PRUEBA",
     )
 
     institutional_work1 = create_institutional_work(

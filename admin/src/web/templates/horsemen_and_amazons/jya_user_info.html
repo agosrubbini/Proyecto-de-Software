@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Listado de jinetes y amazonas{% endblock %}
+{% block title %}Información y documentos del jinete{% endblock %}
 {% block head %}
     {{ super() }}
     <link
@@ -30,7 +30,10 @@
         document.addEventListener('DOMContentLoaded', () => {
 
                 const user = JSON.parse({{ user_jya | tojson | safe }});
-                console.log(user);
+                const files = Array(JSON.parse({{ files | tojson | safe }}));
+
+                
+                console.log(files);
 
                 const buttonInfo = document.getElementById('info');
                 const buttonDocs = document.getElementById('docs');
@@ -40,8 +43,9 @@
                 function cargarInformacion() {
                     buttonInfo.classList.add('clicked');
                     buttonDocs.classList.remove('clicked');
+                    contenedor.classList.remove('docs');
 
-                    let table = `<table class="table is-striped">
+                    let table_users = `<table class="table is-striped">
                                 <thead>
                                     <tr>
                                         <th>Campo</th>
@@ -76,7 +80,7 @@
                                 </tbody>
                             </table>`;
 
-                    contenedor.innerHTML = table;
+                    contenedor.innerHTML = table_users;
                 }
 
                 // Mostrar la información general por defecto
@@ -90,12 +94,102 @@
                 
                 buttonDocs.addEventListener('click', (e) => {
                     buttonDocs.classList.add('clicked');
-                    buttonInfo.classList.remove('clicked')
+                    buttonInfo.classList.remove('clicked');
+                    contenedor.classList.add('docs');
 
-                    contenedor.innerHTML = "";
-                });
+                    // Contenido de los inputs
+                    let inputs = `  
+                        <div class="field is-grouped">
+                            <div class="field">
+                                <label class="label">Nombre</label>
+                                <div class="control has-icons-left">
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </span>
+                                    <input class="input" type="text" id="fila_name" name="fila_name" placeholder="Nombre del documento">
+                                </div>
+                            </div>
+                        
+                            <div class="field">
+                                <label class="label">Tipo</label>
+                                <div class="control">
+                                    <select id="role" name="doc_type">
+                                        <option>Selecciona un tipo</option>
+                                        <option>Entrevista</option>
+                                        <option>Evaluación</option>
+                                        <option>Planificación</option>
+                                        <option>Evolución</option>
+                                        <option>Crónicas</option>
+                                        <option>Documental</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="filter">Filtrar</button>
+                        </div>
+                    `;
+
+                    // Limpia el contenedor y añade los inputs
+                    contenedor.innerHTML = inputs;
+
+                    // Si tienes archivos que mostrar, crea la tabla aquí
                     
+                    if (files.length > 0) {
+                        let table_docs = `
+                            <table class="table is-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Titulo</th>
+                                        <th>Fecha de subida</th>
+                                        <th>Tipo</th>
+                                        <th>Operaciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+                        files.forEach(file => {
+                            table_docs += `
+                                <tr>
+                                    <td>${file.title}</td>
+                                    <td>${file.upload_date}</td>
+                                    <td>${file.document_type}</td>
+                                    <td>
+                                        <select class="operations" data-file-type="${file.file_type}">
+                                            ${file.file_type === 'Archivo' ? `
+                                                <option value="edit">Editar</option>
+                                                <option value="delete">Eliminar</option>
+                                                <option value="download">Descargar</option>
+                                            ` : `
+                                                <option value="edit">Editar</option>
+                                                <option value="delete">Eliminar</option>
+                                                <option value="open">Ir al documento</option>
+                                            `}
+                                        </select>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        table_docs += `
+                                </tbody>
+                            </table>
+                        `;
+                        // Añade la tabla de documentos al contenedor
+                        contenedor.innerHTML += table_docs; // Se agrega al contenido actual
+                }
+            });
+
+                document.addEventListener('change', (e) => {
+                    if (e.target.classList.contains('operations')) {
+                        const selectedValue = e.target.value;
+                        const fileType = e.target.dataset.fileType;
+
+                        // Si la opción seleccionada es "Ir al documento"
+                        if (selectedValue === 'open' && fileType === 'Link') {
+                            const fileUrl = files.find(file => file.file_type === 'Link').file_url; // Encuentra la URL del archivo
+                            window.open(fileUrl, '_blank'); // Abre el enlace en una nueva pestaña
+                        } 
+                    }
                 });
+        });
                   
     </script>
 {% endblock %}

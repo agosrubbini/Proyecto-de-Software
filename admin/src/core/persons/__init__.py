@@ -78,3 +78,9 @@ def find_adress_by_id(id):
     """Devuelve la dirección con el id pasado por parámetro"""
 
     return Address.query.filter_by(id=id).first()
+
+def get_files_by_horseman_id(horseman_id):
+    
+    """Devuelve los archivos asociados al jinete con el id pasado por parámetro"""
+
+    return File.query.filter_by(horsemen_and_amazons_id = horseman_id).all()
