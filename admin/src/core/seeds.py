@@ -81,6 +81,7 @@ def run():
         fur = "Blanco y marron",
         purchase_or_donation = "Donacion",
         date_of_entry = datetime.now(),
+        sede = "arg",
         type_jya_assigned = "Hipoterapia"
     )
 

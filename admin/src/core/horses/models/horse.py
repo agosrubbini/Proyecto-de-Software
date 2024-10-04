@@ -19,6 +19,7 @@ class Horse(db.Model):
     fur = db.Column(db.String(255), nullable=False)
     purchase_or_donation = db.Column(db.Enum("Compra", "Donacion", name="purchase_or_donation"), nullable=False) 
     date_of_entry = db.Column(db.DateTime, nullable=False)
+    sede = db.Column(db.String(255),nullable=False)
     type_jya_assigned = db.Column(db.Enum("Hipoterapia", "Monta Terapeutica", "Deporte Ecuestre Adaptado", 
                                           "Actividades Recreativas", "Equitacion", name="type_jya_assigned"), nullable=False) 
     

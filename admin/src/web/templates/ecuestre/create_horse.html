@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+{% block title %}Agregar Nuevo Caballo{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="title is-size-2 has-text-centered has-text-black-bis mt-5">Agregar Nuevo Caballo</h1>
+
+    <form method="POST" action="{{ url_for('horses.create_horse_view') }}">
+        {{ context.form.hidden_tag() }}
+        <div class="field">
+            <label class="label">Nombre</label>
+            <div class="control">
+                {{ context.form.name(class="input") }}
+            </div>
+            {% for error in context.form.name.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="field">
+            <label class="label">Fecha de Nacimiento</label>
+            <div class="control">
+                {{ context.form.date_of_birth(class="input", type="date") }} 
+            </div>
+            {% for error in context.form.date_of_birth.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="field">
+            <label class="label">Género</label>
+            <div class="control">
+                {{ context.form.gender(class="select") }}
+            </div>
+            {% for error in context.form.gender.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="field">
+            <label class="label">Raza</label>
+            <div class="control">
+                {{ context.form.race(class="input") }}
+            </div>
+            {% for error in context.form.race.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="field">
+            <label class="label">Pelaje</label>
+            <div class="control">
+                {{ context.form.fur(class="input") }}
+            </div>
+            {% for error in context.form.fur.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="field">
+            <label class="label">Compra o Donación</label>
+            <div class="control">
+                {{ context.form.purchase_or_donation(class="select") }}
+            </div>
+            {% for error in context.form.purchase_or_donation.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="field">
+            <label class="label">Fecha de Ingreso</label>
+            <div class="control">
+                {{ context.form.date_of_entry(class="input", type="date") }} 
+            </div>
+            {% for error in context.form.date_of_entry.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="field">
+            <label class="label">Sede</label>
+            <div class="control">
+                {{ context.form.sede(class="input") }}
+            </div>
+            {% for error in context.form.sede.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="field">
+            <label class="label">Tipo de Jinetes y Amazonas Asignados</label>
+            <div class="control">
+                {{ context.form.type_jya_assigned(class="select") }}
+            </div>
+            {% for error in context.form.type_jya_assigned.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="field">
+            <label class="label">Asociar Entrenadores y Conductores</label>
+            <div class="control">
+                {{ context.form.employees(class="input") }}
+            </div>
+            {% for error in context.form.employees.errors %}
+            <p class="help is-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="field">
+            <div class="control">
+                <button type="submit" class="button is-link">Crear Caballo</button>
+            </div>
+        </div>
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="notification is-danger">
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}
