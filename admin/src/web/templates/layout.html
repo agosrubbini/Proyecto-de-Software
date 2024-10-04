@@ -51,17 +51,24 @@
               
                 <div id="navbarBasicExample" class="navbar-menu">
                   <div class="navbar-start">
+                    {% if 'jya_index' in context.user_permissions %}
                     <a class="navbar-item">
                       J&A
                     </a>
-              
+                    {% endif %}
+
+                    {% if 'horse_index' in context.user_permissions %}
                     <a class="navbar-item">
                       Ecuestre
                     </a>
+                    {% endif %}
 
-                    <a class="navbar-item" href=" {{ url_for('registry.registry_function') }}">
+                    {% if 'team_index' in context.user_permissions %}
+                    <a class="navbar-item" href=" {{ url_for('users.index') }}">
                         Equipo
                     </a>
+                    {% endif %}
+
                   </div>
                 </div>
                 <div class="navbar-end">

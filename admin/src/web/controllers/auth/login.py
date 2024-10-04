@@ -7,7 +7,7 @@ bp = Blueprint("login", __name__, url_prefix="/login")
 
 @bp.get("/")
 def login():#muestra el forms
-    return render_template("auth/login.html")
+    return render_template("auth/login.html", context=None)
 
 @bp.post("/authenticate")
 def authenticate():
