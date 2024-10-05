@@ -28,6 +28,7 @@ class File(db.Model):
     
     def to_dict(self):
         return {
+            "id": self.id,
             "title": self.title,
             "upload_date": self.upload_date.strftime('%Y-%m-%d'),
             "file_url": self.file_url,

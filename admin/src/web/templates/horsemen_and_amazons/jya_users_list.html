@@ -27,7 +27,7 @@
         <tbody>
             {% for user in users %}
                 <a href="url_for('jya_users.list_info_by_jya')">
-                    <tr onclick="window.location.href='{{ url_for('jya_users.list_info_by_jya', user_id=user.id) }}'">
+                    <tr onclick="window.location.href='{{ url_for('horsemen_and_amazons.list_info_by_jya', user_id=user.id) }}'">
                         <td> {{user.name}} </td>
                         <td> {{user.last_name}} </td>
                         <td> {{user.DNI}} </td>

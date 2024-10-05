@@ -173,6 +173,7 @@ class JyA(Person):
     
     def to_dict(self, addres):
         return {
+            "id": self.id,
             "name": self.name,
             "last_name": self.last_name,
             "DNI": self.DNI,

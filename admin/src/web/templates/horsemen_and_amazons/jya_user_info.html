@@ -5,204 +5,184 @@
     {{ super() }}
     <link
           rel="stylesheet"
-          href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_info.css') }}"
-    />
+          href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_info.css') }}"/>
     <link
           rel="stylesheet"
-          href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_list.css') }}"
-    />
+          href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_list.css') }}"/>
 {% endblock %}
 {% block content %}
 
     <div class="encabezado">
-        <button id="info">
-            Información General 
-        </button>
-        <button id="docs">
-            Documentos
-        </button>
+        <button id="info">Información General</button>
+        <button id="docs">Documentos</button>
     </div>
     <hr class="separador">
-    <div id="contenedor">
-    </div>
+    <div id="contenedor"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const user = {{ context.user | tojson | safe }};
+            const files = {{ context.files | tojson | safe }};
+            const buttonInfo = document.getElementById('info');
+            const buttonDocs = document.getElementById('docs');
+            const contenedor = document.getElementById('contenedor');
 
-                const user = {{ user_jya | tojson | safe }};
-                const files = {{ files | tojson | safe }};
+            // Función para cargar la información del usuario
+            function cargarInformacion() {
+                buttonInfo.classList.add('clicked');
+                buttonDocs.classList.remove('clicked');
+                contenedor.classList.remove('docs');
 
-                
-                console.log(files);
-
-                const buttonInfo = document.getElementById('info');
-                const buttonDocs = document.getElementById('docs');
-                const contenedor = document.getElementById('contenedor');
-
-                            // Función para cargar la tabla de información
-                function cargarInformacion() {
-                    buttonInfo.classList.add('clicked');
-                    buttonDocs.classList.remove('clicked');
-                    contenedor.classList.remove('docs');
-
-                    let table_users = `<table class="table is-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Campo</th>
-                                        <th>Valor</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                let table_users = `<table class="table is-striped">
+                                    <thead>
                                         <tr>
-                                            <td>Nombre</td>
-                                            <td>${user.name}</td>
+                                            <th>Campo</th>
+                                            <th>Valor</th>
                                         </tr>
-                                        <tr>
-                                            <td>Apellido</td>
-                                            <td>${user.last_name}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>DNI</td>
-                                            <td>${user.DNI}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Edad</td>
-                                            <td>${user.age}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Número de Teléfono</td>
-                                            <td>${user.phone_number}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Dirección</td>
-                                            <td>${user.address}</td>
-                                        </tr>
-                                </tbody>
-                            </table>`;
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>Nombre</td><td>${user.name}</td></tr>
+                                        <tr><td>Apellido</td><td>${user.last_name}</td></tr>
+                                        <tr><td>DNI</td><td>${user.DNI}</td></tr>
+                                        <tr><td>Edad</td><td>${user.age}</td></tr>
+                                        <tr><td>Número de Teléfono</td><td>${user.phone_number}</td></tr>
+                                        <tr><td>Dirección</td><td>${user.address}</td></tr>
+                                    </tbody>
+                                </table>`;
 
-                    contenedor.innerHTML = table_users;
-                }
+                contenedor.innerHTML = table_users;
+            }
 
-                // Mostrar la información general por defecto
-                cargarInformacion();
+            // Función para cargar los documentos
+            function cargarDocumentos() {
+                buttonDocs.classList.add('clicked');
+                buttonInfo.classList.remove('clicked');
+                contenedor.classList.add('docs');
 
-                // Evento del botón de Información General
-                buttonInfo.addEventListener('click', (e) => {
-                    cargarInformacion();
-                });
-
-                
-                buttonDocs.addEventListener('click', (e) => {
-                    buttonDocs.classList.add('clicked');
-                    buttonInfo.classList.remove('clicked');
-                    contenedor.classList.add('docs');
-
-                    // Contenido de los inputs
-                    let inputs = `  
-                        <div class="field is-grouped">
-                            <div class="field">
-                                <label class="label">Nombre</label>
-                                <div class="control has-icons-left">
-                                    <span class="icon is-small is-left">
-                                        <i class="fa-solid fa-magnifying-glass"></i>
-                                    </span>
-                                    <input class="input" type="text" id="fila_name" name="fila_name" placeholder="Nombre del documento">
-                                </div>
+                let inputs = `  
+                    <div class="field is-grouped">
+                        <div class="field">
+                            <label class="label">Nombre</label>
+                            <div class="control has-icons-left">
+                                <span class="icon is-small is-left">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </span>
+                                <input class="input" type="text" id="fila_name" name="fila_name" placeholder="Nombre del documento">
                             </div>
-                        
-                            <div class="field">
-                                <label class="label">Tipo</label>
-                                <div class="control">
-                                    <select id="role" name="doc_type">
-                                        <option>Selecciona un tipo</option>
-                                        <option>Entrevista</option>
-                                        <option>Evaluación</option>
-                                        <option>Planificación</option>
-                                        <option>Evolución</option>
-                                        <option>Crónicas</option>
-                                        <option>Documental</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button class="filter">Filtrar</button>
                         </div>
-
+                        <div class="field">
+                            <label class="label">Tipo</label>
+                            <div class="control">
+                                <select id="role" name="doc_type">
+                                    <option>Selecciona un tipo</option>
+                                    <option>Entrevista</option>
+                                    <option>Evaluación</option>
+                                    <option>Planificación</option>
+                                    <option>Evolución</option>
+                                    <option>Crónicas</option>
+                                    <option>Documental</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="filter">Filtrar</button>
+                    </div>
+                    <form method="POST" action="{{ url_for('horsemen_and_amazons.order_by', user_id=context.id) }}">
                         <div class="control">
-                             <select id="order" name="order">
-                                <label class="label">Orden:</label>
-                                <option>Selecciona un orden</option>
-                                <option>Nombre: A-Z</option>
-                                <option>Nombre: Z-A</option>
-                                <option>Fecha: Menor-Mayor</option>
-                                <option>Fecha: Mayor-Menor</option>
-                             </select>
+                            <select id="order_option" name="order_option" onchange="this.form.submit()">
+                                <option value="default">Selecciona un orden</option>
+                                <option value="title_asc">Nombre: A-Z</option>
+                                <option value="title_desc">Nombre: Z-A</option>
+                                <option value="date_asc">Fecha: Menor-Mayor</option>
+                                <option value="date_desc">Fecha: Mayor-Menor</option>
+                            </select>
                         </div>
-                    `;
+                    </form>
+                `;
 
-                    // Limpia el contenedor y añade los inputs
-                    contenedor.innerHTML = inputs;
+                contenedor.innerHTML = inputs;
 
-                    // Si tienes archivos que mostrar, crea la tabla aquí
-                    
-                    if (files.length > 0) {
-                        let table_docs = `
-                            <table class="table is-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Titulo</th>
-                                        <th>Fecha de subida</th>
-                                        <th>Tipo</th>
-                                        <th>Operaciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                        `;
-                        files.forEach(file => {
-                            console.log(file);
-                            console.log(file.title);
-                            table_docs += `
+                if (files.length > 0) {
+                    let table_docs = `
+                        <table class="table is-striped">
+                            <thead>
                                 <tr>
-                                    <td>${file.title}</td>
-                                    <td>${file.upload_date}</td>
-                                    <td>${file.document_type}</td>
-                                    <td>
-                                        <select class="operations" data-file-type="${file.file_type}">
-                                            ${file.file_type === 'Documento' ? `
-                                                <option value="edit">Editar</option>
-                                                <option value="delete">Eliminar</option>
-                                                <option value="download">Descargar</option>
-                                            ` : `
-                                                <option value="edit">Editar</option>
-                                                <option value="delete">Eliminar</option>
-                                                <option value="open">Ir al documento</option>
-                                            `}
-                                        </select>
-                                    </td>
+                                    <th>Titulo</th>
+                                    <th>Fecha de subida</th>
+                                    <th>Tipo</th>
+                                    <th>Operaciones</th>
                                 </tr>
-                            `;
-                        });
+                            </thead>
+                            <tbody>
+                    `;
+                    files.forEach(file => {
                         table_docs += `
-                                </tbody>
-                            </table>
+                            <tr>
+                                <td>${file.title}</td>
+                                <td>${file.upload_date}</td>
+                                <td>${file.document_type}</td>
+                                <td>
+                                    <select class="operations" data-file-id="${file.id}" data-file-type="${file.file_type}">
+                                        <option value="default">Selecciona la operación</option>
+                                        <option value="edit">Editar</option>
+                                        <option value="delete">Eliminar</option>
+                                        <option value="${file.file_type === 'Link' ? 'open' : 'download'}">
+                                            ${file.file_type === 'Link' ? 'Ir al documento' : 'Descargar'}
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
                         `;
-                        // Añade la tabla de documentos al contenedor
-                        contenedor.innerHTML += table_docs; // Se agrega al contenido actual
+                    });
+                    table_docs += `
+                            </tbody>
+                        </table>
+                    `;
+                    contenedor.innerHTML += table_docs;
                 }
+            }
+
+            // Recuperar el estado del Local Storage
+            const selectedTab = localStorage.getItem('selectedTab');
+
+            if (selectedTab === 'docs') {
+                cargarDocumentos(); // Cargar la pestaña de documentos
+            } else {
+                cargarInformacion(); // Cargar la pestaña de información por defecto
+            }
+
+            // Evento del botón de Información General
+            buttonInfo.addEventListener('click', () => {
+                cargarInformacion();
+                localStorage.setItem('selectedTab', 'info'); // Guardar el estado
             });
 
-                document.addEventListener('change', (e) => {
-                    if (e.target.classList.contains('operations')) {
-                        const selectedValue = e.target.value;
-                        const fileType = e.target.dataset.fileType;
+            // Evento del botón de Documentos
+            buttonDocs.addEventListener('click', () => {
+                cargarDocumentos();
+                localStorage.setItem('selectedTab', 'docs'); // Guardar el estado
+            });
 
-                        // Si la opción seleccionada es "Ir al documento"
-                        if (selectedValue === 'open' && fileType === 'Link') {
-                            const fileUrl = files.find(file => file.file_type === 'Link').file_url; // Encuentra la URL del archivo
-                            window.open(fileUrl, '_blank'); // Abre el enlace en una nueva pestaña
-                        } 
+            // Manejo de cambios en las operaciones
+            document.addEventListener('change', (e) => {
+                if (e.target.classList.contains('operations')) {
+                    const selectedValue = e.target.value;
+                    
+                    const fileType = e.target.dataset.fileType;
+                    const fileId = e.target.dataset.fileId;
+
+                    console.log(fileId);
+                    
+                    if (selectedValue === 'delete'){
+                        const deleteUrl = `${user.id}/delete_file/${fileId}`;  // Aquí usas tu ruta específica para eliminar
+                        window.location.href = deleteUrl;
                     }
-                });
+                    // Si la opción seleccionada es "Ir al documento"
+                    if (selectedValue === 'open' && fileType === 'Link') {
+                        const fileUrl = files.find(file => file.file_type === 'Link').file_url; // Encuentra la URL del archivo
+                        window.open(fileUrl, '_blank'); // Abre el enlace en una nueva pestaña
+                    }
+                }
+            });
         });
-                  
     </script>
 {% endblock %}

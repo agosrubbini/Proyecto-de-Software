@@ -4,7 +4,7 @@ from flask_session import Session
 from web.controllers.auth.registry import bp as bp_registry
 from web.controllers.auth.login import bp as bp_login
 from web.controllers.auth.users import bp as bp_users
-from web.controllers.horsemen_and_amazons.jya_users import bp as bp_jya
+from web.controllers.horsemen_and_amazons import bp as bp_jya
 from src.core import database
 from src.core.config import config
 from src.core.bcrypt import bcrypt

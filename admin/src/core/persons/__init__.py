@@ -84,3 +84,14 @@ def get_files_by_horseman_id(horseman_id):
     """Devuelve los archivos asociados al jinete con el id pasado por parámetro"""
 
     return File.query.filter_by(horsemen_and_amazons_id = horseman_id).all()
+
+
+def delete_file_by_id(file_id):
+
+    """Elimina de la base de datos el archivo con el id pasado como parámetro """
+    
+    print("Este es el file id en la función", file_id)
+    file = File.query.filter_by(id = file_id).first()
+    print("ESTE ES EL FILE", file)
+    db.session.delete(file)
+    db.session.commit()
