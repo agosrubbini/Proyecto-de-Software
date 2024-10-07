@@ -64,8 +64,26 @@
                     {% endif %}
 
                     {% if 'team_index' in context.user_permissions or context.user_system_admin %}
-                    <a class="navbar-item" href=" {{ url_for('users.index') }}">
+                    <a class="navbar-item" href=#>
                         Equipo
+                    </a>
+                    {% endif %}
+
+                    {% if 'team_index' in context.user_permissions or context.user_system_admin %}
+                    <a class="navbar-item" href=#>
+                        Cobros
+                    </a>
+                    {% endif %}
+
+                    {% if 'team_index' in context.user_permissions or context.user_system_admin %}
+                    <a class="navbar-item" href=#>
+                        Pagos
+                    </a>
+                    {% endif %}
+
+                    {% if context.user_system_admin %}
+                    <a class="navbar-item" href=" {{ url_for('users.index') }}">
+                        Usuarios
                     </a>
                     {% endif %}
 

@@ -120,11 +120,12 @@ def initialice_ecuestre_permissions():
     db.session.commit()
 
 def get_user_permissions(user_mail):
-
     if user_mail:
         user = User.query.filter_by(email=user_mail).first()
         user_permissions = {perm.name for perm in user.role.permissions}
     else:
         user_permissions = set()  # Usuario no autenticado, sin permisos
-    
+        return user_permissions, False
     return user_permissions, user.system_admin
+    
+    
