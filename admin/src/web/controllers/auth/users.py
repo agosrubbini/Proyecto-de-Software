@@ -4,6 +4,7 @@ from src.core.auth.models.user import User
 from src.core.database import db
 from flask import current_app as app
 from sqlalchemy import desc
+from src.core.auth.auth import permission_required
 
 bp = Blueprint('users', __name__, url_prefix='/users')
 
@@ -59,6 +60,7 @@ def showUsers(request):
 
 
 @bp.route('/', methods=['GET', 'POST'])
+@permission_required('team_index')
 def index():
     app.logger.info("Call to index function")
     context, page, order_by, search, role, activity = showUsers(request)
@@ -68,6 +70,7 @@ def index():
 
 
 @bp.route('/block', methods=['POST'])
+@permission_required('team_update')
 def block_user():
     app.logger.info("Call to block_user function")
     user_email = request.form.get('user_email')
