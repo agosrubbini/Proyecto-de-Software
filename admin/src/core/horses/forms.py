@@ -8,7 +8,7 @@ class create_horse_Form(FlaskForm):
 
     name = StringField("Nombre", validators=[InputRequired(), Length(max=15)])
 
-    date_of_birth = DateField('Fecha de nacimiento', format='%Y/%m/%d', validators=[InputRequired()])
+    date_of_birth = DateField('Fecha de nacimiento', format='%Y-%m-%d', validators=[InputRequired()])
 
     gender = SelectField(
         'Genero',
@@ -24,7 +24,7 @@ class create_horse_Form(FlaskForm):
         choices=[('C','Compra'), ('D','Donacion')]#revisar
     )
 
-    date_of_entry = DateField('Fecha de ingreso', format='%Y/%m/%d', validators=[InputRequired()])
+    date_of_entry = DateField('Fecha de ingreso', format='%Y-%m-%d', validators=[InputRequired()])
 
     sede = StringField("Sede", validators=[InputRequired(), Length(max=255)])
 

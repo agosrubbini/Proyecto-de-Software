@@ -19,7 +19,7 @@
         <div class="field">
             <label class="label">Fecha de Nacimiento</label>
             <div class="control">
-                {{ context.form.date_of_birth(class="input", type="date") }} 
+                {{ context.form.date_of_birth(class="input", type="date") }}
             </div>
             {% for error in context.form.date_of_birth.errors %}
             <p class="help is-danger">{{ error }}</p>

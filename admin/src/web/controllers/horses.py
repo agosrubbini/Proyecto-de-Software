@@ -22,7 +22,6 @@ def list_horses():
 @bp.route('/create', methods=['GET', 'POST'])
 def create_horse_view():
     form = create_horse_Form()
-    
     app.logger.info("El formulario de creación de caballo ha sido enviado: %s", form.validate_on_submit())
 
     if form.validate_on_submit():
