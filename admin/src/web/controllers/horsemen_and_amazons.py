@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from src.core.persons import get_jya_users, find_adress_by_id, find_jya_by_id, get_files_by_horseman_id, delete_file_by_id
+from src.core.persons import get_jya_users, find_adress_by_id, find_jya_by_id, get_files_by_horseman_id, delete_file_by_id, create_JyA, create_file
+from src.core.persons.forms import registryFileForm
+from flask import current_app as app
 from src.core.persons.models.file import File
 from sqlalchemy import desc
 import json
@@ -85,4 +87,33 @@ def delete_file(user_id, file_id):
     # Redirigir a la vista order_by pasando el user_id y la opción de orden como query parameters
     return redirect(url_for('horsemen_and_amazons.order_by', user_id=user_id))
    
+@bp.route("/<int:user_id>/add_file", methods=['POST', 'GET'])
+def add_file(user_id):
 
+    """
+    Muestra la vista del registro, además valida los parametros, y guarda al archivo en la base de datos si
+    se recibió el formulario y el mismo es válido.
+    """
+
+    app.logger.info("Call to add_file")
+    form = registryFileForm()
+    app.logger.info("El formulario del archivo es valido: %s", form.validate_on_submit())
+    if (form.validate_on_submit()):
+        
+        if (find_user_by_email(form.email.data)):
+            app.logger.error("The following email is already registered: %s ", form.email.data)
+            flash("Ya existe un usuario con el mail ingresado", "error")
+            return redirect(url_for("registry.registry_function"))
+
+        create_file(
+            file_url = form.file_url.data,
+            file_type = form.file_type.data,
+            document_type = form.document_type.data,
+            title = form.title.data,
+            horsemen_and_amazons_id = user_id,
+        )
+        app.logger.info("End of call to add_file")
+        flash("Archivo creado correctamente", "success")
+        return redirect(url_for('horsemen_and_amazons.order_by', user_id=user_id))
+    
+    return render_template("horsemen_and_amazons/registry_file.html", form=form, user_id=user_id)

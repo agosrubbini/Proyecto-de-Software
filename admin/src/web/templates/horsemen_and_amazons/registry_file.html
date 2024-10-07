@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+
+{% block title %}Agregar Archivo{% endblock %}
+
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/auth.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<form  method="POST" action="{{ url_for('horsemen_and_amazons.add_file', user_id=user_id) }}">
+    
+    {{ form.csrf_token }}
+    <div class="div-titulo">
+        <h1 class="label">Agregar Archivo</h1>
+        <hr class="linea-titulo">
+    </div>
+    
+    <label class="label">Ingrese el tipo de archivo</label>
+    <div class="control">
+        <select class="file_type" name="{{ form.file_type.name }}" value="{{ form.file_type.value }}">
+            <option value="default" >Selecciona un tipo</option>
+            <option value="link">Link</option>
+            <option value="document">Documento</option>
+        </select>
+    </div>
+    <hr>
+
+    <div id="contenedor">
+
+    </div>
+    
+    <label class="label">Tipo de documento</label>
+    <div class="control">
+        <select class="file_type" id="document_type" name="{{ form.document_type.name }}" value="{{ form.document_type.value }}">
+            <option>Selecciona un tipo de documento</option>
+            <option>Entrevista</option>
+            <option>Evaluación</option>
+            <option>Planificación</option>
+            <option>Evolución</option>
+            <option>Crónicas</option>
+            <option>Documental</option>
+        </select>
+    </div>
+    <hr>
+
+    <label class="label">Titulo</label>
+    <div class="control has-icons-left">
+        <span class="icon is-small is-left">
+            <i class="fa-solid fa-user"></i>
+        </span>
+        <input class="input" type="text" id="title" name="{{ form.title.name }}" placeholder="Ingrese el titulo del archivo" value="{{ form.title.value }}">
+    </div>
+    <hr>
+    
+    <button type="submit">Agregar Archivo</button>
+</form>
+
+<script>    
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const contenedor = document.getElementById("contenedor");
+
+            document.addEventListener('change', (e) => {
+
+                    if (e.target.classList.contains('file_type')) {
+                        const selectedValue = e.target.value;
+
+                        console.log(selectedValue);
+
+                        const input = document.getElementById('file_url')
+                        
+                        if (selectedValue === 'document'){ 
+
+                            let inputDocument = `<label class="label">Archivo</label>
+                            <div class="control has-icons-left">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <input class="input" type="file" id="file_url" name="{{ form.file_url.name}}" placeholder="Seleccione el archivo" value="{{ form.file_url.value }}">
+                            </div>  
+                            <hr>`;
+
+                            contenedor.innerHTML = inputDocument;
+                        }
+
+                        if (selectedValue === 'link'){
+
+                            let inputLink = `<label class="label">Url de archivo</label>
+                            <div class="control has-icons-left">
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <input class="input" type="text" id="file_url" name="{{ form.file_url.name}}" placeholder="Seleccione el archivo" value="{{ form.file_url.value }}">
+                            </div>  
+                            <hr>`;
+
+                            contenedor.innerHTML = inputLink;
+                        }
+                    }
+                });
+        });
+</script>
+{% endblock %}

@@ -137,7 +137,12 @@
                             </tbody>
                         </table>
                     `;
+
+                    let boton = `<a href="{{ url_for('horsemen_and_amazons.add_file', user_id=context.id) }}"><button class="filter">Añadir archivo</button></a>`;
+
                     contenedor.innerHTML += table_docs;
+                    contenedor.innerHTML += boton;
+        
                 }
             }
 
@@ -173,9 +178,10 @@
                     console.log(fileId);
                     
                     if (selectedValue === 'delete'){
-                        const deleteUrl = `${user.id}/delete_file/${fileId}`;  // Aquí usas tu ruta específica para eliminar
+                        const deleteUrl = "{{ url_for('horsemen_and_amazons.delete_file', user_id=context.id, file_id=0) }}".replace('/0', `/${fileId}`);
                         window.location.href = deleteUrl;
                     }
+
                     // Si la opción seleccionada es "Ir al documento"
                     if (selectedValue === 'open' && fileType === 'Link') {
                         const fileUrl = files.find(file => file.file_type === 'Link').file_url; // Encuentra la URL del archivo
