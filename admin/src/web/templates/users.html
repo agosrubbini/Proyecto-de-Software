@@ -68,6 +68,7 @@
                 <th>Rol</th>
                 <th>Activo</th>
                 <th>Bloquear usuario</th>
+                <th></th>
             </tr>
         </thead>
         {% if context.users %}
@@ -91,6 +92,9 @@
                         </button>
                     </form>
                     {%endif%}
+                </td>
+                <td>
+                    <a class="button is-dark" href="{{url_for('users.profile')}}">Editar</a>
                 </td>
             </tr>
         </tbody>

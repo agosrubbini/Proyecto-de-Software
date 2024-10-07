@@ -82,3 +82,12 @@ def block_user():
     context, page, order_by, search, role, activity = showUsers(request)
     app.logger.info("End of call to block_user function")
     return render_template('users.html', context=context, page=page, order_by=order_by, search=search, role=role, activity=activity)
+
+@bp.route('/profile', methods=['GET'])
+@permission_required('team_update')
+def profile():
+    users = User.query.all()
+    context = {
+        'users': users,
+    }
+    return render_template('profile.html', context=context)
