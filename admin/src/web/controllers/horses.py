@@ -6,7 +6,7 @@ from src.core.horses.forms import create_horse_Form
 from flask import current_app as app
 from src.core.horses.__init__ import create_horse
 from sqlalchemy import desc
-
+from src.core.persons import Employee
 
 bp = Blueprint('horses', __name__, url_prefix='/horses')
 
@@ -23,9 +23,14 @@ def list_horses():
 def create_horse_view():
     form = create_horse_Form()
     app.logger.info("El formulario de creación de caballo ha sido enviado: %s", form.validate_on_submit())
-
+    
+    form.employees.choices = [(employee.id, employee.name) for employee in Employee.query.all()]
+    
     if form.validate_on_submit():
         try:
+            # Obtener empleados seleccionados por el usuario como una lista de objetos Employee
+            selected_employees = Employee.query.filter(Employee.id.in_(form.employees.data)).all()
+
             # Crear el caballo en la base de datos usando la función importada
             new_horse = create_horse(
                 name=form.name.data,
@@ -37,16 +42,19 @@ def create_horse_view():
                 date_of_entry=form.date_of_entry.data,
                 sede=form.sede.data,
                 type_jya_assigned=form.type_jya_assigned.data,
-                employees=form.employees.data
+                employees = selected_employees
+            #employees=form.employees.data
             )
+        
             
             app.logger.info("Caballo creado exitosamente: %s", form.name.data)#controlar
             flash("Caballo creado exitosamente", "success")
             return redirect(url_for('horses.list_horses'))  # Redirigir a la lista de caballos
-
         except Exception as e:
             app.logger.error("Error al crear el caballo: %s", str(e))
             flash("Ocurrió un error al crear el caballo", "error")
+
+ 
     context = {
         'form': form,  # Pasa el formulario para que esté disponible en la plantilla
         'horses': Horse.query.order_by(Horse.name).all()  # Puedes cargar los caballos aquí si deseas

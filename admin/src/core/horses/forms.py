@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, DateField
+from wtforms import StringField, SelectField, DateField, SelectMultipleField
 from wtforms.validators import InputRequired, Length
 
 
@@ -12,7 +12,7 @@ class create_horse_Form(FlaskForm):
 
     gender = SelectField(
         'Genero',
-        choices=[('M', 'Macho'), ('F', 'Hembra')]
+        choices=[('Macho', 'Macho'), ('Hembra', 'Hembra')]
     )
     
     race = StringField("Raza", validators=[InputRequired(), Length(max=15)])
@@ -21,7 +21,7 @@ class create_horse_Form(FlaskForm):
 
     purchase_or_donation = SelectField(
         'Compra o Donacion',
-        choices=[('C','Compra'), ('D','Donacion')]#revisar
+        choices=[('Compra','Compra'), ('Donacion','Donacion')]#revisar
     )
 
     date_of_entry = DateField('Fecha de ingreso', format='%Y-%m-%d', validators=[InputRequired()])
@@ -39,3 +39,13 @@ class create_horse_Form(FlaskForm):
 
     employees = StringField("Asociar entrenadores y conductores", validators=[InputRequired(), Length(max=15)]) #terminar de hacer 
 
+    employees = SelectMultipleField(
+        "Asociar entrenadores y conductores", 
+        choices=[],  # Se cargará dinámicamente con los empleados disponibles
+        coerce=int  # Convertirá el valor a entero (ID de empleados)
+    )
+
+#editar eliminar
+#busqueda nombre y tipo de jya asignados
+#documentacion y enlaces
+#filtros y ordenamientos para docs

@@ -38,3 +38,4 @@ class Horse(db.Model):
         self.sede = sede
         self.type_jya_assigned = type_jya_assigned
 
+
