@@ -61,7 +61,7 @@ select:hover {
     margin-left: 5px !important;
 }
 
-.filter {
+.boton {
     background-color: var(--primary-color);
     width: 30%;
     height: 40px;
@@ -74,6 +74,16 @@ select:hover {
     border: none;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+}
+
+.filter {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.cancel {
+    background-color: var(--secondary-color);
 }
 
 .filter:hover {

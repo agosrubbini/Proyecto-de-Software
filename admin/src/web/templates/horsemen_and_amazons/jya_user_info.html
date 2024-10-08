@@ -84,7 +84,7 @@
                                 </select>
                             </div>
                         </div>
-                        <button class="filter">Filtrar</button>
+                        <button class="boton filter">Filtrar</button>
                     </div>
                     <form method="POST" action="{{ url_for('horsemen_and_amazons.order_by', user_id=context.id) }}">
                         <div class="control">
@@ -138,12 +138,17 @@
                         </table>
                     `;
 
-                    let boton = `<a href="{{ url_for('horsemen_and_amazons.add_file', user_id=context.id) }}"><button class="filter">Añadir archivo</button></a>`;
 
                     contenedor.innerHTML += table_docs;
-                    contenedor.innerHTML += boton;
         
                 }
+                else{
+                    contenedor.innerHTML += `<p style="text-align: center">No hay archivos asociados al jinete</p>`;
+                }
+
+                let boton = ` <a href="{{ url_for('horsemen_and_amazons.add_file', user_id=context.id) }}"><button class="boton add-file">Añadir archivo</button></a>`;
+
+                contenedor.innerHTML += boton;
             }
 
             // Recuperar el estado del Local Storage
@@ -184,8 +189,18 @@
 
                     // Si la opción seleccionada es "Ir al documento"
                     if (selectedValue === 'open' && fileType === 'Link') {
-                        const fileUrl = files.find(file => file.file_type === 'Link').file_url; // Encuentra la URL del archivo
-                        window.open(fileUrl, '_blank'); // Abre el enlace en una nueva pestaña
+                        const selectedFile = files.find(file => file.id === parseInt(fileId));
+                        window.open(selectedFile.file_url, '_blank'); // Abre el enlace en una nueva pestaña
+                    }
+
+                    if (selectedValue === 'download' && fileType !== 'Link') {
+                        const downloadUrl = "{{ url_for('horsemen_and_amazons.download_file', user_id=context.id, file_id=0) }}".replace('/0', `/${fileId}`);
+                        window.location.href = downloadUrl;
+                    }
+
+                    if (selectedValue === 'edit'){
+                        const editUrl = "{{ url_for('horsemen_and_amazons.edit_file', user_id=context.id, file_id=0) }}".replace('/0', `/${fileId}`);
+                        window.location.href = editUrl;
                     }
                 }
             });

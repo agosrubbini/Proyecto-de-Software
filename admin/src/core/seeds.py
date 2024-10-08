@@ -112,7 +112,7 @@ def run():
     file2 = create_file(
         file_url = "chau",
         file_type = "Documento",
-        document_type = "Evaluacion",
+        document_type = "Evaluación",
         horsemen_and_amazons_id = JyA1.id,
         title = "ARCHIVO DE PRUEBA",
     )

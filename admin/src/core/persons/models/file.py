@@ -7,9 +7,9 @@ class File(db.Model):
     __tablename__ = "files"
 
     id = db.Column(db.Integer, primary_key=True)
-    file_url = db.Column(db.String(200), nullable=False)
+    file_url = db.Column(db.String(1000), nullable=False)
     file_type = db.Column(db.Enum("Link", "Documento", name='file_type'), nullable=False)
-    document_type = db.Column(db.Enum("Entrevista", "Evaluacion", "Planificación", "Evolucion", "Cronicas", "Documental", name='document_type'), nullable=False)
+    document_type = db.Column(db.Enum("Entrevista", "Evaluación", "Planificación", "Evolución", "Crónicas", "Documental", name='document_type'), nullable=False)
     horsemen_and_amazons_id = db.Column(db.Integer, db.ForeignKey('horsemen_and_amazons.id'), nullable=False)
     title = db.Column(db.String(70), nullable=True)
     upload_date = db.Column(db.DateTime, default=datetime.now())

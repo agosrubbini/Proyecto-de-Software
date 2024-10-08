@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, PasswordField, SelectField
-from wtforms.validators import InputRequired, Length, EqualTo
+from wtforms import EmailField, StringField, PasswordField, SelectField, FileField
+from wtforms.validators import InputRequired, Length, EqualTo, Optional
 
 
 
@@ -12,6 +12,8 @@ class registryFileForm(FlaskForm):
         validators=[InputRequired()],
         choices=["Link", "Documento"],
     )
+    file_url = FileField('File', validators=[Optional()])  # Campo de tipo archivo
+    link_url = StringField('Link', validators=[Optional()])  # Campo para ingresar un enlace
     document_type = SelectField(
         "Document_type",
         validators=[InputRequired()],

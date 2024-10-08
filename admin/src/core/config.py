@@ -17,6 +17,10 @@ class ProductionConfig(Config):
         Configuración de producción
     """
 
+    MINIO_SERVER = environ.get("MINIO_SERVER")
+    MINIO_ACCESS_KEY = environ.get("MINIO_ACCESS_KEY")
+    MINIO_SECRET_KEY = environ.get("MINIO_SECRET_KEY")
+    MINIO_SECURE = True
     SQLALCHEMY_DATABASE_URI = environ.get("DATABASE_URL")
 
 
@@ -26,6 +30,11 @@ class DevelopmentConfig(Config):
         Configuración de desarrollo
     """
     
+    MINIO_SERVER = "minio.localhost:9000"
+    MINIO_ACCESS_KEY = "zMqOLexUSa8sEK1bNjoF"
+    MINIO_SECRET_KEY = "mP4Mq3MvIzbjWYkH27wxulKuvItfvBKBDY5SKZNG"
+    MINIO_SECURE = False
+    BUCKET_NAME = "grupo06"
     DB_USER = "postgres"
     DB_PASSWORD = "postgres"
     DB_HOST = "localhost"

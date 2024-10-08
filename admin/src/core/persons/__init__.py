@@ -4,6 +4,7 @@ from src.core.persons.models.address import Address
 from src.core.persons.models.emergency_contact import EmergencyContact
 from src.core.persons.models.healthcare_plan import HealthcarePlan
 from src.core.persons.models.file import File
+from datetime import datetime
 
 def create_person(**kwargs):
     person = Person(**kwargs)
@@ -95,3 +96,33 @@ def delete_file_by_id(file_id):
     print("ESTE ES EL FILE", file)
     db.session.delete(file)
     db.session.commit()
+
+def find_file_by_id(id):
+
+    """Devuelve el archivo con el id pasado por parámetro"""
+
+    return File.query.filter_by(id=id).first()
+
+def find_file_by_title(file_title):
+
+    """Devuelve el archivo con el titulo pasado por parámetro"""
+
+    return File.query.filter_by(title=file_title).first()
+
+def updated_file(file, **kwargs):
+
+    """Edita el archivo con el id pasado por parámetro"""
+
+    allowed_fields = ['file_url', 'file_type', 'document_type', 'title', 'horsemen_and_amazons_id']
+    
+    for key, value in kwargs.items():
+        if key in allowed_fields and value is not None:
+            setattr(file, key, value)
+            
+
+    file.upload_date = datetime.now()  # Actualizar la fecha de subida
+
+    db.session.add(file)
+    db.session.commit()
+
+    return file
