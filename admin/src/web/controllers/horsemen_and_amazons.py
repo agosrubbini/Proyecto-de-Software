@@ -4,6 +4,7 @@ from src.core.persons.forms import registryFileForm
 from flask import current_app as app
 from datetime import timedelta
 from src.core.persons.models.file import File
+from src.core.persons.models.person import JyA
 from sqlalchemy import desc
 import json
 import io
@@ -11,6 +12,57 @@ import io
 
 bp = Blueprint("horsemen_and_amazons", __name__, url_prefix="/users-jya")
 
+def showHorsemen(request):
+   
+    # Determine the order option
+    if request.method == 'POST':
+        order_by = request.args.get('order_option', 'name_asc', type=str)
+    else:
+        order_by = request.args.get('order_option', 'name_asc', type=str)
+
+    app.logger.info("Call to showHorsemen function with order_option: %s", order_by)
+    
+    # Map order options to actual column sorting
+    order_mapping = {
+        'name_asc': JyA.name,
+        'name_desc': desc(JyA.name),
+        'last_name_asc': JyA.last_name,
+        'last_name_desc': desc(JyA.last_name),
+    }
+
+    order_criteria = order_mapping.get(order_by, File.title)
+
+    # Pagination
+    page = request.args.get('page', 1, type=int)
+    
+    # Filtering options
+    name = request.args.get('name', '', type=str)
+    last_name = request.args.get('last_name', '', type=str)
+    dni = request.args.get('dni', '', type=str)
+    attending_professionals = request.args.get('professionals', '', type=str)
+
+    app.logger.info("Name: %s,  Last Name: %s, DNI: %s, Profesionales: %s", name, last_name, dni, attending_professionals)
+
+    # Build the query
+    query = JyA.query
+    
+    if name:
+        query = query.filter(JyA.name.like(f'%{name}%'))
+    if last_name:
+        query = query.filter(JyA.last_name.like(f'%{last_name}%'))
+    if dni:
+        query = query.filter(JyA.DNI.like(f'%{dni}%'))
+    if attending_professionals:
+        query = query.filter(JyA.attending_professionals.like(f'%{attending_professionals}%'))
+
+    
+    
+    # Apply ordering and pagination
+    horsemen = query.order_by(order_criteria).paginate(page=page, per_page=2)
+
+    app.logger.info("End of call to showHorsemen function")
+
+    return horsemen, page, order_by, name, last_name, dni, attending_professionals
 
 @bp.get("/")
 def list_jya_users():
@@ -19,9 +71,54 @@ def list_jya_users():
         Esta función retorna el listado con los jinetes y amazonas registrados en el sistema.
     """
 
-    jya_users = get_jya_users()
+    horsemen, page, order_by, name, last_name, dni, attending_professionals = showHorsemen(request)
 
-    return render_template("horsemen_and_amazons/jya_users_list.html", users = jya_users)
+    return render_template("horsemen_and_amazons/jya_users_list.html", users = horsemen, page=page, order_by=order_by, name=name, last_name=last_name, dni=dni, professionals=attending_professionals)
+
+def showFiles(request):
+   
+    # Determine the order option
+    if request.method == 'POST':
+        order_by = request.args.get('order_option', 'title_asc', type=str)
+    else:
+        order_by = request.args.get('order_option', 'title_asc', type=str)
+
+    app.logger.info("Call to order_by function with order_option: %s", order_by)
+    
+    # Map order options to actual column sorting
+    order_mapping = {
+        'title_asc': File.title,
+        'title_desc': desc(File.title),
+        'date_asc': File.upload_date,
+        'date_desc': desc(File.upload_date),
+    }
+
+    order_criteria = order_mapping.get(order_by, File.title)
+
+    # Pagination
+    page = request.args.get('page', 1, type=int)
+    
+    # Filtering options
+    search = request.args.get('search', '', type=str)
+    document_type = request.args.get('document_type', '', type=str)
+
+    app.logger.info("Search: %s, Document_Type: %s", search, document_type)
+
+    # Build the query
+    query = File.query
+    
+    if search:
+        query = query.filter(File.title.like(f'%{search}%'))
+    if document_type and document_type != 'Selecciona un tipo':
+        query = query.filter(File.document_type == document_type)
+    
+    # Apply ordering and pagination
+    files = query.order_by(order_criteria).paginate(page=page, per_page=2)
+
+    app.logger.info("End of call to order_by function")
+
+    return files, page, order_by, search, document_type
+
 
 @bp.get("/<int:user_id>")
 def list_info_by_jya(user_id):
@@ -30,57 +127,30 @@ def list_info_by_jya(user_id):
         Esta función retorna la información del jinete o amazona asociado al id pasado por parámetro en la url.
     """
     
+    app.logger.info("Call to index function")
+
     jya = find_jya_by_id(user_id)
     jya_address = find_adress_by_id(jya.address_id).string()
     files = get_files_by_horseman_id(jya.id)
     jya_json = jya.to_dict(jya_address)
     files_json = []
 
+    files, page, order_by, search, document_type = showFiles(request)
+
     if files:
         for file in files:    
             files_json.append(file.to_dict())
 
     context = {
+        'pagination': files,
         'files': files_json,
         'user': jya_json,
         'id': user_id,
     }
 
-    return render_template("horsemen_and_amazons/jya_user_info.html", context=context)
+    app.logger.info("End of call to index function")
 
-@bp.route("/<int:user_id>/order", methods=['POST', 'GET'])
-def order_by(user_id):
-    order_by = request.form.get('order_option')
-    print("ESTE ES EL USER ID", user_id)
-    jya = find_jya_by_id(user_id)
-    jya_address = find_adress_by_id(jya.address_id).string()
-    jya_json = jya.to_dict(jya_address)
-    files = get_files_by_horseman_id(jya.id)
-    files_json = []
-
-    if order_by:
-        if order_by == 'title_asc':
-            files = File.query.order_by(File.title).all()
-        elif order_by == 'title_desc':
-            files = File.query.order_by(desc(File.title)).all()
-        if order_by == 'date_asc':
-            files = File.query.order_by(File.upload_date).all()
-        elif order_by == 'date_desc':
-            files = File.query.order_by(desc(File.upload_date)).all()
-        
-    if files:
-        for file in files:    
-            files_json.append(file.to_dict())
-            print("Estos son los archivos ordenados por nombre", files_json)
-
-    context = {
-        'files': files_json,
-        'user': jya_json,
-        'id': user_id,
-    }
-
-    return render_template("horsemen_and_amazons/jya_user_info.html", context=context)
-
+    return render_template('horsemen_and_amazons/jya_user_info.html', context=context, page=page, order_by=order_by, search=search, document_type=document_type)
 
 @bp.route("/<int:user_id>/delete_file/<int:file_id>", methods=['POST', 'GET'])
 def delete_file(user_id, file_id):
@@ -98,7 +168,7 @@ def delete_file(user_id, file_id):
     flash('Archivo eliminado correctamente', 'success')
 
     # Redirigir a la vista order_by pasando el user_id y la opción de orden como query parameters
-    return redirect(url_for('horsemen_and_amazons.order_by', user_id=user_id))
+    return redirect(url_for('horsemen_and_amazons.list_info_by_jya', user_id=user_id))
    
 @bp.route("/<int:user_id>/add_file", methods=['POST', 'GET'])
 def add_file(user_id):
@@ -171,7 +241,7 @@ def add_file(user_id):
             )
 
         flash("El archivo se ha creado correctamente", "success")
-        return redirect(url_for('horsemen_and_amazons.order_by', user_id=user_id))
+        return redirect(url_for('horsemen_and_amazons.list_info_by_jya', user_id=user_id))
     
     else:
         for field, errors in form.errors.items():
@@ -269,7 +339,7 @@ def edit_file(user_id, file_id):
             )
 
         flash("Archivo editado correctamente", "success")
-        return redirect(url_for('horsemen_and_amazons.order_by', user_id=user_id))
+        return redirect(url_for('horsemen_and_amazons.list_info_by_jya', user_id=user_id))
 
     else:
         for field, errors in form.errors.items():

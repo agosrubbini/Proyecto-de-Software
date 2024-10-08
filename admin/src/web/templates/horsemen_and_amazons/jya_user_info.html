@@ -60,34 +60,36 @@
                 contenedor.classList.add('docs');
 
                 let inputs = `  
-                    <div class="field is-grouped">
-                        <div class="field">
-                            <label class="label">Nombre</label>
-                            <div class="control has-icons-left">
-                                <span class="icon is-small is-left">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                </span>
-                                <input class="input" type="text" id="fila_name" name="fila_name" placeholder="Nombre del documento">
+                    <form method="GET" action="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id)}}">
+                        <div class="field is-grouped">
+                            <div class="field">
+                                <label class="label">Nombre</label>
+                                <div class="control has-icons-left">
+                                    <span class="icon is-small is-left">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </span>
+                                    <input class="input" type="text" name="search" placeholder="Nombre del documento" value="{{ search }}" />
+                                </div>
                             </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">Tipo</label>
-                            <div class="control">
-                                <select id="role" name="doc_type">
-                                    <option>Selecciona un tipo</option>
-                                    <option>Entrevista</option>
-                                    <option>Evaluación</option>
-                                    <option>Planificación</option>
-                                    <option>Evolución</option>
-                                    <option>Crónicas</option>
-                                    <option>Documental</option>
-                                </select>
+                            <div class="field">
+                                <label class="label">Tipo</label>
+                                <div class="control">
+                                    <select name="document_type">
+                                        <option>Selecciona un tipo</option>
+                                        <option>Entrevista</option>
+                                        <option>Evaluación</option>
+                                        <option>Planificación</option>
+                                        <option>Evolución</option>
+                                        <option>Crónicas</option>
+                                        <option>Documental</option>
+                                    </select>
+                                </div>
                             </div>
+                            <button class="boton filter" type="submit">Filtrar</button>
                         </div>
-                        <button class="boton filter">Filtrar</button>
-                    </div>
-                    <form method="POST" action="{{ url_for('horsemen_and_amazons.order_by', user_id=context.id) }}">
-                        <div class="control">
+                    </form>
+                    <form method="GET" action="{{ url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id) }}">
+                        <div class="control order_options_docs">
                             <select id="order_option" name="order_option" onchange="this.form.submit()">
                                 <option value="default">Selecciona un orden</option>
                                 <option value="title_asc">Nombre: A-Z</option>
@@ -136,6 +138,11 @@
                     table_docs += `
                             </tbody>
                         </table>
+                        <nav class="pagination" role="navigation" aria-label="pagination">
+                            <a class="boton pagination-previous" {% if not context.pagination.has_prev %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id, page=page-1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Previous</a>
+                            <a class="boton pagination-next" {% if not context.pagination.has_next %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id, page=page+1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Next page</a>
+                        </nav>
+
                     `;
 
 
