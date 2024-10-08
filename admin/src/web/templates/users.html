@@ -3,21 +3,62 @@
 {% block content%}
 <div class="container">
     <h1 class="title is-size-2 has-text-centered  has-text-black-bis mt-5">Usuarios</h1>
-    <div class="container">
-        <a class="has-text-link  is-size-4" href="{{ url_for('registry.registry_function') }}">
+    <div class="container" style="margin-bottom: 2px;">
+        <a style="margin-bottom: 10px;" class="button is-white is-size-6" href="{{ url_for('registry.registry_function') }}">
             <strong>Crear usuario</strong>
         </a>
-        <form method="Post" action="{{url_for('users.order_by')}}">
-            <div class="select">
-                <select name="order_option" onchange="this.form.submit()">
-                  <option value="default">Ordenar por:</option>
-                  <option value="email_asc">Email: Orden ascendente</option>
-                  <option value="email_desc">Email: Orden descendente</option>
-                  <option value="creation_date_asc">Fecha creación: Orden ascendente</option>
-                  <option value="creation_date_desc">Fecha creación: Orden descendente</option>
-                </select>
-              </div>
-        </form>
+        <div style="display: flex; align-items: center;">
+            <div style="background-color:white; padding:10px">
+            <form method="GET" action="{{url_for('users.index', page=page, order_option=order_by)}}">
+                <input name="search" class="input" type="text" placeholder="Buscar email" value="{{ search }}" />
+                <div class="radios">
+                    <label class="radio">
+                      <input type="radio" name="activity" value="active" {% if activity == 'active' %}checked{% endif %} />
+                      Activo 
+                    </label>
+                    <label class="radio">
+                      <input type="radio" name="activity" value="noactive"{% if activity == 'noactive' %}checked{% endif %} />
+                      No activo
+                    </label>
+                </div>
+                  <div class="radios">
+                    <label class="radio">
+                      <input type="radio" name="role" value="1" {% if role == 1 %}checked{% endif %} />
+                      Técnica 
+                    </label>
+                    <label class="radio">
+                      <input type="radio" name="role"  value="2" {% if role == 2 %}checked{% endif %} />
+                      Ecuestre
+                    </label>
+                    <label class="radio" >
+                      <input type="radio" name="role"  value="3" {% if role == 3 %}checked{% endif %}/>
+                      Voluntariado
+                    </label>
+                    <label class="radio" >
+                        <input type="radio" name="role"  value="4" {% if role == 4 %}checked{% endif %} />
+                        Administración
+                      </label>
+                      <label class="radio" >
+                        <input type="radio" name="role"  value="5" {% if role == 5 %}checked{% endif %}/>
+                        Sin Rol
+                      </label>
+                  </div>
+                <button class="button is-dark" type="submit">Buscar</button>
+                <button class="button is-dark" href="{{url_for('users.index', page=page, order_option=order_by)}}">Quitar Filtros</button>
+            </form>
+            <form method="Post" action="{{url_for('users.index',search=search, role=role, activity=activity)}}">
+                <div class="select ">
+                    <select name="order_option" onchange="this.form.submit()">
+                        <option value="default">Ordenar por:</option>
+                        <option value="email_asc">Email: Orden ascendente</option>
+                        <option value="email_desc">Email: Orden descendente</option>
+                        <option value="creation_date_asc">Fecha creación: Orden ascendente</option>
+                        <option value="creation_date_desc">Fecha creación: Orden descendente</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        </div>
     </div>
     <table class="table is-striped is-bordered is-fullwidth">
         <thead>
@@ -25,7 +66,9 @@
                 <th>Email</th>
                 <th>Alias</th>
                 <th>Rol</th>
+                <th>Activo</th>
                 <th>Bloquear usuario</th>
+                <th></th>
             </tr>
         </thead>
         {% if context.users %}
@@ -35,6 +78,7 @@
                 <td>{{ user.email }}</td>
                 <td>{{ user.alias }}</td>
                 <td>{{ user.role.name }}</td>
+                <td>{{user.active}}</td>
                 <td>
                     {% if not user.system_admin %}
                     <form method="POST" action="{{url_for('users.block_user')}}">
@@ -49,11 +93,18 @@
                     </form>
                     {%endif%}
                 </td>
+                <td>
+                    <a class="button is-dark" href="{{url_for('users.profile')}}">Editar</a>
+                </td>
             </tr>
         </tbody>
         {% endfor %}
         {% endif %}
     </table>
+    <nav class="pagination" role="navigation" aria-label="pagination">
+        <a class="pagination-previous" {% if not context.users.has_prev %}disabled{% else %}href="{{url_for('users.index', page=page-1,  order_option=order_by, search=search, role=role, activity=activity)}}"{% endif %}>Previous</a>
+        <a class="pagination-next" {% if not context.users.has_next %}disabled{% else %}href="{{url_for('users.index', page=page+1,  order_option=order_by, search=search, role=role, activity=activity)}}"{% endif %}>Next page</a>
+    </nav>
 </div>
 
 {% endblock %}
