@@ -2,12 +2,16 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from src.core import auth
 from flask import current_app as app
 from flask_bcrypt import Bcrypt
+from src.web.handlers.auth import is_authenticated
 
 bp = Blueprint("login", __name__, url_prefix="/login")
 
 @bp.get("/")
 def login():#muestra el forms
-    return render_template("auth/login.html", context=None)
+    if is_authenticated(session):
+        flash("Ya te encuentras logueado", "warning")
+        return render_template("home.html")
+    return render_template("auth/login.html")
 
 @bp.post("/authenticate")
 def authenticate():

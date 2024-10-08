@@ -1,6 +1,8 @@
 {% extends "layout.html" %}
 
 {% block title %}Registrarse{% endblock %}
+
+
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/auth.css') }}">
@@ -12,17 +14,19 @@
     
     {{ form.csrf_token }}
     <div class="div-titulo">
-        <h1 class="label" >Registrar usuario</h1>
+        <h1 class="label">Registrar usuario</h1>
         <hr class="linea-titulo">
     </div>
-    <label class="label">Correo Electronico</label>
-    <div class="control has-icons-left ">
+    
+    <label class="label">Correo Electrónico</label>
+    <div class="control has-icons-left">
         <span class="icon is-small is-left">
             <i class="fas fa-envelope"></i>
         </span>
-        <input class="input" type="email" id="email" name="{{ form.email.name }}" placeholder="Ingrese su correo electronico" value="{{ form.email.value }}">
+        <input class="input" type="email" id="email" name="{{ form.email.name }}" placeholder="Ingrese su correo electrónico" value="{{ form.email.value }}">
     </div>  
     <hr>
+    
     <label class="label">Alias</label>
     <div class="control has-icons-left">
         <span class="icon is-small is-left">
@@ -31,33 +35,38 @@
         <input class="input" type="text" id="alias" name="{{ form.alias.name }}" placeholder="Ingrese su alias" value="{{ form.alias.value }}">
     </div>
     <hr>
+    
     <label class="label">Contraseña</label>
     <div class="control has-icons-left">
         <span class="icon is-small is-left">
             <i class="fas fa-lock"></i>
         </span>
-        <input class="input" type="password" id="password" name="{{ form.password.name}}" placeholder="Ingrese su contraseña" value="{{ form.password.value}}">
+        <input class="input" type="password" id="password" name="{{ form.password.name }}" placeholder="Ingrese su contraseña" value="{{ form.password.value }}">
     </div> 
     <hr> 
+    
     <label class="label">Repita la contraseña</label>
     <div class="control has-icons-left">
         <span class="icon is-small is-left">
             <i class="fas fa-lock"></i>
         </span>
-        <input class="input" type="password" id="confirm_password" name="{{ form.confirm.name}}" placeholder="Ingrese la contraseña nuevamente" value="{{ form.confirm.value}}">
+        <input class="input" type="password" id="confirm_password" name="{{ form.confirm.name }}" placeholder="Ingrese la contraseña nuevamente" value="{{ form.confirm.value }}">
     </div>
     <hr>
+    
     <label class="label">Rol</label>
     <div class="control">
-        <select id="role" name="{{ form.role.name}}" value="{{ form.role.value }}">
-          <option>Selecciona un rol</option>
-          <option>Administración</option>
-          <option>Ecuestre</option>
-          <option>Técnica</option>
-          <option>Sin Rol</option>
+        <select id="role" name="{{ form.role.name }}" value="{{ form.role.value }}">
+            <option>Selecciona un rol</option>
+            <option>Administración</option>
+            <option>Ecuestre</option>
+            <option>Técnica</option>
+            <option>Sin Rol</option>
         </select>
     </div>
     <hr>
-    <button type="submit" >Registrar usuario</button>
+    
+    <button type="submit">Registrar usuario</button>
 </form>
+
 {% endblock %}

@@ -1,11 +1,34 @@
+
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
     
-    h1{
+    h1 {
         padding-top: 20px;
-        font-size: 20px !important;
+        font-size: 24px !important;
         margin-bottom: 0 !important;
+        font-weight: 600;
     }
 
-    .input, form{
+    select {
+        border-radius: 10px;
+        background-color: hsl(221, 14%, 20%);
+        width: 175px;
+        height: 40px;
+        text-align: center;
+        color: hsl(221, 14%, 93%);
+        font-family: 'Poppins', sans-serif;
+        margin-bottom: 15px;
+        border-color: hsl(221, 14%, 50%);
+        padding-inline-end: 2px;
+        transition: background-color 0.3s ease;
+    }
+    
+    select:hover {
+        background-color: hsl(221, 14%, 15%);
+    }
+
+    .input, form {
         background-color: white;
     }
     
@@ -13,71 +36,70 @@
         width: fit-content;
     }
 
-    .linea-titulo{
+    .linea-titulo {
         border: none;
         border: 2px solid var(--primary-color);
         margin-top: 0px;
         width: 100%;
     }
-
+    
     form {
-        display:block;
+        display: block;
         width: 30%;
         margin: 60px auto;
         height: 80%;
-        padding: 20px 40px;;
+        padding: 30px 50px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        background-color: white;
+    }
+
+    hr {
+        margin-top: -10px;
+        border: 1px solid black;
+    }
+
+    input {
+        margin-bottom: 15px;
         border-radius: 10px;
-    }
-    
-    hr{
-        margin-top:-10px;
-        border: 1x solid black;
-    }
-
-    input{
-        margin-bottom: 10px;
-        border: none;
-        outline: none;
+        border: 1px solid hsl(221, 14%, 80%);
+        padding: 10px;
+        height: 40px;
+        transition: box-shadow 0.2s ease, border-color 0.2s ease;
         width: 100%;
-        height: 30px;
     }
 
-    button{
+    input:focus {
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        border-color: hsl(221, 14%, 50%);
+        outline: none;
+    }
+
+    button {
         background-color: var(--primary-color);
-        width: 300px;
-        height: 30px;
-        color: black;
-        font-style: bold;
-        font-weight: 600;
+        width: 100%;
+        height: 40px;
+        color: white;
+        font-weight: bold;
         display: block;
         margin: 20px auto;
-    }
-    
-    .input, .input:focus{
-        box-shadow: none;
+        border-radius: 20px;
         border: none;
-        outline: none;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, transform 0.3s ease;
     }
 
-    .input, .input::placeholder, .label, .button{
+    button:hover {
+        background-color: hsl(221, 14%, 40%);
+        transform: scale(1.05);
+    }
+    
+    .input, .input::placeholder, .label, .button {
         color: black;
         font-weight: 600;
         font-style: bold;
     }
     
     i {
-        color:black;
-    }
-
-    select{
-        border-radius: 20px;
-        background-color: hsl(221, 14%,calc(9% + 0%));
-        width: 175px;
-        height: 25px;
-        text-align: center;
-        color: hsl(221, 14%, 93%);
-        font-family: Inter, SF Pro, Segoe UI, Roboto, Oxygen, Ubuntu, Helvetica Neue, Helvetica, Arial, sans-serif;
-        margin-bottom: 15px;
-        border-color: hsl(221, 14%,calc(24% + 0%));
-        padding-inline-end: 2px;
+        color: black;
     }

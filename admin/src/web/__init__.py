@@ -10,7 +10,7 @@ from src.core.bcrypt import bcrypt
 from src.web.handlers import error
 from src.web import commands
 from src.web import routes
-from src.web.handlers.auth import is_authenticated
+from src.web.handlers.auth import is_authenticated, get_user_info
 
 
 session = Session()
@@ -38,6 +38,7 @@ def create_app(env="development", static_folder="../../static"):
     app.register_error_handler(401, error.unautorized)
     # Register jinja filters
     app.jinja_env.globals.update(is_authenticated=is_authenticated)
+    app.jinja_env.globals.update(user=get_user_info)
     # Commands
     commands.register(app)
     # Routes

@@ -6,14 +6,16 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/auth.css') }}">
 {% endblock %}
 {% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
 <section>
-    <form method="POST" action="{{ url_for('login.authenticate') }}" >
+    <form method="POST" action="{{ url_for('login.authenticate') }}">
         <div class="div-titulo">
-            <h1 class="label" >Iniciar Sesión</h1>
+            <h1 class="label">Iniciar Sesión</h1>
             <hr class="linea-titulo">
         </div>
         <label class="label" for="email">Correo:</label>
-        <div class="control has-icons-left ">
+        <div class="control has-icons-left">
             <span class="icon is-small is-left">
                 <i class="fas fa-envelope"></i>
             </span>

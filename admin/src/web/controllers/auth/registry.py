@@ -4,6 +4,7 @@ from src.core.auth.forms import registryForm
 from flask import current_app as app
 from src.core.auth import find_user_by_email, find_role_id_by_name
 from src.core.auth import get_user_permissions
+from src.web.handlers.auth import is_authenticated
 
 bp = Blueprint('registry', __name__, url_prefix='/registry')
 
@@ -15,6 +16,10 @@ def registry_function():
     Muestra la vista del registro, además valida los parametros, y guarda al usuario en la base de datos si
     se recibió el formulario y el mismo es válido.
     """
+    if is_authenticated(session):
+        flash("Ya te encuentras logueado", "warning")
+        return render_template("home.html")
+
     app.logger.info("Call to registry_function")
     form = registryForm()
     app.logger.info("El formulario es valido: %s", form.validate_on_submit())
