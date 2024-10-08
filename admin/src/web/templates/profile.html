@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block title %}Usuarios{% endblock %}
+{% block content%}
+    <div>
+        <h1>Perfil de usuario</h1>
+        <hr>
+        <div>
+            <label>Correo Electrónico</label>
+            <p>{{ context.user.email }}</p>
+        </div>
+        <hr>
+        <div>
+            <label>Alias</label>
+            <p>{{ context.user.alias }}</p>
+        </div>
+        <hr>
+        <div>
+            <label>Rol</label>
+            <p>{{ context.user.role }}</p>
+        </div>
+        <hr>
+    </div>
+{% endblock %}

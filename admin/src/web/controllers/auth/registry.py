@@ -3,6 +3,7 @@ from src.core.auth import create_user
 from src.core.auth.forms import registryForm
 from flask import current_app as app
 from src.core.auth import find_user_by_email, find_role_id_by_name
+from src.core.auth import get_user_permissions
 from src.web.handlers.auth import is_authenticated
 
 bp = Blueprint('registry', __name__, url_prefix='/registry')
@@ -22,6 +23,12 @@ def registry_function():
     app.logger.info("Call to registry_function")
     form = registryForm()
     app.logger.info("El formulario es valido: %s", form.validate_on_submit())
+    user_permissions, user_system_admin = get_user_permissions(session.get("user"))
+
+    context = {
+        "user_permissions": user_permissions,
+        "user_system_admin": user_system_admin,
+    }
     if (form.validate_on_submit()):
         
         if (find_user_by_email(form.email.data)):
@@ -37,6 +44,6 @@ def registry_function():
         )
         app.logger.info("End of call to registry_function")
         flash("Usuario creado correctamente", "success")
-        return render_template("home.html")
+        return render_template("home.html", context=context)
     
-    return render_template("auth/registry.html", form=form)
+    return render_template("auth/registry.html",context=context, form=form)
