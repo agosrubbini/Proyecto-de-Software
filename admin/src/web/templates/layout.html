@@ -44,7 +44,7 @@
                 <div id="navbarElement" class="navbar-menu">
                   <div class="navbar-start">
                     {% if 'jya_index' in context.user_permissions or context.user_system_admin %}
-                    <a class="navbar-item">
+                    <a class="navbar-item" href="{{ url_for('horsemen_and_amazons.list_jya_users') }}" >
                       J&A
                     </a>
                     {% endif %}

@@ -92,8 +92,8 @@
     button:hover {
         background-color: hsl(221, 14%, 40%);
         transform: scale(1.05);
-    }
-    
+    }   
+
     .input, .input::placeholder, .label, .button {
         color: black;
         font-weight: 600;
@@ -103,3 +103,4 @@
     i {
         color: black;
     }
+    
