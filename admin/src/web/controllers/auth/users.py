@@ -90,8 +90,10 @@ def block_user():
 @bp.route('/profile', methods=['GET'])
 @permission_required('team_update')
 def profile():
-    users = User.query.all()
+    user_email = request.args.get('user')
+    user = User.query.filter_by(email=user_email).first()
     context = {
-        'users': users,
+        'user': user,
     }
+    print(context)
     return render_template('profile.html', context=context)

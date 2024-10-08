@@ -94,7 +94,7 @@
                     {%endif%}
                 </td>
                 <td>
-                    <a class="button is-dark" href="{{url_for('users.profile')}}">Editar</a>
+                    <a class="button is-dark" href="{{url_for('users.profile', user=user.email)}}">Editar</a>
                 </td>
             </tr>
         </tbody>
