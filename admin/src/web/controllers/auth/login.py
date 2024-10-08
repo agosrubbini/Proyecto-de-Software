@@ -6,14 +6,14 @@ from src.web.handlers.auth import is_authenticated
 
 bp = Blueprint("login", __name__, url_prefix="/login")
 
-@bp.get("/")
+@bp.route('/', methods=['GET'])
 def login():#muestra el forms
     if is_authenticated(session):
         flash("Ya te encuentras logueado", "warning")
         return render_template("home.html")
     return render_template("auth/login.html")
 
-@bp.post("/authenticate")
+@bp.route('/authenticate', methods=['POST'])
 def authenticate():
     app.logger.info("Call to authenticate method")
     params = request.form  # objeto desde donde obtengo los parámetros de entrada de un form
@@ -46,7 +46,7 @@ def authenticate():
     flash("La sesión se inició correctamente!", "success")
     return redirect(url_for("home"))
 
-@bp.get("/logout")
+@bp.route('/logout', methods=['GET'])
 def logout():
     app.logger.info("Call to logout method")
     if session.get("user"):
