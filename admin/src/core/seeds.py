@@ -7,7 +7,7 @@ from src.core.institutions import create_institutional_work, create_school
 from src.core.payments import create_payment, create_billing
 from src.core.persons import (
     create_person, create_employee, create_JyA, create_family_member_or_tutor, create_address, create_emergency_contact, 
-    create_healthcare_plan)
+    create_healthcare_plan, create_file)
 
 
 
@@ -38,7 +38,7 @@ def run():
     admin = create_user(
         email="admin@gmail.com",
         alias="admin",
-        password="1234",#bcrypt.generate_password_hash("1234"),
+        password="1234",
         role_id=administracion.id,
         system_admin=True,
         active=True,
@@ -127,6 +127,23 @@ def run():
         diagnosis = Diagnosis.ESCLEROSIS_MULTIPLE,
         type_of_disability = "Mental"
     )
+
+    file1 = create_file(
+        file_url = "hola",
+        file_type = "Link",
+        document_type = "Entrevista",
+        horsemen_and_amazons_id = JyA1.id,
+        title = "LINK DE PRUEBA",
+    )
+
+    file2 = create_file(
+        file_url = "chau",
+        file_type = "Documento",
+        document_type = "Evaluación",
+        horsemen_and_amazons_id = JyA1.id,
+        title = "ARCHIVO DE PRUEBA",
+    )
+
 
     institutional_work1 = create_institutional_work(
         condicion="Regular",
