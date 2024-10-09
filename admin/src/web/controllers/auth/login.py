@@ -45,6 +45,7 @@ def authenticate():
 
     # 3. Si la autenticación es exitosa, iniciar la sesión
     session["user"] = user.email
+    session["user_id"] = user.id
     app.logger.info("End of call to authenticate method")
     flash("La sesión se inició correctamente!", "success")
     return redirect(url_for("home"))

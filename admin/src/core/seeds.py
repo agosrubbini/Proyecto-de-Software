@@ -35,12 +35,22 @@ def run():
         name="Sin rol",
     )
 
-    admin = create_user(
-        email="admin@gmail.com",
-        alias="admin",
+    system_admin = create_user(
+        email="system_admin@gmail.com",
+        alias="system_admin",
         password="1234",
         role_id=administracion.id,
         system_admin=True,
+        active=True,
+        is_blocked=False
+    )
+
+    user_admin = create_user(
+        email="user_admin@gmail.com",
+        alias="user_admin",
+        password="1234",
+        role_id=administracion.id,
+        system_admin=False,
         active=True,
         is_blocked=False
     )

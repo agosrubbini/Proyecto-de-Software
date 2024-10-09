@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, session, url_for, flash
+from core.auth import find_user_by_email
 from src.core.database import db
 from src.core.payments.models.billing import Billing
-from src.core.persons.models.person import Person
+from src.core.persons.models.person import Employee, JyA, Person
 from src.core.payments.forms import BillingForm
 from core.auth.auth import inject_user_permissions, permission_required
 from datetime import datetime
@@ -59,6 +60,16 @@ def list_billings():
 @inject_user_permissions
 def new_billing():
     form = BillingForm()
+    jya_list = JyA.query.all()
+    employee_list = Employee.query.all()
+    
+    employee_actual = find_user_by_email(session.get('user'))
+
+    if employee_actual.system_admin:
+        employee_actual = None
+    elif employee_actual in employee_list:
+        employee_list = employee_list.remove(employee_actual)
+
     if form.validate_on_submit():
         new_billing = Billing(
             employee_id=form.employee_id.data,
@@ -71,4 +82,4 @@ def new_billing():
         db.session.commit()
         flash('Billing created successfully!', 'success')
         return redirect(url_for('billing.list_billings'))
-    return render_template('billing/billing_new.html', form=form)
+    return render_template('billing/billing_new.html', form=form, jya_list=jya_list, employee_list=employee_list, employee_actual=employee_actual)
