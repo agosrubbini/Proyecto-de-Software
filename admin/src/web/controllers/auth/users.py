@@ -1,11 +1,10 @@
 from flask import Blueprint, request, session
 from flask import render_template
-from core.auth.auth import inject_user_permissions
 from src.core.auth.models.user import User
 from src.core.database import db
 from flask import current_app as app
 from sqlalchemy import desc
-from src.core.auth.auth import permission_required
+from src.core.auth.auth import permission_required, inject_user_permissions
 
 bp = Blueprint('users', __name__, url_prefix='/users')
 
@@ -73,6 +72,7 @@ def index():
 
 @bp.route('/block', methods=['POST'])
 @permission_required('team_update')
+@inject_user_permissions
 def block_user():
     app.logger.info("Call to block_user function")
     user_email = request.form.get('user_email')
@@ -87,6 +87,7 @@ def block_user():
 
 @bp.route('/profile', methods=['GET'])
 @permission_required('team_update')
+@inject_user_permissions
 def profile():
     user_email = request.args.get('user')
     user = User.query.filter_by(email=user_email).first()
