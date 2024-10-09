@@ -1,23 +1,49 @@
 {% extends "layout.html" %}
 {% block title %}Usuarios{% endblock %}
 {% block content%}
-    <div>
-        <h1>Perfil de usuario</h1>
+<div class="container is-max-desktop">
+    <div class="box">
+        <h1 class="is-size-4-desktop">Perfil de usuario: {{context.user.alias}}</h1>
         <hr>
         <div>
-            <label>Correo Electrónico</label>
+            <label class="is-size-4-desktop">Correo Electrónico</label>
             <p>{{ context.user.email }}</p>
         </div>
         <hr>
-        <div>
-            <label>Alias</label>
-            <p>{{ context.user.alias }}</p>
+        <div class="is-flex">
+            <div >
+            <label class="is-size-4-desktop">Rol</label>
+            <p>{{ context.user.role.name }}</p>
+            </div>
+            <div>
+                <label class="is-size-5-desktop">Cambiar rol</label>
+                <form method="POST" action="{{url_for('profile.change_role', id=context.user.id)}}">          
+                    <div class="select">
+                        <select name="role">
+                            {% for role in context.roles %}
+                                <option value="{{ role.id }}" {% if role.id == context.user.role.id %}selected{% endif %}>{{ role.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="button is-dark">Cambiar</button>
+                </form>
+            </div>    
         </div>
         <hr>
         <div>
-            <label>Rol</label>
-            <p>{{ context.user.role }}</p>
+            {% if not context.user.system_admin %}
+            <form method="POST" action="{{url_for('profile.block_user', id=context.user.id)}}">
+                <button type="submit" class="button is-dark {% if context.user.is_blocked %}is-success{% else %}is-danger{% endif %}">
+                    {% if context.user.is_blocked %}
+                        Desbloquear
+                    {% else %}
+                        Bloquear
+                    {% endif %}
+                </button>
+            </form>
+            {%endif%}
         </div>
-        <hr>
+    </div>
+        <a class="button is-dark" href="{{ url_for('users.index') }}">Volver</a>
     </div>
 {% endblock %}

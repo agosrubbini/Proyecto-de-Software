@@ -1,7 +1,6 @@
 from flask import Blueprint, request, session
 from flask import render_template
 from src.core.auth.models.user import User
-from src.core.database import db
 from flask import current_app as app
 from sqlalchemy import desc
 from src.core.auth.auth import permission_required, inject_user_permissions
@@ -69,30 +68,3 @@ def index():
     return render_template('users.html', context=context, page=page, order_by=order_by, search=search, role=role, activity=activity)
 
 
-
-@bp.route('/block', methods=['POST'])
-@permission_required('team_update')
-@inject_user_permissions
-def block_user():
-    app.logger.info("Call to block_user function")
-    user_email = request.form.get('user_email')
-    user = User.query.filter_by(email=user_email).first()
-    if user:
-        user.is_blocked = not user.is_blocked
-        app.logger.info("User %s is blocked: %s", user.email, user.is_blocked)
-        db.session.commit()  
-    context, page, order_by, search, role, activity = showUsers(request)
-    app.logger.info("End of call to block_user function")
-    return render_template('users.html', context=context, page=page, order_by=order_by, search=search, role=role, activity=activity)
-
-@bp.route('/profile', methods=['GET'])
-@permission_required('team_update')
-@inject_user_permissions
-def profile():
-    user_email = request.args.get('user')
-    user = User.query.filter_by(email=user_email).first()
-    context = {
-        'user': user,
-    }
-    print(context)
-    return render_template('profile.html', context=context)

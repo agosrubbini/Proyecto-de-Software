@@ -66,8 +66,8 @@
                 <th>Email</th>
                 <th>Alias</th>
                 <th>Rol</th>
-                <th>Activo</th>
-                <th>Bloquear usuario</th>
+                <th>Estado</th>
+                <th>Estado Bloqueo</th>
                 <th></th>
             </tr>
         </thead>
@@ -78,23 +78,10 @@
                 <td>{{ user.email }}</td>
                 <td>{{ user.alias }}</td>
                 <td>{{ user.role.name }}</td>
-                <td>{{user.active}}</td>
+                <td>{{'Activo' if user.active else 'No activo'}}</td>
+                <td>{{'Bloqueado' if user.is_blocked else 'No bloqueado' }}</td>
                 <td>
-                    {% if not user.system_admin %}
-                    <form method="POST" action="{{url_for('users.block_user')}}">
-                        <input type="hidden" name="user_email" value="{{ user.email }}">
-                        <button type="submit" class="button is-dark {% if user.is_blocked %}is-success{% else %}is-danger{% endif %}">
-                            {% if user.is_blocked %}
-                                Desbloquear
-                            {% else %}
-                                Bloquear
-                            {% endif %}
-                        </button>
-                    </form>
-                    {%endif%}
-                </td>
-                <td>
-                    <a class="button is-dark" href="{{url_for('users.profile', user=user.email)}}">Editar</a>
+                    <a class="button is-dark" href="{{url_for('profile.index', id=user.id)}}">Editar</a>
                 </td>
             </tr>
         </tbody>
