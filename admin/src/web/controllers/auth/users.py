@@ -3,7 +3,7 @@ from flask import render_template
 from src.core.auth.models.user import User
 from flask import current_app as app
 from sqlalchemy import desc
-from src.core.auth.auth import permission_required, inject_user_permissions
+from src.core.auth.auth import inject_user_permissions
 
 bp = Blueprint('users', __name__, url_prefix='/users')
 
@@ -59,7 +59,6 @@ def showUsers(request):
 
 
 @bp.route('/', methods=['GET', 'POST'])
-@permission_required('team_index')
 @inject_user_permissions
 def index():
     app.logger.info("Call to index function")

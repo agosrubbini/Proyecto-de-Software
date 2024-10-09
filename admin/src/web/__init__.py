@@ -40,12 +40,9 @@ def create_app(env="development", static_folder="../../static"):
     app.register_blueprint(bp_registry)
     app.register_blueprint(bp_login)
     app.register_blueprint(bp_users)
-<<<<<<< admin/src/web/__init__.py
     app.register_blueprint(bp_profile)
-=======
     app.register_blueprint(bp_jya)
 
->>>>>>> admin/src/web/__init__.py
     # Register error handlers
     app.register_error_handler(404, error.error_not_found)
     app.register_error_handler(401, error.unautorized)

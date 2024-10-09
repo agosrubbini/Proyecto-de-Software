@@ -24,19 +24,19 @@
                   <div class="radios">
                     <label class="radio">
                       <input type="radio" name="role" value="1" {% if role == 1 %}checked{% endif %} />
-                      Técnica 
+                      Administracion 
                     </label>
                     <label class="radio">
                       <input type="radio" name="role"  value="2" {% if role == 2 %}checked{% endif %} />
-                      Ecuestre
+                      Tecnica
                     </label>
                     <label class="radio" >
                       <input type="radio" name="role"  value="3" {% if role == 3 %}checked{% endif %}/>
-                      Voluntariado
+                      Ecuestre
                     </label>
                     <label class="radio" >
                         <input type="radio" name="role"  value="4" {% if role == 4 %}checked{% endif %} />
-                        Administración
+                        Voluntariado
                       </label>
                       <label class="radio" >
                         <input type="radio" name="role"  value="5" {% if role == 5 %}checked{% endif %}/>
@@ -44,7 +44,7 @@
                       </label>
                   </div>
                 <button class="button is-dark" type="submit">Buscar</button>
-                <button class="button is-dark" href="{{url_for('users.index', page=page, order_option=order_by)}}">Quitar Filtros</button>
+                <a class="button is-dark" href="{{ url_for('users.index', page=page, order_option=order_by) }}">Quitar Filtros</a>
             </form>
             <form method="Post" action="{{url_for('users.index',search=search, role=role, activity=activity)}}">
                 <div class="select ">
@@ -81,7 +81,11 @@
                 <td>{{'Activo' if user.active else 'No activo'}}</td>
                 <td>{{'Bloqueado' if user.is_blocked else 'No bloqueado' }}</td>
                 <td>
-                    <a class="button is-dark" href="{{url_for('profile.index', id=user.id)}}">Editar</a>
+                    {% if user.role_id != 1 %}
+                        <a class="button is-dark" href="{{url_for('profile.index', id=user.id)}}">Editar</a>
+                    {% else%}
+                        <a class="button is-dark" href="{{url_for('profile.index', id=user.id)}}">Ver Perfil</a>
+                    {% endif %}
                 </td>
             </tr>
         </tbody>

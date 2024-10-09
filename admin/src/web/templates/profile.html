@@ -16,6 +16,7 @@
             <p>{{ context.user.role.name }}</p>
             </div>
             <div>
+                {% if not context.user.system_admin %}
                 <label class="is-size-5-desktop">Cambiar rol</label>
                 <form method="POST" action="{{url_for('profile.change_role', id=context.user.id)}}">          
                     <div class="select">
@@ -27,6 +28,7 @@
                     </div>
                     <button type="submit" class="button is-dark">Cambiar</button>
                 </form>
+                {% endif %}
             </div>    
         </div>
         <hr>
