@@ -60,6 +60,13 @@ def find_user_by_email(email):
 
     return User.query.filter_by(email=email).first()
 
+
+def find_user_by_id(id):
+
+    """Devuelve al usuario con el email pasado por parámetro"""
+
+    return User.query.filter_by(id=id).first()
+
 def find_role_id_by_name(name):
 
     """Devuelve el id del rol con el nombre pasado por parámetro"""
@@ -127,5 +134,15 @@ def get_user_permissions(user_mail):
         user_permissions = set()  # Usuario no autenticado, sin permisos
         return user_permissions, False
     return user_permissions, user.system_admin
-    
-    
+
+
+def update_role(user, role):
+    user.role_id = role
+
+    db.session.add(user)
+    db.session.commit()
+
+    return user
+
+def get_all_roles():
+    return Role.query.all()
