@@ -38,7 +38,7 @@ def run():
     admin = create_user(
         email="admin@gmail.com",
         alias="admin",
-        password="1234",#bcrypt.generate_password_hash("1234"),
+        password="1234",
         role_id=administracion.id,
         system_admin=True,
         active=True,

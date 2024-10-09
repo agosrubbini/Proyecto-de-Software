@@ -1,6 +1,6 @@
 from flask import Blueprint, request, session
 from flask import render_template
-from core.auth import get_user_permissions
+from core.auth.auth import inject_user_permissions
 from src.core.auth.models.user import User
 from src.core.database import db
 from flask import current_app as app
@@ -50,12 +50,9 @@ def showUsers(request):
     
     # Apply ordering and pagination
     users = query.order_by(order_criteria).paginate(page=page, per_page=2)
-    user_permissions, user_system_admin = get_user_permissions(session.get("user"))
     
     context = {
         'users': users,
-        "user_permissions": user_permissions,
-        "user_system_admin": user_system_admin,
     }
     
     app.logger.info("End of call to showUsers function")
@@ -65,6 +62,7 @@ def showUsers(request):
 
 @bp.route('/', methods=['GET', 'POST'])
 @permission_required('team_index')
+@inject_user_permissions
 def index():
     app.logger.info("Call to index function")
     context, page, order_by, search, role, activity = showUsers(request)

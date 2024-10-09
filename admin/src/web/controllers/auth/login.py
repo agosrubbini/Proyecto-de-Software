@@ -3,10 +3,12 @@ from src.core import auth
 from flask import current_app as app
 from flask_bcrypt import Bcrypt
 from src.web.handlers.auth import is_authenticated
+from src.core.auth.auth import inject_user_permissions
 
 bp = Blueprint("login", __name__, url_prefix="/login")
 
 @bp.get("/")
+@inject_user_permissions
 def login():#muestra el forms
     if is_authenticated(session):
         flash("Ya te encuentras logueado", "warning")
@@ -14,6 +16,7 @@ def login():#muestra el forms
     return render_template("auth/login.html")
 
 @bp.post("/authenticate")
+@inject_user_permissions
 def authenticate():
     app.logger.info("Call to authenticate method")
     params = request.form  # objeto desde donde obtengo los parámetros de entrada de un form
@@ -47,6 +50,7 @@ def authenticate():
     return redirect(url_for("home"))
 
 @bp.get("/logout")
+@inject_user_permissions
 def logout():
     app.logger.info("Call to logout method")
     if session.get("user"):

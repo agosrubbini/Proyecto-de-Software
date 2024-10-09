@@ -8,6 +8,7 @@ from src.core.persons.models.person import JyA
 from sqlalchemy import desc
 import json
 import io
+from src.core.auth.auth import inject_user_permissions
 
 
 bp = Blueprint("horsemen_and_amazons", __name__, url_prefix="/users-jya")
@@ -65,6 +66,7 @@ def showHorsemen(request):
     return horsemen, page, order_by, name, last_name, dni, attending_professionals
 
 @bp.get("/")
+@inject_user_permissions
 def list_jya_users():
 
     """
@@ -121,6 +123,7 @@ def showFiles(request):
 
 
 @bp.get("/<int:user_id>")
+@inject_user_permissions
 def list_info_by_jya(user_id):
 
     """
@@ -153,6 +156,7 @@ def list_info_by_jya(user_id):
     return render_template('horsemen_and_amazons/jya_user_info.html', context=context, page=page, order_by=order_by, search=search, document_type=document_type)
 
 @bp.route("/<int:user_id>/delete_file/<int:file_id>", methods=['POST', 'GET'])
+@inject_user_permissions
 def delete_file(user_id, file_id):
 
     print("Este es el file id", file_id)
@@ -171,6 +175,7 @@ def delete_file(user_id, file_id):
     return redirect(url_for('horsemen_and_amazons.list_info_by_jya', user_id=user_id))
    
 @bp.route("/<int:user_id>/add_file", methods=['POST', 'GET'])
+@inject_user_permissions
 def add_file(user_id):
 
     """
@@ -251,6 +256,7 @@ def add_file(user_id):
     return render_template("horsemen_and_amazons/registry_file.html", form=form, user_id=user_id)
 
 @bp.route("/<int:user_id>/download_file/<file_id>", methods=['GET'])
+@inject_user_permissions
 def download_file(user_id, file_id):
     # Obtener el archivo de la base de datos usando el ID
     file = find_file_by_id(file_id)  # Función que obtenga el archivo desde la base de datos
@@ -271,6 +277,7 @@ def download_file(user_id, file_id):
     return redirect(presigned_url)
 
 @bp.route("/<int:user_id>/edit_file/<file_id>", methods=['POST', 'GET'])
+@inject_user_permissions
 def edit_file(user_id, file_id):
 
     """
