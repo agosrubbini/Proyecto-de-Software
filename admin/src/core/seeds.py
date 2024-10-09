@@ -156,6 +156,14 @@ def run():
         auxiliar = employee1.id,
     )
 
+    billing1 = create_billing(
+        employee_id=employee1.id,
+        jya_id=JyA1.id,
+        amount=2000,
+        payment_method="Efectivo",
+        observation="Se abona en efectivo",
+    )
+
     team_index = create_permission(
         name="team_index",
     )

@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block title %}Nuevo cobro{% endblock %}
+{% block content%}
+<h1>Crear nuevo cobro</h1>
+<form method="POST" action="{{ url_for('billing.new_billing') }}">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.employee_id.label }}<br>
+        {{ form.employee_id(size=32) }}<br>
+        {% for error in form.employee_id.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.jya_id.label }}<br>
+        {{ form.jya_id(size=32) }}<br>
+        {% for error in form.jya_id.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.amount.label }}<br>
+        {{ form.amount(size=32) }}<br>
+        {% for error in form.amount.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.payment_method.label }}<br>
+        {{ form.payment_method() }}<br>
+        {% for error in form.payment_method.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.observation.label }}<br>
+        {{ form.observation(size=32) }}<br>
+        {% for error in form.observation.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}
