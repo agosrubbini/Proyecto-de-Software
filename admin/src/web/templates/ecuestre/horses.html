@@ -1,26 +1,55 @@
 {% extends "layout.html" %}
 {% block title %}Caballos{% endblock %}
-{% block content%}
+{% block content %}
 <div class="container">
-    <h1 class="title is-size-2 has-text-centered  has-text-black-bis mt-5">Caballos</h1>
+    <h1 class="title is-size-2 has-text-centered has-text-black-bis mt-5">Caballos</h1>
+
+    <!-- Botón para agregar nuevo caballo -->
     <div class="container">
-        <a class="has-text-link  is-size-4" href="{{ url_for('horses.create_horse_view') }}">
+        <a class="has-text-link is-size-4" href="{{ url_for('horses.create_horse_view') }}">
             <strong>Agregar nuevo Caballo</strong>
         </a>
-        <form method="POST" action="{{url_for('horses.order_by')}}">
-            <div class="select">
-                <select name="order_option" onchange="this.form.submit()">
-                  <option value="default">Ordenar por:</option>
-                  <option value="name_asc">Nombre: Orden ascendente</option>
-                  <option value="name_desc">Nombre: Orden descendente</option>
-                  <option value="birth_date_asc">Fecha de nacimiento: Orden ascendente</option>
-                  <option value="birth_date_desc">Fecha de nacimiento: Orden descendente</option>
-                  <option value="entry_date_asc">Fecha de ingreso: Orden ascendente</option>
-                  <option value="entry_date_desc">Fecha de ingreso: Orden descendente</option>
-                </select>
-              </div>
-        </form>
     </div>
+
+    <!-- Formulario de búsqueda -->
+    <form method="GET" action="{{ url_for('horses.list_horses') }}">
+        <div class="field is-grouped">
+            <div class="field">
+                <label class="label">Nombre</label>
+                <div class="control has-icons-left">
+                    <span class="icon is-small is-left">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input class="input" type="text" name="name" placeholder="Nombre del caballo" value="{{ name }}">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Raza</label>
+                <div class="control has-icons-left">
+                    <span class="icon is-small is-left">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input class="input" type="text" name="race" placeholder="Raza del caballo" value="{{ race }}">
+                </div>
+            </div>
+            <button class="button is-link" type="submit">Buscar</button>
+        </div>
+    </form>
+
+    <!-- Formulario para ordenar -->
+    <form method="GET" action="{{ url_for('horses.list_horses') }}">
+        <div class="control order_options">
+            <select id="order_option" name="order_option" onchange="this.form.submit()">
+                <option value="default">Ordenar por:</option>
+                <option value="name_asc">Nombre: A-Z</option>
+                <option value="name_desc">Nombre: Z-A</option>
+                <option value="birth_date_asc">Fecha de nacimiento: Menor-Mayor</option>
+                <option value="birth_date_desc">Fecha de nacimiento: Mayor-Menor</option>
+            </select>
+        </div>
+    </form>
+
+    <!-- Tabla de caballos -->
     <table class="table is-striped is-bordered is-fullwidth">
         <thead>
             <tr>
@@ -36,25 +65,28 @@
                 <th>Entrenadores y Conductores</th>
             </tr>
         </thead>
-        {% if context.horses %}
-        {% for horse in context.horses %}
         <tbody>
-            <tr>
-                <td>{{ horse.name }}</td>
-                <td>{{ horse.date_of_birth.strftime('%Y/%m/%d') }}</td>
-                <td>{{ 'Macho' if horse.gender == 'M' else 'Hembra' }}</td>
-                <td>{{ horse.race }}</td>
-                <td>{{ horse.fur }}</td>
-                <td>{{ 'Compra' if horse.purchase_or_donation == 'C' else 'Donación' }}</td>
-                <td>{{ horse.date_of_entry.strftime('%Y/%m/%d') }}</td>
-                <td>{{ horse.sede }}</td>
-                <td>{{ horse.type_jya_assigned }}</td>
-                <td>{{ horse.employees }}</td>
-            </tr>
+            {% if horses %} 
+                {% for horse in horses %}
+                    
+                        <td>{{ horse.name }}</td>
+                        <td>{{ horse.date_of_birth.strftime('%Y/%m/%d') }}</td>
+                        <td>{{ horse.gender }}</td>
+                        <td>{{ horse.race }}</td>
+                        <td>{{ horse.fur }}</td>
+                        <td>{{ horse.purchase_or_donation }}</td>
+                        <td>{{ horse.date_of_entry.strftime('%Y/%m/%d') }}</td>
+                        <td>{{ horse.sede }}</td>
+                        <td>{{ horse.type_jya_assigned }}</td>
+                        <td>{{ horse.employees }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="10" style="text-align: center;">No hay caballos registrados en el sistema</td>
+                </tr>
+            {% endif %}
         </tbody>
-        {% endfor %}
-        {% endif %}
     </table>
 </div>
-
 {% endblock %}
