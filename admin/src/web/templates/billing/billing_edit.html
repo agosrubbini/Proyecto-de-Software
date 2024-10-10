@@ -1,17 +1,17 @@
 {% extends "layout.html" %}
-{% block title %}Nuevo cobro{% endblock %}
+{% block title %}Editar cobro{% endblock %}
 {% block head %}
     {{ super() }}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
 {% endblock %}
-{% block content%}
-<form method="POST" action="{{ url_for('billing.new_billing') }}">
+{% block content %}
+<form method="POST" action="{{ url_for('billing.edit_billing', billing_id=billing.id) }}">
     {{ form.csrf_token }}
 
     <div class="div-titulo">
-        <h1 class="label">Agregar cobro</h1>
+        <h1 class="label">Editar cobro</h1>
         <hr class="linea-titulo">
     </div>
 
@@ -20,7 +20,7 @@
         <select name="jya_id" id="jya_id">
             <option value=""></option>
             {% for jya in jya_list %}
-            <option value="{{ jya.id }}">{{ jya.name }} {{ jya.last_name }}</option>
+            <option value="{{ jya.id }}" {% if jya.id == billing.jya_id %}selected{% endif %}>{{ jya.name }} {{ jya.last_name }}</option>
             {% endfor %}
         </select>
         {% if form.jya_id.errors %}
@@ -34,7 +34,7 @@
     <hr style="margin-top: 0;">
 
     <label class="label" for="payment_date">Fecha de pago</label>
-    <input class="input" type="date" name="payment_date" id="payment_date">
+    <input class="input" type="date" name="payment_date" id="payment_date" value="{{ billing.payment_date.strftime('%Y-%m-%d') }}">
     {% if form.payment_date.errors %}
             <div class="alert alert-danger">
                 {% for error in form.payment_date.errors %}
@@ -46,12 +46,12 @@
 
     <label class="label" for="payment_method">Metodo de pago</label>
     <div class="control">
-        <select name="payment_method" id="payment_method" enabled>
+        <select name="payment_method" id="payment_method">
             <option value=""></option>
-            <option value="Efectivo">Efectivo</option>
-            <option value="Tarjeta de Credito">Tarjeta de crédito</option>
-            <option value="Tarjeta de Debito">Tarjeta de débito</option>
-            <option value="Otro">Otro</option>
+            <option value="Efectivo" {% if billing.payment_method == 'Efectivo' %}selected{% endif %}>Efectivo</option>
+            <option value="Tarjeta de credito" {% if billing.payment_method == 'Tarjeta de credito' %}selected{% endif %}>Tarjeta de crédito</option>
+            <option value="Tarjeta de debito" {% if billing.payment_method == 'Tarjeta de debito' %}selected{% endif %}>Tarjeta de débito</option>
+            <option value="Otro" {% if billing.payment_method == 'Otro' %}selected{% endif %}>Otro</option>
         </select>
     </div>
     {% if form.payment_method.errors %}
@@ -64,7 +64,7 @@
     <hr style="margin-top: 0;">
 
     <label class="label" for="amount">Monto</label>
-    <input class="input" name="amount" type="number" step="0.01">
+    <input class="input" name="amount" type="number" step="0.01" value="{{ billing.amount }}">
     {% if form.amount.errors %}
             <div class="alert alert-danger">
                 {% for error in form.amount.errors %}
@@ -77,9 +77,9 @@
     <label class="label" for="employee_id">Empleado</label>
     <div class="control">
         <select name="employee_id" id="employee_id">
-            <option value="{{ employee_actual.id }}">{{employee_actual.name}} {{employee_actual.last_name}}</option>
+            <option value=""></option>
             {% for employee in employee_list %}
-            <option value="{{ employee.id }}">{{ employee.name }} {{ employee.last_name }}</option>
+            <option value="{{ employee.id }}" {% if employee.id == billing.employee_id %}selected{% endif %}>{{ employee.name }} {{ employee.last_name }}</option>
             {% endfor %}
         </select>
         {% if form.employee_id.errors %}
@@ -93,7 +93,7 @@
     <hr style="margin-top: 0;">
 
     <label class="label" for="observation">Observaciones:</label>
-    <input type="text" name="observation" id="observation">
+    <input type="text" name="observation" id="observation" value="{{ billing.observation }}">
     {% if form.observation.errors %}
             <div class="alert alert-danger">
                 {% for error in form.observation.errors %}
@@ -103,7 +103,11 @@
         {% endif %}
     <hr>
 
-    <button type="submit">Crear</button>
+    <div class="buttons">
+        <a class="a-button" href="{{ url_for('billing.show_billing', billing_id = billing.id) }}" style="color: white;"><button type="button">Cancelar</button></a>
+        <button type="submit">Actualizar</button>
+    </div>
+        
 </form>
 
 <script>
@@ -112,16 +116,10 @@
         $('select').selectize({
             sortField: 'text'
         });
-
-        //Script para mostrar la fecha actual en el input de fecha
-        var today = new Date().toISOString().split('T')[0];
-        document.getElementById('payment_date').value = today;
-
     });
 </script>
 
 <style>
-    
     body {
         font-family: 'Poppins', sans-serif;
     }
@@ -217,7 +215,7 @@
         transform: scale(1.05);
     }   
 
-    .input, .input::placeholder, .label, .button {
+    .input, .input::placeholder, .label {
         color: black;
         font-weight: 600;
         font-style: bold;
@@ -226,6 +224,17 @@
     i {
         color: black;
     }
-    
+
+    .buttons {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+    }
+
+    .a-button {
+        width: 100%;
+        color: white;
+    }
+
 </style>
 {% endblock %}

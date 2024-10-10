@@ -43,9 +43,12 @@ def list_billings():
     billings_pagination = billings_query.paginate(page=page, per_page=per_page, error_out=False)
     billings = billings_pagination.items
 
+    pos = 1
     for billing in billings:
         billing.employee_name = get_person_name_and_last_name(billing.employee_id)
         billing.jya_name = get_person_name_and_last_name(billing.jya_id)
+        billing.pos = pos
+        pos += 1
 
     if q:
         billings = [billing for billing in billings if q.lower() in billing.employee_name.lower()]
@@ -53,7 +56,7 @@ def list_billings():
     if payment_method:
         billings = [billing for billing in billings if payment_method.lower() in billing.payment_method.lower()]
 
-    return render_template('billing/billing_list.html', billings=billings, order=order, q=q, pagination=billings_pagination, payment_method=payment_method, start_date=start_date_str, end_date=end_date_str,)
+    return render_template('billing/billing_list.html', billings=billings, order=order, q=q, pagination=billings_pagination, payment_method=payment_method, start_date=start_date_str, end_date=end_date_str, form=BillingForm())
 
 @bp.route('/crear', methods=['GET', 'POST'])
 @permission_required('billing_new')
@@ -92,3 +95,36 @@ def show_billing(billing_id):
     billing.employee_name = get_person_name_and_last_name(billing.employee_id)
     billing.jya_name = get_person_name_and_last_name(billing.jya_id)
     return render_template('billing/billing_show.html', billing=billing)
+
+@bp.route('/cobro/editar/<int:billing_id>', methods=['GET', 'POST'])
+@permission_required('billing_edit')
+@inject_user_permissions
+def edit_billing(billing_id):
+    billing = Billing.query.get(billing_id)
+    form = BillingForm(obj=billing)
+    jya_list = JyA.query.all()
+    employee_list = Employee.query.all()
+
+    if form.validate_on_submit():
+        billing.employee_id = form.employee_id.data
+        billing.jya_id = form.jya_id.data
+        billing.amount = form.amount.data
+        billing.payment_method = form.payment_method.data
+        billing.observation = form.observation.data
+        db.session.commit()
+        flash('Billing updated successfully!', 'success')
+        return redirect(url_for('billing.show_billing', billing_id=billing.id))
+    return render_template('billing/billing_edit.html', form=form, jya_list=jya_list, employee_list=employee_list, billing=billing)
+
+@bp.route('/eliminar/<int:billing_id>', methods=['POST'])
+@permission_required('billing_delete')
+@inject_user_permissions
+def delete_billing(billing_id):
+    billing = Billing.query.get(billing_id)
+    if billing:
+        db.session.delete(billing)
+        db.session.commit()
+        flash('Billing deleted successfully!', 'success')
+    else:
+        flash('Billing not found!', 'danger')
+    return redirect(url_for('billing.list_billings'))

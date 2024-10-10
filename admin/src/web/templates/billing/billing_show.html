@@ -1,12 +1,168 @@
 {% extends "layout.html" %}
 {% block title %}Cobro{% endblock %}
 {% block content %}
-<h1>Detalles del cobro</h1>
-<p>Employee Name: {{ billing.employee_name }}</p>
-<p>JyA Name: {{ billing.jya_name }}</p>
-<p>Amount: {{ billing.amount }}</p>
-<p>Payment Method: {{ billing.payment_method }}</p>
-<p>Observation: {{ billing.observation }}</p>
-<p>Payment Date: {{ billing.payment_date.strftime('%d-%m-%Y') }}</p>
-<a href="{{ url_for('billing.list_billings') }}">Volver al listado de cobros</a>
+
+<form action="">
+    <div class="div-titulo">
+        <h1 class="label">Cobro</h1>
+        <hr class="linea-titulo">
+    </div>
+
+    <label class="label" for="jya_id">J&A</label>
+    <div class="control">
+        <input disabled type="text" value="{{ billing.jya_name }}">
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="payment_date">Fecha de pago</label>
+    <input disabled type="date" name="payment_date" id="payment_date" value="{{ billing.payment_date.strftime('%Y-%m-%d') }}">
+    <hr>
+
+    <label class="label" for="payment_method">Metodo de pago</label>
+    <div class="control">
+        <input disabled type="text" value="{{ billing.payment_method }}">
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="amount">Monto</label>
+    <input disabled name="amount" type="number" step="0.01" value="{{ billing.amount }}">
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="employee_id">Empleado</label>
+    <div class="control">
+        <input disabled type="text" value="{{ billing.employee_name }}">
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="observation">Observaciones:</label>
+    <input disabled type="text" name="observation" id="observation" value="{{ billing.observation }}">
+    <hr>
+
+    <div class="buttons">
+        <a class="a-button" href="{{ url_for('billing.list_billings') }}"><button type="button">Listado de cobros</button></a>
+        <a class="a-button" href="{{ url_for('billing.edit_billing', billing_id = billing.id) }} "><button type="button">Editar</button></a>
+    </div>
+</form>
+    
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    h1 {
+        padding-top: 20px;
+        font-size: 24px !important;
+        margin-bottom: 0 !important;
+        font-weight: 600;
+    }
+
+    select {
+        border-radius: 10px;
+        background-color: hsl(221, 14%, 20%);
+        width: 175px;
+        height: 40px;
+        text-align: center;
+        color: hsl(221, 14%, 93%);
+        font-family: 'Poppins', sans-serif;
+        margin-bottom: 15px;
+        border-color: hsl(221, 14%, 50%);
+        padding-inline-end: 2px;
+        transition: background-color 0.3s ease;
+    }
+    
+    select:hover {
+        background-color: hsl(221, 14%, 15%);
+    }
+
+    .input, form {
+        background-color: white;
+    }
+    
+    .div-titulo {
+        width: fit-content;
+    }
+
+    .linea-titulo {
+        border: none;
+        border: 2px solid var(--primary-color);
+        margin-top: 0px;
+        width: 100%;
+    }
+    
+    form {
+        display: block;
+        width: 30%;
+        margin: 60px auto;
+        height: 80%;
+        padding: 30px 50px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        background-color: white;
+    }
+
+    hr {
+        margin-top: -10px;
+        border: 1px solid black;
+    }
+
+    input {
+        margin-bottom: 15px;
+        border-radius: 10px;
+        border: 1px solid hsl(221, 14%, 80%);
+        padding: 10px;
+        height: 40px;
+        transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        width: 100%;
+    }
+
+    input:focus {
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        border-color: hsl(221, 14%, 50%);
+        outline: none;
+    }
+
+    button {
+        background-color: var(--primary-color);
+        width: 100%;
+        height: 40px;
+        color: white;
+        font-weight: bold;
+        display: block;
+        margin: 20px auto;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+        background-color: hsl(221, 14%, 40%);
+        transform: scale(1.05);
+    }   
+
+    .input, .input::placeholder, .label {
+        color: black;
+        font-weight: 600;
+        font-style: bold;
+    }
+    
+    i {
+        color: black;
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        color: white;
+    }
+
+    .a-button {
+        width: 100%;
+        color: white;
+    }
+
+</style>
+
 {% endblock %}
