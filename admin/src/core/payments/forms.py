@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, FloatField, SelectField, StringField, SubmitField
+from wtforms import DateField, IntegerField, FloatField, SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired, NumberRange
 
 class BillingForm(FlaskForm):
@@ -10,7 +10,8 @@ class BillingForm(FlaskForm):
         ('Efectivo', 'Efectivo'),
         ('Tarjeta de Credito', 'Tarjeta de Credito'),
         ('Tarjeta de Debito', 'Tarjeta de Debito'),
-        ('Otros', 'Otros')
+        ('Otro', 'Otro')
     ], validators=[DataRequired()])
-    observation = StringField('Observation', validators=[DataRequired()])
+    payment_date = DateField('Payment Date', validators=[DataRequired()])
+    observation = StringField('Observation', validators=[])
     submit = SubmitField('Submit')

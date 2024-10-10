@@ -100,7 +100,7 @@
                         <td><a href="#">{{ billing.employee_name }}</a></td>
                         <td><a href="#">{{ billing.jya_name }}</a></td>
                         <td>{{ billing.amount }}</td>
-                        <td>{{ billing.payment_date }}</td>
+                        <td>{{ billing.payment_date.strftime('%d-%m-%Y') }}</td>
                         <td>{{ billing.payment_method }}</td>
                     </tr>
                     {% endfor %}
