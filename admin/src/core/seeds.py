@@ -35,12 +35,22 @@ def run():
         name="Sin rol",
     )
 
-    admin = create_user(
-        email="admin@gmail.com",
-        alias="admin",
+    system_admin = create_user(
+        email="system_admin@gmail.com",
+        alias="system_admin",
         password="1234",
         role_id=administracion.id,
         system_admin=True,
+        active=True,
+        is_blocked=False
+    )
+
+    user_admin = create_user(
+        email="user_admin@gmail.com",
+        alias="user_admin",
+        password="1234",
+        role_id=administracion.id,
+        system_admin=False,
         active=True,
         is_blocked=False
     )
@@ -154,6 +164,14 @@ def run():
         rider = employee1.id,
         horse = horse1.id,
         auxiliar = employee1.id,
+    )
+
+    billing1 = create_billing(
+        employee_id=employee1.id,
+        jya_id=JyA1.id,
+        amount=2000,
+        payment_method="Efectivo",
+        observation="Se abona en efectivo",
     )
 
     team_index = create_permission(
