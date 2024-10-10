@@ -1,0 +1,14 @@
+  :root {
+    --primary-color: rgba(120,185,190,255);
+    --secondary-color: rgba(247,189,105,255);
+    --color-text: #abb5b7;
+    --font-primary: Poppins;
+    --font-color: black;
+  }
+
+  html, body {
+    font-family: var(--font-primary) !important;
+    color: var(--font-color) !important;
+  }
+
+  
