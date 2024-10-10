@@ -91,6 +91,7 @@
                     <th>Monto</th>
                     <th>Dia</th>
                     <th>Metodo de pago</th>
+                    <th>Acción</th>
                 </tr>
             </thead>
             <tbody>
@@ -102,6 +103,10 @@
                         <td>{{ billing.amount }}</td>
                         <td>{{ billing.payment_date.strftime('%d-%m-%Y') }}</td>
                         <td>{{ billing.payment_method }}</td>
+                        <td>
+                            <a href="{{ url_for('billing.show_billing', billing_id = billing.id) }}" class="button is-small is-white"><i class="fas fa-eye" title="Ver"></i></a>
+                            <a href="#" class="button is-small is-white"><i class="fas fa-edit" title="Editar"></i></a>
+                            <a href="#" class="button is-small is-white"><i class="fas fa-trash" title="Eliminar"></i></a>
                     </tr>
                     {% endfor %}
                 {% else %}

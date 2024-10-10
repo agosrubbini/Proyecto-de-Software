@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block title %}Cobro{% endblock %}
+{% block content %}
+<h1>Detalles del cobro</h1>
+<p>Employee Name: {{ billing.employee_name }}</p>
+<p>JyA Name: {{ billing.jya_name }}</p>
+<p>Amount: {{ billing.amount }}</p>
+<p>Payment Method: {{ billing.payment_method }}</p>
+<p>Observation: {{ billing.observation }}</p>
+<p>Payment Date: {{ billing.payment_date.strftime('%d-%m-%Y') }}</p>
+<a href="{{ url_for('billing.list_billings') }}">Volver al listado de cobros</a>
+{% endblock %}

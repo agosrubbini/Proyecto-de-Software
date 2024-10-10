@@ -83,3 +83,12 @@ def new_billing():
         flash('Billing created successfully!', 'success')
         return redirect(url_for('billing.list_billings'))
     return render_template('billing/billing_new.html', form=form, jya_list=jya_list, employee_list=employee_list, employee_actual=employee_actual)
+
+@bp.route('/cobro/<int:billing_id>', methods=['GET', 'POST'])
+@permission_required('billing_show')
+@inject_user_permissions
+def show_billing(billing_id):
+    billing = Billing.query.get(billing_id)
+    billing.employee_name = get_person_name_and_last_name(billing.employee_id)
+    billing.jya_name = get_person_name_and_last_name(billing.jya_id)
+    return render_template('billing/billing_show.html', billing=billing)
