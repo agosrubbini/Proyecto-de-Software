@@ -2,7 +2,7 @@ from src.core.database import db
 from datetime import datetime
 
 
-class File(db.Model):
+class Horse_file(db.Model):
 
     __tablename__ = "horses_files"
 

@@ -23,7 +23,13 @@ class Horse(db.Model):
     type_jya_assigned = db.Column(db.Enum("Hipoterapia", "Monta Terapeutica", "Deporte Ecuestre Adaptado", 
                                           "Actividades Recreativas", "Equitacion", name="type_jya_assigned"), nullable=False) 
     
-    employees = db.relationship("Employee", secondary=horse_employee, backref="horse")  
+    employees = db.relationship("Employee", secondary=horse_employee, backref="horse")
+
+    files = db.relationship("Horse_file", backref="horse")
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'ecuestre',
+    }
 
     def __init__(self, id=None, name=None, date_of_birth=None, gender=None, race=None, fur=None, purchase_or_donation=None, date_of_entry=None, sede=None,type_jya_assigned=None):
 
@@ -37,5 +43,3 @@ class Horse(db.Model):
         self.date_of_entry = date_of_entry
         self.sede = sede
         self.type_jya_assigned = type_jya_assigned
-
-
