@@ -15,7 +15,7 @@ def showUsers(request):
         order_by = request.form.get('order_option', 'email_asc', type=str)
     else:
         order_by = request.args.get('order_option', 'email_asc', type=str)
-    app.logger.info("Call to order_by function with order_option: %s", order_by)
+    app.logger.info("order_option: %s", order_by)
     
     # Map order options to actual column sorting
     order_mapping = {

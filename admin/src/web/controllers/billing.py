@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash
 from core.auth import find_user_by_email
+from src.core.payments import create_billing
 from src.core.database import db
 from src.core.payments.models.billing import Billing
 from src.core.persons.models.person import Employee, JyA, Person
@@ -74,15 +75,13 @@ def new_billing():
         employee_list = employee_list.remove(employee_actual)
 
     if form.validate_on_submit():
-        new_billing = Billing(
+        create_billing(
             employee_id=form.employee_id.data,
             jya_id=form.jya_id.data,
             amount=form.amount.data,
             payment_method=form.payment_method.data,
             observation=form.observation.data
         )
-        db.session.add(new_billing)
-        db.session.commit()
         flash('Billing created successfully!', 'success')
         return redirect(url_for('billing.list_billings'))
     return render_template('billing/billing_new.html', form=form, jya_list=jya_list, employee_list=employee_list, employee_actual=employee_actual)

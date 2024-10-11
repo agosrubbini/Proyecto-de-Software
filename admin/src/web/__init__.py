@@ -5,6 +5,7 @@ from web.controllers.auth.registry import bp as bp_registry
 from web.controllers.auth.login import bp as bp_login
 from web.controllers.auth.users import bp as bp_users
 from web.controllers.auth.profile import bp as bp_profile
+from web.controllers.payment import bp as bp_payment
 from web.controllers.horsemen_and_amazons import bp as bp_jya
 from web.controllers.billing import bp as bp_billing
 from src.core import database
@@ -44,6 +45,7 @@ def create_app(env="development", static_folder="../../static"):
     app.register_blueprint(bp_profile)
     app.register_blueprint(bp_jya)
     app.register_blueprint(bp_billing)
+    app.register_blueprint(bp_payment)
 
     # Register error handlers
     app.register_error_handler(404, error.error_not_found)

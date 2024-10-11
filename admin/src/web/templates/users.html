@@ -90,6 +90,10 @@
             </tr>
         </tbody>
         {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="5">No hay usuarios</td>
+            </tr>
         {% endif %}
     </table>
     <nav class="pagination" role="navigation" aria-label="pagination">

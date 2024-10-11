@@ -174,6 +174,14 @@ def run():
         observation="Se abona en efectivo",
     )
 
+    payment1 = create_payment(
+        beneficiary=employee1.id,
+        amount=2000,
+        payment_date=datetime.now(),
+        payment_type="Honorarios",
+        description="Pago de honorarios",
+    )
+
     team_index = create_permission(
         name="team_index",
     )
