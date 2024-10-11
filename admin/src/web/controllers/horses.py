@@ -21,6 +21,8 @@ def show_horses(request):
         order_by = request.args.get('order_option', 'name_asc', type=str)
     else:
         order_by = request.args.get('order_option', 'name_asc', type=str)
+    
+    app.logger.info("Call to showHorsemen function with order_option: %s", order_by)
 
     # Map order options to actual column sorting
     order_mapping = {
@@ -57,6 +59,7 @@ def show_horses(request):
     return horse, page, order_by, name, type_jya_assigned
 
 @bp.get("/")
+#@inject_user_permissions
 def list_horses():
 
     """
@@ -65,7 +68,7 @@ def list_horses():
 
     horse, page, order_by, name, type_jya_assigned = show_horses(request)
 
-    return render_template ("ecuestre/horses.html", horses = horse.items, page=page, order_by=order_by, name=name, type_jya_assigned=type_jya_assigned)
+    return render_template ("ecuestre/horses.html", horses = horse, page=page, order_by=order_by, name=name, type_jya_assigned=type_jya_assigned)
 
 
 @bp.route('/create', methods=['GET', 'POST'])
@@ -140,6 +143,8 @@ def show_files(request):
     search = request.args.get('search', '', type=str)
     document_type = request.args.get('document_type', '', type=str)
 
+    app.logger.info("Search: %s, Document_Type: %s", search, document_type)
+
     # Build the query
     query = Horse_file.query
     
@@ -155,11 +160,13 @@ def show_files(request):
 
 
 @bp.get("/<int:horse_id>")
-def list_documentation_by_id(horse_id):
+#@inject_user_permissions
+def list_info_by_id(horse_id):
 
     """
         Esta función retorna la información del caballo asociado al id pasado por parámetro en la url.
     """
+    app.logger.info("Call to index function")
 
     horse = find_horse_by_id(horse_id)
     files = get_files_by_horse_id(horse_id)
@@ -179,10 +186,13 @@ def list_documentation_by_id(horse_id):
         'id': horse_id,
     }
 
+    app.logger.info("End of call to index function")
+    
     return render_template('ecuestre/horses_info.html', context=context, page=page, order_by=order_by, search=search, document_type=document_type)
 
 
 @bp.route("/<int:horse_id>/delete_file/<int:file_id>", methods=['POST', 'GET'])
+#@inject_user_permissions
 def delete_file(horse_id, file_id):
 
     print("Este es el file id", file_id)
@@ -198,17 +208,18 @@ def delete_file(horse_id, file_id):
     flash('Archivo eliminado correctamente', 'success')
 
     # Redirigir a la vista order_by pasando el user_id y la opción de orden como query parameters
-    return redirect(url_for('horses.list_documentation_by_id', horse_id=horse_id))
+    return redirect(url_for('horses.list_info_by_id', horse_id=horse_id))
 
 
 @bp.route("/<int:horse_id>/add_file", methods=['POST', 'GET'])
+#@inject_user_permissions
 def add_file(horse_id):
 
     """
     Muestra la vista del registro,  valida los parametros, y guarda al archivo en la base de datos si
     se recibió el formulario y el mismo es válido.
     """
-
+    app.logger.info("Call to add_file")
     form = registryFileForm()
 
     minio_client = app.storage.client
@@ -271,7 +282,7 @@ def add_file(horse_id):
             )
 
         flash("El archivo se ha creado correctamente", "success")
-        return redirect(url_for('horses.list_documentation_by_id', horse_id=horse_id))
+        return redirect(url_for('horses.list_info_by_id', horse_id=horse_id))
     
     else:
         for field, errors in form.errors.items():
@@ -282,6 +293,7 @@ def add_file(horse_id):
 
 
 @bp.route("/<int:horse_id>/download_file/<file_id>", methods=['GET'])
+#@inject_user_permissions
 def download_file(horse_id, file_id):
     # Obtener el archivo de la base de datos usando el ID
     file = find_file_by_id(file_id)
@@ -301,6 +313,7 @@ def download_file(horse_id, file_id):
     return redirect(presigned_url)
 
 @bp.route("/<int:horse_id>/edit_file/<file_id>", methods=['POST', 'GET'])
+#@inject_user_permissions
 def edit_file(horse_id, file_id):
 
     """
@@ -368,7 +381,7 @@ def edit_file(horse_id, file_id):
             )
 
         flash("Archivo editado correctamente", "success")
-        return redirect(url_for('horses._documentation_by_id', horse_id=horse_id))
+        return redirect(url_for('horses.list_info_by_id', horse_id=horse_id))
 
     else:
         for field, errors in form.errors.items():

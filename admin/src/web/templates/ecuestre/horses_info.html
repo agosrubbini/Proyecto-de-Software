@@ -1,7 +1,15 @@
 {% extends "layout.html" %}
 
 {% block title %}Información y documentos del jinete{% endblock %}
-
+{% block head %}
+    {{ super() }}
+    <link
+          rel="stylesheet"
+          href="{{ url_for('static', filename='styles/ecuestre/horses_info.css') }}"/>
+    <link
+          rel="stylesheet"
+          href="{{ url_for('static', filename='styles/ecuestre/horses_list.css') }}"/>
+{% endblock %}
 {% block content %}
 
     <div class="encabezado">
@@ -13,7 +21,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const horse = {{ context.horse | tojson | safe }};
+            const horse = {{ context.horse| tojson | safe }};
             const files = {{ context.files | tojson | safe }};
             const buttonInfo = document.getElementById('info');
             const buttonDocs = document.getElementById('docs');
@@ -25,7 +33,7 @@
                 buttonDocs.classList.remove('clicked');
                 contenedor.classList.remove('docs');
 
-                let table_horses = `<table class="table is-striped">
+                let table_users = `<table class="table is-striped">
                                     <thead>
                                         <tr>
                                             <th>Campo</th>
@@ -34,11 +42,12 @@
                                     </thead>
                                     <tbody>
                                         <tr><td>Nombre</td><td>${horse.name}</td></tr>
-                                        <tr><td>Apellido</td><td>${horse.date_of_birth}</td></tr>
-                                        <tr><td>DNI</td><td>${horse.gender}</td></tr>
-                                        <tr><td>Edad</td><td>${horse.race}</td></tr>
-                                        <tr><td>Número de Teléfono</td><td>${horse.fur}</td></tr>
-                                        <tr><td>Dirección</td><td>${horse.purchase_or_donation}</td></tr>
+                                        <tr><td>Fecha de nacimiento</td><td>${horse.date_of_birth}</td></tr>
+                                        <tr><td>Genero</td><td>${horse.gender}</td></tr>
+                                        <tr><td>Raza</td><td>${horse.race}</td></tr>
+                                        <tr><td>Pelaje</td><td>${horse.fur}</td></tr>
+                                        <tr><td>Sede</td><td>${horse.sede}</td></tr>
+                                        <tr><td>tipo de jinetes y amazonas asignados</td><td>${horse.type_jya_assigned}</td></tr>
                                     </tbody>
                                 </table>`;
 
@@ -52,7 +61,7 @@
                 contenedor.classList.add('docs');
 
                 let inputs = `  
-                    <form method="GET" action="{{url_for('horses.list_documentation_by_id', horse_id=context.id)}}">
+                    <form method="GET" action="{{url_for('horses.list_info_by_id', horse_id=context.id)}}">
                         <div class="field is-grouped">
                             <div class="field">
                                 <label class="label">Nombre</label>
@@ -79,7 +88,7 @@
                             <button class="boton filter" type="submit">Filtrar</button>
                         </div>
                     </form>
-                    <form method="GET" action="{{ url_for('horses.list_documentation_by_id', horse_id=context.id) }}">
+                    <form method="GET" action="{{ url_for('horses.list_info_by_id', horse_id=context.id) }}">
                         <div class="control order_options_docs">
                             <select id="order_option" name="order_option" onchange="this.form.submit()">
                                 <option value="default">Selecciona un orden</option>
@@ -130,8 +139,8 @@
                             </tbody>
                         </table>
                         <nav class="pagination" role="navigation" aria-label="pagination">
-                            <a class="boton pagination-previous" {% if not context.pagination.has_prev %}disabled{% else %} href="{{url_for('horses.list_documentation_by_id', horse_id=context.id, page=page-1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Previous</a>
-                            <a class="boton pagination-next" {% if not context.pagination.has_next %}disabled{% else %} href="{{url_for('horses.list_documentation_by_id', horse_id=context.id, page=page+1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Next page</a>
+                            <a class="boton pagination-previous" {% if not context.pagination.has_prev %}disabled{% else %} href="{{url_for('horses.list_info_by_id', horse_id=context.id, page=page-1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Previous</a>
+                            <a class="boton pagination-next" {% if not context.pagination.has_next %}disabled{% else %} href="{{url_for('horses.list_info_by_id', horse_id=context.id, page=page+1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Next page</a>
                         </nav>
 
                     `;

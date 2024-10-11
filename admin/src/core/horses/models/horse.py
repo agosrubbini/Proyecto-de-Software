@@ -43,3 +43,15 @@ class Horse(db.Model):
         self.date_of_entry = date_of_entry
         self.sede = sede
         self.type_jya_assigned = type_jya_assigned
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "date_of_birth": self.date_of_birth,
+            "gender": self.gender,
+            "race": self.race,
+            "fur": self.fur,
+            "sede": self.sede,
+            "type_jya_assigned": self.type_jya_assigned,
+        }
