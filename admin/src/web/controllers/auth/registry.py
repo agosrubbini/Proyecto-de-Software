@@ -1,14 +1,15 @@
 from flask import Blueprint, render_template, redirect, flash, url_for, session
-from src.core.auth import create_user 
+from src.core.auth import create_user, find_user_by_email, find_role_id_by_name 
 from src.core.auth.forms import registryForm
 from flask import current_app as app
-from src.core.auth import find_user_by_email, find_role_id_by_name
+from src.core.auth.auth import inject_user_permissions
 from src.web.handlers.auth import is_authenticated
 
 bp = Blueprint('registry', __name__, url_prefix='/registry')
 
 
 @bp.route('/', methods=['GET','POST'])
+@inject_user_permissions
 def registry_function():
 
     """
@@ -22,6 +23,7 @@ def registry_function():
     app.logger.info("Call to registry_function")
     form = registryForm()
     app.logger.info("El formulario es valido: %s", form.validate_on_submit())
+
     if (form.validate_on_submit()):
         
         if (find_user_by_email(form.email.data)):

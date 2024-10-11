@@ -1,0 +1,231 @@
+{% extends "layout.html" %}
+{% block title %}Nuevo cobro{% endblock %}
+{% block head %}
+    {{ super() }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+{% endblock %}
+{% block content%}
+<form method="POST" action="{{ url_for('billing.new_billing') }}">
+    {{ form.csrf_token }}
+
+    <div class="div-titulo">
+        <h1 class="label">Agregar cobro</h1>
+        <hr class="linea-titulo">
+    </div>
+
+    <label class="label" for="jya_id">J&A</label>
+    <div class="control">
+        <select name="jya_id" id="jya_id">
+            <option value=""></option>
+            {% for jya in jya_list %}
+            <option value="{{ jya.id }}">{{ jya.name }} {{ jya.last_name }}</option>
+            {% endfor %}
+        </select>
+        {% if form.jya_id.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.jya_id.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="payment_date">Fecha de pago</label>
+    <input class="input" type="date" name="payment_date" id="payment_date">
+    {% if form.payment_date.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.payment_date.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+    <label class="label" for="payment_method">Metodo de pago</label>
+    <div class="control">
+        <select name="payment_method" id="payment_method" enabled>
+            <option value=""></option>
+            <option value="Efectivo">Efectivo</option>
+            <option value="Tarjeta de Credito">Tarjeta de crédito</option>
+            <option value="Tarjeta de Debito">Tarjeta de débito</option>
+            <option value="Otro">Otro</option>
+        </select>
+    </div>
+    {% if form.payment_method.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.payment_method.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="amount">Monto</label>
+    <input class="input" name="amount" type="number" step="0.01">
+    {% if form.amount.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.amount.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="employee_id">Empleado</label>
+    <div class="control">
+        <select name="employee_id" id="employee_id">
+            <option value="{{ employee_actual.id }}">{{employee_actual.name}} {{employee_actual.last_name}}</option>
+            {% for employee in employee_list %}
+            <option value="{{ employee.id }}">{{ employee.name }} {{ employee.last_name }}</option>
+            {% endfor %}
+        </select>
+        {% if form.employee_id.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.employee_id.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="observation">Observaciones:</label>
+    <input type="text" name="observation" id="observation">
+    {% if form.observation.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.observation.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+    <button type="submit">Crear</button>
+</form>
+
+<script>
+    $(document).ready(function () {
+        //Script para el select de J&A
+        $('select').selectize({
+            sortField: 'text'
+        });
+
+        //Script para mostrar la fecha actual en el input de fecha
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById('payment_date').value = today;
+
+    });
+</script>
+
+<style>
+    
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    h1 {
+        padding-top: 20px;
+        font-size: 24px !important;
+        margin-bottom: 0 !important;
+        font-weight: 600;
+    }
+
+    select {
+        border-radius: 10px;
+        background-color: hsl(221, 14%, 20%);
+        width: 175px;
+        height: 40px;
+        text-align: center;
+        color: hsl(221, 14%, 93%);
+        font-family: 'Poppins', sans-serif;
+        margin-bottom: 15px;
+        border-color: hsl(221, 14%, 50%);
+        padding-inline-end: 2px;
+        transition: background-color 0.3s ease;
+    }
+    
+    select:hover {
+        background-color: hsl(221, 14%, 15%);
+    }
+
+    .input, form {
+        background-color: white;
+    }
+    
+    .div-titulo {
+        width: fit-content;
+    }
+
+    .linea-titulo {
+        border: none;
+        border: 2px solid var(--primary-color);
+        margin-top: 0px;
+        width: 100%;
+    }
+    
+    form {
+        display: block;
+        width: 30%;
+        margin: 60px auto;
+        height: 80%;
+        padding: 30px 50px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        background-color: white;
+    }
+
+    hr {
+        margin-top: -10px;
+        border: 1px solid black;
+    }
+
+    input {
+        margin-bottom: 15px;
+        border-radius: 10px;
+        border: 1px solid hsl(221, 14%, 80%);
+        padding: 10px;
+        height: 40px;
+        transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        width: 100%;
+    }
+
+    input:focus {
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        border-color: hsl(221, 14%, 50%);
+        outline: none;
+    }
+
+    button {
+        background-color: var(--primary-color);
+        width: 100%;
+        height: 40px;
+        color: white;
+        font-weight: bold;
+        display: block;
+        margin: 20px auto;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+        background-color: hsl(221, 14%, 40%);
+        transform: scale(1.05);
+    }   
+
+    .input, .input::placeholder, .label, .button {
+        color: black;
+        font-weight: 600;
+        font-style: bold;
+    }
+    
+    i {
+        color: black;
+    }
+    
+</style>
+{% endblock %}

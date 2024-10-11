@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block title %}Listado de jinetes y amazonas{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_list.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_info.css') }}"/>
+{% endblock %}
+
+{% block content %}
+
+    <div class="encabezado">
+        <h1>Listado de Jinetes y Amazonas</h1>
+    </div>
+    <hr class="separador">
+
+    <form method="GET" action="{{url_for('horsemen_and_amazons.list_jya_users')}}">
+        <div class="field is-grouped">
+            <div class="field">
+                <label class="label">Nombre</label>
+                <div class="control has-icons-left">
+                    <span class="icon is-small is-left">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input class="input" type="text" name="name" placeholder="Nombre del jinete" value="{{ name }}" />
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Apellido</label>
+                <div class="control has-icons-left">
+                    <span class="icon is-small is-left">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input class="input" type="text" name="last_name" placeholder="Apellido del jinete" value="{{ last_name }}" />
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">DNI</label>
+                <div class="control has-icons-left">
+                    <span class="icon is-small is-left">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input class="input" type="text" name="dni" placeholder="DNI del jinete" value="{{ dni }}" />
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Profesionales</label>
+                <div class="control has-icons-left">
+                    <span class="icon is-small is-left">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input class="input" type="text" name="professionals" placeholder="Profesionales" value="{{ professionals }}" />
+                </div>
+            </div>
+            <button class="boton filter" type="submit">Buscar</button>
+        </div>
+    </form>
+    <form method="GET" action="{{ url_for('horsemen_and_amazons.list_jya_users') }}">
+        <div class="control order_options">
+            <select id="order_option" name="order_option" onchange="this.form.submit()">
+                <option value="default">Selecciona un orden</option>
+                <option value="name_asc">Nombre: A-Z</option>
+                <option value="name_desc">Nombre: Z-A</option>
+                <option value="last_name_asc">Apellido: Menor-Mayor</option>
+                <option value="last_name_desc">Apellido: Mayor-Menor</option>
+            </select>
+        </div>
+    </form>
+    <table class="table is-striped users">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>DNI</th>
+                <th>Edad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if users %}
+                {% for user in users %}
+                    <a href="url_for('jya_users.list_info_by_jya')">
+                        <tr onclick="window.location.href='{{ url_for('horsemen_and_amazons.list_info_by_jya', user_id=user.id) }}'">
+                            <td> {{user.name}} </td>
+                            <td> {{user.last_name}} </td>
+                            <td> {{user.DNI}} </td>
+                            <td> {{user.age}} </td>
+                        </tr>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center;">No hay jinetes registrados en el sistema</p>
+            {% endif %}
+        </tbody>
+    </table>
+
+{% endblock %}

@@ -7,17 +7,58 @@
         <a style="margin-bottom: 10px;" class="button is-white is-size-6" href="{{ url_for('registry.registry_function') }}">
             <strong>Crear usuario</strong>
         </a>
-        <form method="Post" action="{{url_for('users.index')}}">
-            <div class="select ">
-                <select name="order_option" onchange="this.form.submit()">
-                    <option value="default">Ordenar por:</option>
-                    <option value="email_asc">Email: Orden ascendente</option>
-                    <option value="email_desc">Email: Orden descendente</option>
-                    <option value="creation_date_asc">Fecha creación: Orden ascendente</option>
-                    <option value="creation_date_desc">Fecha creación: Orden descendente</option>
-                </select>
-            </div>
-        </form>
+        <div style="display: flex; align-items: center;">
+            <div style="background-color:white; padding:10px">
+            <form method="GET" action="{{url_for('users.index', page=page, order_option=order_by)}}">
+                <input name="search" class="input" type="text" placeholder="Buscar email" value="{{ search }}" />
+                <div class="radios">
+                    <label class="radio">
+                      <input type="radio" name="activity" value="active" {% if activity == 'active' %}checked{% endif %} />
+                      Activo 
+                    </label>
+                    <label class="radio">
+                      <input type="radio" name="activity" value="noactive"{% if activity == 'noactive' %}checked{% endif %} />
+                      No activo
+                    </label>
+                </div>
+                  <div class="radios">
+                    <label class="radio">
+                      <input type="radio" name="role" value="1" {% if role == 1 %}checked{% endif %} />
+                      Administracion 
+                    </label>
+                    <label class="radio">
+                      <input type="radio" name="role"  value="2" {% if role == 2 %}checked{% endif %} />
+                      Tecnica
+                    </label>
+                    <label class="radio" >
+                      <input type="radio" name="role"  value="3" {% if role == 3 %}checked{% endif %}/>
+                      Ecuestre
+                    </label>
+                    <label class="radio" >
+                        <input type="radio" name="role"  value="4" {% if role == 4 %}checked{% endif %} />
+                        Voluntariado
+                      </label>
+                      <label class="radio" >
+                        <input type="radio" name="role"  value="5" {% if role == 5 %}checked{% endif %}/>
+                        Sin Rol
+                      </label>
+                  </div>
+                <button class="button is-dark" type="submit">Buscar</button>
+                <a class="button is-dark" href="{{ url_for('users.index', page=page, order_option=order_by) }}">Quitar Filtros</a>
+            </form>
+            <form method="Post" action="{{url_for('users.index',search=search, role=role, activity=activity)}}">
+                <div class="select ">
+                    <select name="order_option" onchange="this.form.submit()">
+                        <option value="default">Ordenar por:</option>
+                        <option value="email_asc">Email: Orden ascendente</option>
+                        <option value="email_desc">Email: Orden descendente</option>
+                        <option value="creation_date_asc">Fecha creación: Orden ascendente</option>
+                        <option value="creation_date_desc">Fecha creación: Orden descendente</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        </div>
     </div>
     <table class="table is-striped is-bordered is-fullwidth">
         <thead>
@@ -25,7 +66,9 @@
                 <th>Email</th>
                 <th>Alias</th>
                 <th>Rol</th>
-                <th>Bloquear usuario</th>
+                <th>Estado</th>
+                <th>Estado Bloqueo</th>
+                <th></th>
             </tr>
         </thead>
         {% if context.users %}
@@ -35,19 +78,14 @@
                 <td>{{ user.email }}</td>
                 <td>{{ user.alias }}</td>
                 <td>{{ user.role.name }}</td>
+                <td>{{'Activo' if user.active else 'No activo'}}</td>
+                <td>{{'Bloqueado' if user.is_blocked else 'No bloqueado' }}</td>
                 <td>
-                    {% if not user.system_admin %}
-                    <form method="POST" action="{{url_for('users.block_user')}}">
-                        <input type="hidden" name="user_email" value="{{ user.email }}">
-                        <button type="submit" class="button is-dark {% if user.is_blocked %}is-success{% else %}is-danger{% endif %}">
-                            {% if user.is_blocked %}
-                                Desbloquear
-                            {% else %}
-                                Bloquear
-                            {% endif %}
-                        </button>
-                    </form>
-                    {%endif%}
+                    {% if user.role_id != 1 %}
+                        <a class="button is-dark" href="{{url_for('profile.index', id=user.id)}}">Editar</a>
+                    {% else%}
+                        <a class="button is-dark" href="{{url_for('profile.index', id=user.id)}}">Ver Perfil</a>
+                    {% endif %}
                 </td>
             </tr>
         </tbody>
@@ -55,8 +93,8 @@
         {% endif %}
     </table>
     <nav class="pagination" role="navigation" aria-label="pagination">
-        <a class="pagination-previous" {% if not context.users.has_prev %}disabled{% else %}href="{{url_for('users.index', page=page-1,  order_option=order_by)}}"{% endif %}>Previous</a>
-        <a class="pagination-next" {% if not context.users.has_next %}disabled{% else %}href="{{url_for('users.index', page=page+1,  order_option=order_by)}}"{% endif %}>Next page</a>
+        <a class="pagination-previous" {% if not context.users.has_prev %}disabled{% else %}href="{{url_for('users.index', page=page-1,  order_option=order_by, search=search, role=role, activity=activity)}}"{% endif %}>Previous</a>
+        <a class="pagination-next" {% if not context.users.has_next %}disabled{% else %}href="{{url_for('users.index', page=page+1,  order_option=order_by, search=search, role=role, activity=activity)}}"{% endif %}>Next page</a>
     </nav>
 </div>
 
