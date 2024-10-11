@@ -1,9 +1,9 @@
-from flask import Blueprint, request, session
+from flask import Blueprint, request
 from flask import render_template
 from src.core.auth.models.user import User
 from flask import current_app as app
 from sqlalchemy import desc
-from src.core.auth.auth import inject_user_permissions
+from src.core.auth.auth import inject_user_permissions, permission_required
 
 bp = Blueprint('users', __name__, url_prefix='/users')
 
@@ -28,12 +28,14 @@ def showUsers(request):
     
     # Pagination
     page = request.args.get('page', 1, type=int)
+    per_page=2
     
     # Filtering options
     search = request.args.get('search', '', type=str)
     role = request.args.get('role', '', type=int)
     activity = request.args.get('activity', '', type=str)
     app.logger.info("Search: %s, Role: %s, Activity: %s", search, role, activity)
+
     # Build the query
     query = User.query
     
@@ -47,7 +49,7 @@ def showUsers(request):
         query = query.filter(User.active == is_active)
     
     # Apply ordering and pagination
-    users = query.order_by(order_criteria).paginate(page=page, per_page=2)
+    users = query.order_by(order_criteria).paginate(page=page, per_page=per_page)
     
     context = {
         'users': users,
@@ -59,6 +61,7 @@ def showUsers(request):
 
 
 @bp.route('/', methods=['GET', 'POST'])
+@permission_required('users_index')
 @inject_user_permissions
 def index():
     app.logger.info("Call to index function")

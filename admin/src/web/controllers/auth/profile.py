@@ -3,13 +3,14 @@ from flask import Blueprint, render_template, request
 from src.core.database import db
 from flask import current_app as app
 from core.auth import find_user_by_id, get_all_roles, update_role
-from core.auth.auth import inject_user_permissions
+from core.auth.auth import inject_user_permissions, permission_required
 
 
 bp = Blueprint('profile', __name__, url_prefix='/profile')
 
 
 @bp.route('/<int:id>', methods=['GET'])
+@permission_required('user_index')
 @inject_user_permissions
 def index(id):
     user = find_user_by_id(id)
@@ -22,6 +23,7 @@ def index(id):
     return render_template('profile.html', context=context)
 
 @bp.route('/<int:id>/block', methods=['POST'])
+@permission_required('update_user')
 @inject_user_permissions
 def block_user(id):
     app.logger.info("Call to block_user function")
@@ -39,6 +41,7 @@ def block_user(id):
     return render_template('profile.html', context=context)
 
 @bp.route('/<int:id>/update', methods=['POST'])
+@permission_required('update_user')
 @inject_user_permissions
 def change_role(id):
     app.logger.info("Call to change_role function")
