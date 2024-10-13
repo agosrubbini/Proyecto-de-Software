@@ -81,12 +81,63 @@
 
 <div id="deleteModal" class="modal">
     <div class="modal-content">
-        <h3>¿Estás seguro de que deseas eliminar el cobro de ID:<span id="billingPosToDelete"></span>?</h3>
+        <h3>¿Estás seguro de que deseas eliminar el pago de ID:<span id="paymentPosToDelete"></span>?</h3>
         <div class="modal-actions">
             <button id="cancelButton" class="button">Cancelar</button>
             <button id="confirmButton" class="button is-danger">Eliminar</button>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('.delete-button');
+        const deleteModal = document.getElementById('deleteModal');
+        const cancelButton = document.getElementById('cancelButton');
+        const confirmButton = document.getElementById('confirmButton');
+        const paymentPosToDeleteSpan = document.getElementById('paymentPosToDelete');
+        let paymentIdToDelete = null;
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                paymentIdToDelete = this.dataset.paymentId;
+                paymentPosToDelete = this.dataset.paymentPos;
+                console.log(paymentIdToDelete);
+                console.log(paymentPosToDelete);
+                paymentPosToDeleteSpan.textContent = paymentPosToDelete;
+                deleteModal.style.display = 'block';
+            });
+        });
+
+        cancelButton.addEventListener('click', function () {
+            deleteModal.style.display = 'none';
+            paymentIdToDelete = null;
+        });
+
+        confirmButton.addEventListener('click', function () {
+            if (paymentIdToDelete) {
+                fetch(`/pagos/delete/${paymentIdToDelete}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ form.csrf_token._value() }}'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error al eliminar el cobro');
+                    }
+                });
+            }
+        });
+
+        window.onclick = function (event) {
+            if (event.target == deleteModal) {
+                deleteModal.style.display = 'none';
+            }
+        }
+    });
+</script>
 
 {% endblock %}

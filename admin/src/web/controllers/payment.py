@@ -49,7 +49,7 @@ def list_payments():
     if payment_method:
         payments = [payment for payment in payments if payment_method.lower() in payment.payment_type.lower()]
 
-    return render_template('payment/payment_list.html', payments=payments, order=order, pagination=payments_pagination, payment_method=payment_method, start_date=start_date_str, end_date=end_date_str)
+    return render_template('payment/payment_list.html', payments=payments, order=order, pagination=payments_pagination, payment_method=payment_method, start_date=start_date_str, end_date=end_date_str, form=PaymentForm())
     
 
 @bp.route('/crear', methods=['GET', 'POST'])
@@ -117,13 +117,15 @@ def edit_payment(id):
 
 
 
-
-
-
-'''
-@bp.route('/crear', methods=['GET', 'POST'])
+@bp.route('/delete/<int:id>', methods=['GET', 'POST'])
 @permission_required('payment_destroy')
 @inject_user_permissions
 def delete_payment(id):
-    pass
-'''
+    billing = Payment.query.get(id)
+    if billing:
+        db.session.delete(billing)
+        db.session.commit()
+        flash('Payment deleted successfully!', 'success')
+    else:
+        flash('Payment not found!', 'danger')
+    return redirect(url_for('payment.list_payments'))
