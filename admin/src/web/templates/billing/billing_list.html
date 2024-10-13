@@ -19,7 +19,7 @@
     <div class="search-container">
             <form class="form-container" method="get" action="{{ url_for('billing.list_billings') }}">
                 <div class="columns is-desktop">
-                    <div class="column">
+                    <div class="column is-one-fifth">
                         <input class="input" type="text" name="q" placeholder="Buscar por nombre" value="{{ request.args.get('q', '') }}">
                     </div>
                     <div class="column">
@@ -51,7 +51,7 @@
                         <button type="submit" class="button search-button">Buscar</button>
                     </div>
                     <div class="column">
-                        <a class="button restore-button" href="{{ url_for('payment.list_payments', page=page, order=order) }}">Restablecer</a>
+                        <a class="button restore-button" href="{{ url_for('billing.list_billings', page=page, order=order) }}">Restablecer</a>
                     </div>
                 </div>
             </form>
