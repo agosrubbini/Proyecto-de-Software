@@ -17,6 +17,12 @@ bp = Blueprint('payment', __name__, url_prefix='/pagos')
 @permission_required('payment_index')
 @inject_user_permissions
 def list_payments():
+
+    """
+        Esta funcion se encarga de listar los pagos realizados y aplicar filtros de busqueda.
+
+    """
+
     order = request.args.get('order', 'asc')
     start_date_str = request.args.get('start_date', None)
     end_date_str = request.args.get('end_date', None)
@@ -42,7 +48,10 @@ def list_payments():
 
     pos = 1
     for payment in payments:
-        payment.employee_name = get_person_name_and_last_name(payment.beneficiary)
+        if payment.beneficiary:
+            payment.employee_name = get_person_name_and_last_name(payment.beneficiary)
+        else:
+            payment.employee_name = "-"
         payment.pos = pos
         pos += 1
     
@@ -56,6 +65,12 @@ def list_payments():
 @permission_required('payment_new')
 @inject_user_permissions
 def new_payment():
+
+    """
+        Esta funcion se encarga de crear un nuevo pago.
+    """
+
+
     app.logger.info("Call to new_payment function")
     form = PaymentForm()
     employee_list = Employee.query.all()
@@ -88,12 +103,21 @@ def new_payment():
     app.logger.info("End of call to new_payment function")
     return render_template('payment/payment_new.html', form=form, employee_list=employee_list, employee_actual=employee_actual)
 
+
 @bp.route('/<int:id>', methods=['GET', 'POST'])
 @permission_required('payment_show')
 @inject_user_permissions
 def show_payment(id):
+
+    """
+        Esta funcion se encarga de mostrar un pago en especifico asociado a un id.
+    """
+
     payment = Payment.query.get(id)
-    payment.employee_name = get_person_name_and_last_name(payment.beneficiary)
+    if payment.beneficiary:
+        payment.employee_name = get_person_name_and_last_name(payment.beneficiary)
+    else:
+        payment.employee_name = "-"
     return render_template('payment/payment_show.html', payment=payment)
 
 
@@ -101,12 +125,19 @@ def show_payment(id):
 @permission_required('payment_update')
 @inject_user_permissions
 def edit_payment(id):
+
+    """
+        Esta funcion se encarga de editar un pago en especifico asociado a un id.
+    """
+
     payment = Payment.query.get(id)
     form = PaymentForm(obj=payment)
     employee_list = Employee.query.all()
-
+    beneficiary = form.beneficiary.data
+    if form.payment_type.data != "Honorarios":
+        beneficiary = None
     if form.validate_on_submit():
-        payment.beneficiary = form.beneficiary.data
+        payment.beneficiary = beneficiary
         payment.amount = form.amount.data
         payment.payment_type = form.payment_type.data
         payment.description = form.description.data
@@ -121,6 +152,11 @@ def edit_payment(id):
 @permission_required('payment_destroy')
 @inject_user_permissions
 def delete_payment(id):
+
+    """
+        Esta funcion se encarga de eliminar un pago en especifico asociado a un id.
+    """
+
     billing = Payment.query.get(id)
     if billing:
         db.session.delete(billing)

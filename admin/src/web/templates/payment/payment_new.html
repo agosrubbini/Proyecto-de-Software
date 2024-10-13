@@ -76,7 +76,7 @@
     <hr>
 
     <label class="label" for="description">Descripcion:</label>
-    <input type="text" name="description" id="description">
+    <textarea class="textarea" type="text" name="description" id="description" placeholder="Detalle de pago"></textarea>
     {% if form.description.errors %}
             <div class="alert alert-danger">
                 {% for error in form.description.errors %}
@@ -100,5 +100,8 @@
             }
         });
     });
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('payment_date').setAttribute('max', today);
+
 </script>
 {%endblock%}

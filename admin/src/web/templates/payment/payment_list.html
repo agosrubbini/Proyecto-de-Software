@@ -9,33 +9,45 @@
 
 <div class="container">
     <div class="header-container">
-        <h1>Lista de Pagos</h1>
+        <h1 class="is-size-2-mobile is-size-2-tablet is-size-2-desktop">Lista de Pagos</h1>
         <a href="{{ url_for('payment.new_payment') }}" class="button is-white is-size-6">Agregar pago</a>
     </div>
 
     <div class="search-container">
-        <form class="form-container" method="get" action="{{ url_for('payment.list_payments') }}">
-            <select name="order" id="order" >
-                <option value="asc" {% if order == 'asc' %}selected{% endif %}>Fecha: Orden Ascendente</option>
-                <option value="desc" {% if order == 'desc' %}selected{% endif %}>Fecha: Orden Descendente</option>
-            </select>
-            <select name="payment_method" id="payment_method">
-                <option value="">Tipo de pago</option>
-                <option value="Honorarios" {% if payment_method == 'Honorarios' %}selected{% endif %}>Honorarios</option>
-                <option value="Proveedor" {% if payment_method == 'Proveedor' %}selected{% endif %}>Proveedor</option>
-                <option value="Gastos Varios" {% if payment_method == 'Gastos Varios' %}selected{% endif %}>Gastos varios</option>
-            </select>
-            <input type="date" id="start_date" name="start_date" value="{{ request.args.get('start_date', '') }}">
-            <input type="date" id="end_date" name="end_date" value="{{ request.args.get('end_date', '') }}">
-            <button type="submit" class="button">Buscar</button>
-        </form>
-        <form class="search-form" method="get" action="{{ url_for('payment.list_payments') }}">
-            <input hidden name="order" id="order" value="asc">
-            <input hidden name="payment_method" id="payment_method" value="">
-            <input hidden type="date" id="start_date" name="start_date" value="">
-            <input hidden type="date" id="end_date" name="end_date" value="">
-            <button type="submit" style="margin-left: 5px;" class="button">Restablecer</button>
-        </form>
+            <form class="form-container" method="get" action="{{ url_for('payment.list_payments') }}">
+                <div class="columns is-desktop">
+                    <div class="column">
+                        <div class="select">
+                            <select name="order" id="order" >
+                                <option value="asc" {% if order == 'asc' %}selected{% endif %}>Fecha: Orden Ascendente</option>
+                                <option value="desc" {% if order == 'desc' %}selected{% endif %}>Fecha: Orden Descendente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="select">
+                            <select name="payment_method" id="payment_method">
+                                <option value="">Tipo de pago</option>
+                                <option value="Honorarios" {% if payment_method == 'Honorarios' %}selected{% endif %}>Honorarios</option>
+                                <option value="Proveedor" {% if payment_method == 'Proveedor' %}selected{% endif %}>Proveedor</option>
+                                <option value="Gastos Varios" {% if payment_method == 'Gastos Varios' %}selected{% endif %}>Gastos varios</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <input class="input" type="date" id="start_date" name="start_date" value="{{ request.args.get('start_date', '') }}">
+                    </div>
+                    <div class="column">
+                        <input class="input" type="date" id="end_date" name="end_date" value="{{ request.args.get('end_date', '') }}">
+                    </div>
+                    <div class="column">
+                        <button type="submit" class="button search-button">Buscar</button>
+                    </div>
+                    <div class="column">
+                        <a class="button restore-button" href="{{ url_for('payment.list_payments', page=page, order=order) }}">Restablecer</a>
+                    </div>
+                </div>
+            </form>
     </div>
 
     <div class="table-container">
@@ -46,7 +58,8 @@
                     <th>Monto</th>
                     <th>Fecha</th>
                     <th>Tipo de pago</th>
-                    <th>Descripción</th>   
+                    <th>Descripción</th> 
+                    <th>Acciones</th>  
                 </tr>
             </thead>
             <tbody>
@@ -138,6 +151,10 @@
             }
         }
     });
+
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('start_date').setAttribute('max', today);
+    document.getElementById('end_date').setAttribute('max', today);
 </script>
 
 {% endblock %}

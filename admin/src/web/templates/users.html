@@ -47,7 +47,7 @@
                 <a class="button is-dark" href="{{ url_for('users.index', page=page, order_option=order_by) }}">Quitar Filtros</a>
             </form>
             <form method="Post" action="{{url_for('users.index',search=search, role=role, activity=activity)}}">
-                <div class="select ">
+                <div class="select">
                     <select name="order_option" onchange="this.form.submit()">
                         <option value="default">Ordenar por:</option>
                         <option value="email_asc">Email: Orden ascendente</option>

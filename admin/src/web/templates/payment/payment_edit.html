@@ -16,7 +16,7 @@
 
     <label class="label" for="payment_type">Tipo de pago</label>
     <div class="control">
-        <select name="payment_type" id="payment_type" {% if payment.payment_type == 'Honorarios' %}disabled{% endif %}>
+        <select name="payment_type" id="payment_type">
             <option value=""></option>
             <option value="Honorarios" {% if payment.payment_type == 'Honorarios' %}selected{% endif %}>Honorarios</option>
             <option value="Proveedor" {% if payment.payment_type == 'Proveedor' %}selected{% endif %}>Proveedor</option>
@@ -31,7 +31,6 @@
         </div>
     {% endif %}
     <hr style="margin-top: 0;">
-
 
     <label class="label" for="beneficiary">Beneficiario</label>
     <div class="control">
@@ -76,7 +75,7 @@
     <hr>
 
     <label class="label" for="description">Descripcion:</label>
-    <input type="text" name="description" id="description" value="{{ payment.description }}">
+    <textarea class="textarea" type="text" name="description" id="description">{{ payment.description }}</textarea>
     {% if form.description.errors %}
             <div class="alert alert-danger">
                 {% for error in form.description.errors %}
@@ -93,12 +92,15 @@
         
 </form>
 <script>
+
+
     document.addEventListener('DOMContentLoaded', function() {
         const paymentTypeSelect = document.getElementById('payment_type');
         const beneficiarySelect = document.getElementById('beneficiary');
 
         function toggleBeneficiary() {
             if (paymentTypeSelect.value != 'Honorarios') {
+                beneficiarySelect.value = '';
                 beneficiarySelect.disabled = true;
             } else {
                 beneficiarySelect.disabled = false;
@@ -109,5 +111,7 @@
 
         paymentTypeSelect.addEventListener('change', toggleBeneficiary);
     });
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('payment_date').setAttribute('max', today);
 </script>
 {% endblock%}

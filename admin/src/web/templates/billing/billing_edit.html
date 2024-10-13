@@ -94,7 +94,7 @@
     <hr style="margin-top: 0;">
 
     <label class="label" for="observation">Observaciones:</label>
-    <input type="text" name="observation" id="observation" value="{{ billing.observation }}">
+    <textarea class="textarea" type="text" name="observation" id="observation">{{ billing.observation }}</textarea>
     {% if form.observation.errors %}
             <div class="alert alert-danger">
                 {% for error in form.observation.errors %}
@@ -118,6 +118,8 @@
             sortField: 'text'
         });
     });
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('payment_date').setAttribute('max', today);
 </script>
 
 {% endblock %}

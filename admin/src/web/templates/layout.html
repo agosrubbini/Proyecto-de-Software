@@ -60,13 +60,13 @@
                         Equipo
                     </a>
                     {% endif %}
-                    {% if 'team_index' in g.user_permissions or g.user_system_admin %}
+                    {% if 'billing_index' in g.user_permissions or g.user_system_admin %}
                     <a class="navbar-item" href="{{ url_for('billing.list_billings') }}">
                         Cobros
                     </a>
                     {% endif %}
 
-                    {% if 'team_index' in g.user_permissions or g.user_system_admin %}
+                    {% if 'payment_index' in g.user_permissions or g.user_system_admin %}
                     <a class="navbar-item" href="{{url_for('payment.list_payments')}}">
                         Pagos
                     </a>

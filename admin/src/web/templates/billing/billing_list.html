@@ -12,36 +12,49 @@
 
 <div class="container">
     <div class="header-container">
-        <h1>Lista de Cobros</h1>
+        <h1 class="is-size-2-mobile is-size-2-tablet is-size-2-desktop">Lista de Cobros</h1>
         <a href="{{ url_for('billing.new_billing') }}" class="button is-white is-size-6">Agregar cobro</a>
     </div>
 
     <div class="search-container">
-        <form class="form-container" method="get" action="{{ url_for('billing.list_billings') }}">
-            <input type="text" name="q" placeholder="Buscar por nombre" value="{{ request.args.get('q', '') }}">
-            <select name="order" id="order" onchange="this.form.submit()">
-                <option value="asc" {% if order == 'asc' %}selected{% endif %}>Orden Ascendente</option>
-                <option value="desc" {% if order == 'desc' %}selected{% endif %}>Orden Descendente</option>
-            </select>
-            <select name="payment_method" id="payment_method" onchange="this.form.submit()">
-                <option value="">Metodo de pago</option>
-                <option value="efectivo" {% if payment_method == 'efectivo' %}selected{% endif %}>Efectivo</option>
-                <option value="credito" {% if payment_method == 'credito' %}selected{% endif %}>Tarjeta de crédito</option>
-                <option value="debito" {% if payment_method == 'debito' %}selected{% endif %}>Tarjeta de débito</option>
-                <option value="otro" {% if payment_method == 'otro' %}selected{% endif %}>Otro</option>
-            </select>
-            <input type="date" id="start_date" name="start_date" value="{{ request.args.get('start_date', '') }}">
-            <input type="date" id="end_date" name="end_date" value="{{ request.args.get('end_date', '') }}">
-            <button type="submit" class="button">Buscar</button>
-        </form>
-        <form class="search-form" method="get" action="{{ url_for('billing.list_billings') }}">
-            <input hidden name="q" id="q" value="">
-            <input hidden name="order" id="order" value="asc">
-            <input hidden name="payment_method" id="payment_method" value="">
-            <input hidden type="date" id="start_date" name="start_date" value="">
-            <input hidden type="date" id="end_date" name="end_date" value="">
-            <button type="submit" style="margin-left: 5px;" class="button">Restablecer</button>
-        </form>
+            <form class="form-container" method="get" action="{{ url_for('billing.list_billings') }}">
+                <div class="columns is-desktop">
+                    <div class="column">
+                        <input class="input" type="text" name="q" placeholder="Buscar por nombre" value="{{ request.args.get('q', '') }}">
+                    </div>
+                    <div class="column">
+                        <div class="select">
+                            <select name="order" id="order" onchange="this.form.submit()">
+                                <option value="asc" {% if order == 'asc' %}selected{% endif %}>Orden Ascendente</option>
+                                <option value="desc" {% if order == 'desc' %}selected{% endif %}>Orden Descendente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="select">
+                            <select name="payment_method" id="payment_method" onchange="this.form.submit()">
+                                <option value="">Metodo de pago</option>
+                                <option value="efectivo" {% if payment_method == 'efectivo' %}selected{% endif %}>Efectivo</option>
+                                <option value="credito" {% if payment_method == 'credito' %}selected{% endif %}>Tarjeta de crédito</option>
+                                <option value="debito" {% if payment_method == 'debito' %}selected{% endif %}>Tarjeta de débito</option>
+                                <option value="otro" {% if payment_method == 'otro' %}selected{% endif %}>Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <input class="input" type="date" id="start_date" name="start_date" value="{{ request.args.get('start_date', '') }}">
+                    </div>
+                    <div class="column">
+                        <input class="input" type="date" id="end_date" name="end_date" value="{{ request.args.get('end_date', '') }}">
+                    </div>
+                    <div class="column">
+                        <button type="submit" class="button search-button">Buscar</button>
+                    </div>
+                    <div class="column">
+                        <a class="button restore-button" href="{{ url_for('payment.list_payments', page=page, order=order) }}">Restablecer</a>
+                    </div>
+                </div>
+            </form>
     </div>
 
     <div class="table-container">
@@ -148,6 +161,9 @@
             }
         }
     });
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('start_date').setAttribute('max', today);
+    document.getElementById('end_date').setAttribute('max', today);
 </script>
 
 {% endblock %}
