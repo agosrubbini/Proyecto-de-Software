@@ -47,7 +47,7 @@ def list_payments():
         pos += 1
     
     if payment_method:
-        payments = [payment for payment in payments if payment_method.lower() in payment.payment_method.lower()]
+        payments = [payment for payment in payments if payment_method.lower() in payment.payment_type.lower()]
 
     return render_template('payment/payment_list.html', payments=payments, order=order, pagination=payments_pagination, payment_method=payment_method, start_date=start_date_str, end_date=end_date_str)
     
@@ -88,21 +88,42 @@ def new_payment():
     app.logger.info("End of call to new_payment function")
     return render_template('payment/payment_new.html', form=form, employee_list=employee_list, employee_actual=employee_actual)
 
-@bp.route('/crear', methods=['GET', 'POST'])
+@bp.route('/<int:id>', methods=['GET', 'POST'])
 @permission_required('payment_show')
 @inject_user_permissions
 def show_payment(id):
-    pass
+    payment = Payment.query.get(id)
+    payment.employee_name = get_person_name_and_last_name(payment.beneficiary)
+    return render_template('payment/payment_show.html', payment=payment)
 
 
-@bp.route('/crear', methods=['GET', 'POST'])
+@bp.route('/update/<int:id>', methods=['GET', 'POST'])
 @permission_required('payment_update')
 @inject_user_permissions
 def edit_payment(id):
-    pass
+    payment = Payment.query.get(id)
+    form = PaymentForm(obj=payment)
+    employee_list = Employee.query.all()
 
+    if form.validate_on_submit():
+        payment.beneficiary = form.beneficiary.data
+        payment.amount = form.amount.data
+        payment.payment_type = form.payment_type.data
+        payment.description = form.description.data
+        db.session.commit()
+        flash('Payment updated successfully!', 'success')
+        return redirect(url_for('payment.show_payment', id=payment.id))
+    return render_template('payment/payment_edit.html', form=form, employee_list=employee_list, payment=payment)
+
+
+
+
+
+
+'''
 @bp.route('/crear', methods=['GET', 'POST'])
 @permission_required('payment_destroy')
 @inject_user_permissions
 def delete_payment(id):
     pass
+'''

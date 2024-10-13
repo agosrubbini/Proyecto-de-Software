@@ -21,9 +21,9 @@
             </select>
             <select name="payment_method" id="payment_method">
                 <option value="">Tipo de pago</option>
-                <option value="efectivo" {% if payment_method == 'honorarios' %}selected{% endif %}>Honorarios</option>
-                <option value="credito" {% if payment_method == 'proveedor' %}selected{% endif %}>Proveedor</option>
-                <option value="debito" {% if payment_method == 'gastos_varios ' %}selected{% endif %}>Gastos varios</option>
+                <option value="Honorarios" {% if payment_method == 'Honorarios' %}selected{% endif %}>Honorarios</option>
+                <option value="Proveedor" {% if payment_method == 'Proveedor' %}selected{% endif %}>Proveedor</option>
+                <option value="Gastos Varios" {% if payment_method == 'Gastos Varios' %}selected{% endif %}>Gastos varios</option>
             </select>
             <input type="date" id="start_date" name="start_date" value="{{ request.args.get('start_date', '') }}">
             <input type="date" id="end_date" name="end_date" value="{{ request.args.get('end_date', '') }}">
@@ -59,8 +59,8 @@
                         <td>{{ payment.payment_type }}</td>
                         <td>{{ payment.description }}</td>
                         <td>
-                            <a href="{{ url_for('payment.show_payment', payment_id=payment.id) }}" class="button is-small is-white"><i class="fas fa-eye" title="Ver"></i></a>
-                            <a href="{{ url_for('payment.edit_payment', payment_id=payment.id) }}" class="button is-small is-white"><i class="fas fa-edit" title="Editar"></i></a>
+                            <a href="{{ url_for('payment.show_payment', id=payment.id) }}" class="button is-small is-white"><i class="fas fa-eye" title="Ver"></i></a>
+                            <a href="{{ url_for('payment.edit_payment', id=payment.id) }}" class="button is-small is-white"><i class="fas fa-edit" title="Editar"></i></a> 
                             <a class="button is-small is-white delete-button" data-payment-id="{{ payment.id }}" data-payment-pos="{{ payment.pos }}"><i class="fas fa-trash" title="Eliminar"></i></a>
                         </td>
                     </tr>
@@ -73,10 +73,10 @@
             </tbody>
         </table>
     </div>
-    {# <nav class="pagination" role="navigation" aria-label="pagination">
+    <nav class="pagination" role="navigation" aria-label="pagination">
         <a class="pagination-previous" {% if not pagination.has_prev %}disabled{% else %}href="{{ url_for('payment.list_payments', page=pagination.prev_num,  order=order, q=q) }}"{% endif %}>Previous</a>
         <a class="pagination-next" {% if not pagination.has_next %}disabled{% else %}href="{{ url_for('payment.list_payments', page=pagination.next_num,  order=order, q=q) }}"{% endif %}>Next page</a>
-    </nav> #}
+    </nav> 
 </div>
 
 <div id="deleteModal" class="modal">
