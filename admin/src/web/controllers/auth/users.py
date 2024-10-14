@@ -116,32 +116,43 @@ def show_user(id):
     print(context)
     return render_template('users/user_show.html', context=context)
 
-
-@bp.route('/update/<int:id>', methods=['GET'])
+#TODO fix showUsers
+@bp.route('/block/<int:id>', methods=['POST'])
 @permission_required('user_update')
 @inject_user_permissions
-def update_user(id):
-    '''
-        role = request.form.get('role')
-
+def block_user(id):
+    app.logger.info("Call to block_user function")
+    context, page, order_option, search, role, activity = showUsers(request)
+    user = find_user_by_id(id)
     if user:
         user.is_blocked = not user.is_blocked
         app.logger.info("User %s is blocked: %s", user.email, user.is_blocked)
-        db.session.commit()
-    '''
-    payment = User.query.get(id)
+        db.session.commit()  
+    app.logger.info("End of call to block_user function")
+    return render_template('users/user_list.html', context=context, page=page, order_option=order_option, search=search, role=role, activity=activity)
+
+
+@bp.route('/update/<int:id>', methods=['GET','POST'])
+@permission_required('user_update')
+@inject_user_permissions
+def update_user(id):
+    user = User.query.get(id)
     form = registryForm()
 
-    if form.payment_type.data != "Honorarios":
-        beneficiary = None
     if form.validate_on_submit():
-        payment.beneficiary = beneficiary
-        payment.amount = form.amount.data
-        payment.payment_type = form.payment_type.data
-        payment.description = form.description.data
+        
+        if (find_user_by_email(form.email.data)):
+            app.logger.error("The following email is already registered: %s ", form.email.data)
+            flash("Ya existe un usuario con el mail ingresado", "error")
+            return redirect(url_for("users.new_user"))
+        
+        user.email = form.email.data
+        user.alias = form.alias.data
+        user.password = form.password.data
+        user.role = form.role.data
         db.session.commit()
-        flash('Payment updated successfully!', 'success')
-        return redirect(url_for('payment.show_payment', id=payment.id))
+        flash('User updated successfully!', 'success')
+        return redirect(url_for('user.show_user', id=user.id))
 
     
     user = find_user_by_id(id)

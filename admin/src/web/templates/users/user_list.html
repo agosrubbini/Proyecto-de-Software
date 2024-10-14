@@ -63,17 +63,19 @@
                     <td>{{'Bloqueado' if user.is_blocked else 'No bloqueado' }}</td>
                     <td>{{ user.created_at.strftime('%d-%m-%Y') }}</td>
                     <td>
-                        <a href="{{ url_for('users.show_user', id=user.id) }}" class="button is-small is-white"><i class="fas fa-eye" title="Ver"></i></a>
-                        <a href="{{ url_for('users.update_user', id=user.id) }}" class="button is-small is-white"><i class="fas fa-edit" title="Editar"></i></a>
-
-                        <button type="submit" class="button is-dark {% if user.is_blocked %}is-success{% else %}is-danger{% endif %}">
-                            {% if user.is_blocked %}
-                                Desbloquear
-                            {% else %}
-                                Bloquear
-                            {% endif %}
-                        </button>
-                        <a class="button is-small is-white delete-button"><i class="fas fa-trash" title="Eliminar"></i></a> 
+                        <a href="{{ url_for('users.show_user', id=user.id) }}" class="button action-button is-small is-white"><i class="fas fa-eye" title="Ver"></i></a>
+                        {% if not user.system_admin %}
+                        <a href="{{ url_for('users.update_user', id=user.id) }}" class="button action-button is-small is-white"><i class="fas fa-edit" title="Editar"></i></a>
+                        <form method="POST" action="{{url_for('users.block_user', id=user.id, page=page, order_option=order_by, search=search, role=role, activity=activity)}}" onsubmit="event.preventDefault(); this.submit();" class="action-button is-small is-white">
+                            <button type="submit" class="{% if user.is_blocked %}is-success{% else %}is-danger{% endif %}">
+                                {% if user.is_blocked %}
+                                <i class="fa fa-check-circle" title="Desbloquear"></i>
+                                {% else %}
+                                <i class="fas fa-ban" title="Bloquear"></i>
+                                {% endif %}
+                            </button>
+                        </form>
+                        {%endif%}
                     </td>
                 </tr>
             </tbody>
@@ -91,6 +93,22 @@
     </div>
 </div>
 </div>
+<style>
 
+    .action-button i {
+        width: 20px;  /* Ajusta el tamaño según tus necesidades */
+        height: 20px; /* Ajusta el tamaño según tus necesidades */
+        display: inline-block; /* Permite que el tamaño funcione correctamente */
+        horizontal-align: middle; /* Alinea verticalmente los íconos */
+        font-size: 16px; /* Ajusta el tamaño de la fuente si es necesario */
+    }
+    .action-button {
+        padding: 5px;  /* Ajusta según sea necesario */
+        margin: 0 5px; /* Margen entre botones */
+        display: flex;  /* Asegura que los contenidos se alineen */
+        justify-content: center; /* Centra el contenido del botón */
+        align-items: center; /* Alinea verticalmente el contenido */
+    }
+</style>
 
 {% endblock %}
