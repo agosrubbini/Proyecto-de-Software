@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block title %}Usuarios{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/auth.css') }}">
+{% endblock %}
+{% block content%}
+<form method="POST" action="{{ url_for('users.update_user', id=context.user.id) }}">
+    {{ context.form.csrf_token }}
+
+    <div class="div-titulo">
+        <h1 class="label">Editar Usuario</h1>
+        <hr class="linea-titulo">
+    </div>
+    
+
+    <label class="label" for="email">Mail</label>
+    <input class="input" type="text" name="email" id="email" value="{{ context.user.email }}">
+    {% if context.form.email.errors %}
+            <div class="alert alert-danger">
+                {% for error in context.form.email.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+    <label class="label" for="alias">Alias</label>
+    <input class="input" type="text" name="alias" id="alias" value="{{ context.user.alias }}">
+    {% if context.form.alias.errors %}
+            <div class="alert alert-danger">
+                {% for error in context.form.alias.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+    <label class="label" for="password">Contraseña</label>
+    <input class="input" type="text" name="password" id="password" value="">
+    {% if context.form.password.errors %}
+            <div class="alert alert-danger">
+                {% for error in context.form.password.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+
+    <label class="label" for="confirm">Confirmacion contraseña</label>
+    <input class="input" type="text" name="confirm" id="confirm" value="">
+    {% if context.form.confirm.errors %}
+            <div class="alert alert-danger">
+                {% for error in context.form.confirm.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+
+    <label class="label" for="role">Rol</label>
+    <select name="role" id="role">
+        <option value=""></option>
+        <option value="Administración" {% if context.user.role == 'Administración' %}selected{% endif %}>Administración</option>
+        <option value="Técnica" {% if context.user.role == 'Técnica' %}selected{% endif %}>Técnica</option>
+        <option value="Ecuestre" {% if context.user.role == 'Ecuestre' %}selected{% endif %}>Ecuestre</option>
+        <option value="Sin Rol" {% if context.user.role == 'Sin Rol' %}selected{% endif %}>Sin Rol</option>
+    </select>
+    {% if context.form.email.errors %}
+            <div class="alert alert-danger">
+                {% for error in context.form.email.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+    <div class="buttons">
+        <a class="a-button" href="{{ url_for('users.show_user', id = context.user.id) }}" style="color: white;"><button type="button">Cancelar</button></a>
+        <button type="submit">Actualizar</button>
+    </div>
+        
+</form>
+{% endblock %}

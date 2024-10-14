@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block title %}Usuarios{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/auth.css') }}">
+{% endblock %}
+{% block content%}
+
+<form action="">
+    <div class="div-titulo">
+        <h1 class="label">Usuario</h1>
+        <hr class="linea-titulo">
+    </div>
+
+    <label class="label" for="type">Alias</label>
+    <div class="control">
+        <input disabled type="text" value="{{ context.user.alias }}">
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="employee_id">Mail</label>
+    <div class="control">
+        <input disabled type="text" value="{{ context.user.email }}">
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="amount">Rol</label>
+    <input disabled type="text" value="{{ context.user.role.name }}">
+    <hr style="margin-top: 0;">
+
+    <div class="buttons">
+        <a class="a-button" href="{{ url_for('users.index') }}"><button type="button">Listado de usuarios</button></a>
+        <a class="a-button" href="{{ url_for('users.update_user', id=context.user.id) }}"><button type="button">Editar usuario</button></a>
+    </div>
+</form>
+{% endblock %}
