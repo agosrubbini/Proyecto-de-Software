@@ -6,7 +6,7 @@ class Billing(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     employee_id = db.Column(db.Integer, db.ForeignKey('persons.id'), nullable=False)
-    jya_id = db.Column(db.Integer, db.ForeignKey('persons.id'), nullable=False)
+    jya_id = db.Column(db.Integer, db.ForeignKey('persons.id', ondelete='CASCADE'), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     payment_method = db.Column(db.String(255), nullable=False)
     observation = db.Column(db.String(255))
