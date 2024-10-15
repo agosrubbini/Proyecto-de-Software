@@ -47,6 +47,8 @@
                     <a class="navbar-item" href="{{ url_for('horsemen_and_amazons.list_jya_users') }}" >
                       J&A
                     </a>
+              
+                    <a class="navbar-item" href=" {{ url_for('horses.list_horses') }}">
                     {% endif %}
 
                     {% if 'horse_index' in g.user_permissions or g.user_system_admin %}
