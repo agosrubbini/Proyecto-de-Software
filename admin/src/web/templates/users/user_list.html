@@ -75,6 +75,7 @@
                                 {% endif %}
                             </button>
                         </form>
+                        <a href="{{ url_for('users.delete_user', id=user.id, page=page,  order_option=order_by, search=search, role=role, activity=activity) }}" class="button action-button is-small is-white"><i class="fas fa-trash" title="Eliminar"></i></a>
                         {%endif%}
                     </td>
                 </tr>

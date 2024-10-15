@@ -114,7 +114,6 @@ def show_user(id):
         'user': user,
         'roles': roles
     }
-    print(context)
     return render_template('users/user_show.html', context=context)
 
 #TODO fix showUsers
@@ -166,3 +165,17 @@ def update_user(id):
     }
     app.logger.info("End of call to update_user function")
     return render_template('users/user_edit.html', context=context)
+
+@bp.route('/delete/<int:id>', methods=['GET'])
+@permission_required('user_destroy')
+@inject_user_permissions
+def delete_user(id):
+    app.logger.info("Call to delete_user function")
+    user = find_user_by_id(id)
+    if user:
+        if not user.system_admin:
+            db.session.delete(user)
+            db.session.commit()
+    context, page, order_option, search, role, activity = showUsers(request)
+    app.logger.info("End of call to delete_user function")
+    return render_template('users/user_list.html', context=context, page=page, order_option=order_option, search=search, role=role, activity=activity)
