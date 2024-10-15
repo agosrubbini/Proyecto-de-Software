@@ -15,6 +15,7 @@ from src.web.storage import storage
 from src.web import commands
 from src.web import routes
 from src.web.handlers.auth import is_authenticated, get_user_info
+from src.web.controllers.horses import bp as bp_horses
 
 
 session = Session()
@@ -41,6 +42,7 @@ def create_app(env="development", static_folder="../../static"):
     app.register_blueprint(bp_registry)
     app.register_blueprint(bp_login)
     app.register_blueprint(bp_users)
+    app.register_blueprint(bp_horses)
     app.register_blueprint(bp_profile)
     app.register_blueprint(bp_jya)
     app.register_blueprint(bp_billing)

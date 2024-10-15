@@ -7,6 +7,10 @@
     margin-right: 10px;
 }
 
+.is-error {
+    background-color: red !important;
+}
+
 span.message {
     margin: 0 !important;
     padding:0 !important;

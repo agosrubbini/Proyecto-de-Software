@@ -74,7 +74,28 @@ def find_jya_by_id(id):
 
     return JyA.query.filter_by(id=id).first()
 
-def find_adress_by_id(id):
+def updated_jya(horseman, **kwargs):
+
+    """Edita el jinete con el id pasado por parámetro"""
+    
+    for key, value in kwargs.items():
+        if value is not None:
+            setattr(horseman, key, value)
+            
+    db.session.add(horseman)
+    db.session.commit()
+
+    return horseman
+
+def delete_jya_by_id(jya_id):
+
+    """Elimina de la base de datos el jinete con el id pasado como parámetro """
+    
+    horseman = JyA.query.filter_by(id = jya_id).first()
+    db.session.delete(horseman)
+    db.session.commit()
+
+def find_address_by_id(id):
 
     """Devuelve la dirección con el id pasado por parámetro"""
 
@@ -126,3 +147,35 @@ def updated_file(file, **kwargs):
     db.session.commit()
 
     return file
+
+def get_emergency_contacts():
+    
+    """Devuelve todos los contactos de emergencia existentes en la base de datos"""
+
+    return EmergencyContact.query.all()
+
+def get_healthcare_plans():
+
+    """Devuelve todos los contactos de emergencia existentes en la base de datos"""
+
+    return HealthcarePlan.query.all()
+
+def get_address():
+
+    """Devuelve todas las direcciones existentes en la base de datos"""
+
+    return Address.query.all()
+
+def get_emergency_contact_by_id(emergency_contact_id):
+
+    """Devuelve el contacto de emergencia con el id pasado por parámetro"""
+
+    return EmergencyContact.query.filter_by(id=emergency_contact_id).first()
+
+def get_healthcare_plan_by_id(healthcare_plan_id):
+
+    """Devuelve el plan de salud con el id pasado por parámetro"""
+
+    return HealthcarePlan.query.filter_by(id=healthcare_plan_id).first()
+
+   

@@ -7,11 +7,14 @@ table, table th, table td {
     color:black !important;
 }
 
-
 table.users tbody tr:hover {
     cursor: pointer; /* Cambia el puntero a mano */
     transform: scale(1.05); /* Cambia el color de fondo al pasar el mouse */
     transition: background-color 0.3s; /* Suaviza el cambio de color */
+}
+
+.add-horseman {
+    width: auto;
 }
 
 .separador{
@@ -30,14 +33,34 @@ table.users tbody tr:hover {
     width: 100%;
 }
 
+#form-search {
+    display: flex;
+    flex-wrap: wrap;
+    margin:auto;
+    justify-content: space-between;
+    width: 90%;
+    max-width: 800px;
+}
+
+.field {
+    flex: 1 1 45%; /* Ajusta el tamaño de los campos, permitiendo flexibilidad */
+    min-width: 185px; /* Define un ancho mínimo para los campos */
+    margin-bottom: 10px;
+}
+
+div.field.is-grouped {
+    margin: auto;
+}
+
+.boton {
+    flex-basis: 100%; /* Botón de búsqueda ocupará todo el ancho en pantallas pequeñas */
+    margin-top: 10px;
+    width: 100%;
+}
+
 h1 {
     font-size: 2rem;
 }
-
-#info {
-    margin-right: 40px;
-}
-
 
 input {
     margin-bottom: 15px !important;

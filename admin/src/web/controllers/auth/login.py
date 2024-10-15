@@ -7,6 +7,7 @@ from src.core.auth.auth import inject_user_permissions
 
 bp = Blueprint("login", __name__, url_prefix="/login")
 
+@bp.route('/', methods=['GET'])
 @bp.get("/")
 @inject_user_permissions
 def login():#muestra el forms
@@ -15,6 +16,7 @@ def login():#muestra el forms
         return render_template("home.html")
     return render_template("auth/login.html")
 
+@bp.route('/authenticate', methods=['POST'])
 @bp.post("/authenticate")
 @inject_user_permissions
 def authenticate():
@@ -50,6 +52,7 @@ def authenticate():
     flash("La sesión se inició correctamente!", "success")
     return redirect(url_for("home"))
 
+@bp.route('/logout', methods=['GET'])
 @bp.get("/logout")
 @inject_user_permissions
 def logout():
