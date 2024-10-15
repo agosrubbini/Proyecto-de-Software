@@ -29,8 +29,8 @@
     <hr style="margin-top: 0;">
 
     <div class="buttons">
-        <a class="a-button" href="{{ url_for('users.index') }}"><button type="button">Listado de usuarios</button></a>
-        <a class="a-button" href="{{ url_for('users.update_user', id=context.user.id) }}"><button type="button">Editar usuario</button></a>
+        <a class="a-button" href="{{ url_for('users.index') }}"><button type="button" style="width:170px">Listado de usuarios</button></a>
+        <a class="a-button" href="{{ url_for('users.update_user', id=context.user.id) }}"><button type="button" style="width:150px">Editar usuario</button></a>
     </div>
 </form>
 {% endblock %}

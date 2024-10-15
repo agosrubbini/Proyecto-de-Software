@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, request,url_for
 from flask import render_template
-from core.auth import create_user, find_role_id_by_name, find_user_by_email, find_user_by_id, get_all_roles, update_role
+from core import bcrypt
+from core.auth import create_user, edit_user, find_role_id_by_name, find_user_by_email, find_user_by_id, get_all_roles, update_role
 from core.auth.forms import registryForm
 from src.core.auth.models.user import User
 from flask import current_app as app
@@ -125,9 +126,10 @@ def block_user(id):
     context, page, order_option, search, role, activity = showUsers(request)
     user = find_user_by_id(id)
     if user:
-        user.is_blocked = not user.is_blocked
-        app.logger.info("User %s is blocked: %s", user.email, user.is_blocked)
-        db.session.commit()  
+        if not user.system_admin:
+            user.is_blocked = not user.is_blocked
+            app.logger.info("User %s is blocked: %s", user.email, user.is_blocked)
+            db.session.commit()  
     app.logger.info("End of call to block_user function")
     return render_template('users/user_list.html', context=context, page=page, order_option=order_option, search=search, role=role, activity=activity)
 
@@ -136,25 +138,25 @@ def block_user(id):
 @permission_required('user_update')
 @inject_user_permissions
 def update_user(id):
+    app.logger.info("Call to update_user function")
     user = User.query.get(id)
     form = registryForm()
-
+    app.logger.info("El formulario es valido: %s", form.validate_on_submit())
     if form.validate_on_submit():
-        
-        if (find_user_by_email(form.email.data)):
+        if (find_user_by_email(form.email.data) and find_user_by_email(form.email.data).id != id):
             app.logger.error("The following email is already registered: %s ", form.email.data)
             flash("Ya existe un usuario con el mail ingresado", "error")
-            return redirect(url_for("users.new_user"))
-        
-        user.email = form.email.data
-        user.alias = form.alias.data
-        user.password = form.password.data
-        user.role = form.role.data
-        db.session.commit()
+            return redirect(url_for('users.update_user', id=id))
+        edit_user(
+            user = user,
+            id = id,
+            email = form.email.data,
+            alias = form.alias.data,
+            password = form.password.data,
+            role_id = find_role_id_by_name(form.role.data))
         flash('User updated successfully!', 'success')
-        return redirect(url_for('user.show_user', id=user.id))
+        return redirect(url_for('users.show_user', id=id))
 
-    
     user = find_user_by_id(id)
     roles = get_all_roles()
     context = {
@@ -162,4 +164,5 @@ def update_user(id):
         'roles': roles,
         'form': form
     }
+    app.logger.info("End of call to update_user function")
     return render_template('users/user_edit.html', context=context)

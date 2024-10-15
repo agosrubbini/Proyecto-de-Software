@@ -63,10 +63,10 @@
     <label class="label" for="role">Rol</label>
     <select name="role" id="role"{% if context.user.system_admin %}disabled{% endif %}>
         <option value="">Selecciona un rol:</option>
-        <option value="Administración" {% if context.user.role == 'Administración' %}selected{% endif %}>Administración</option>
-        <option value="Técnica" {% if context.user.role == 'Técnica' %}selected{% endif %}>Técnica</option>
-        <option value="Ecuestre" {% if context.user.role == 'Ecuestre' %}selected{% endif %}>Ecuestre</option>
-        <option value="Sin Rol" {% if context.user.role == 'Sin Rol' %}selected{% endif %}>Sin Rol</option>
+        <option value="Administración" {% if context.user.role.name == 'Administración' %}selected{% endif %}>Administración</option>
+        <option value="Técnica" {% if context.user.role.name == 'Técnica' %}selected{% endif %}>Técnica</option>
+        <option value="Ecuestre" {% if context.user.role.name == 'Ecuestre' %}selected{% endif %}>Ecuestre</option>
+        <option value="Sin Rol" {% if context.user.role.name == 'Sin Rol' %}selected{% endif %}>Sin Rol</option>
     </select>
     {% if context.form.email.errors %}
             <div class="alert alert-danger">
@@ -77,8 +77,10 @@
         {% endif %}
     <hr>
     <div class="buttons">
-        <a class="a-button" href="{{ url_for('users.show_user', id = context.user.id) }}" style="color: white;"><button type="button" >Cancelar</button></a>
-        <button type="submit">Actualizar</button>
+        <a class="a-button" href="{{ url_for('users.show_user', id = context.user.id) }}" style="width:100px"><button type="button" >Volver</button></a>
+        {%if not context.user.system_admin%}
+            <button type="submit" style="width:200px">Actualizar</button>
+        {%endif%}
     </div>
         
 </form>
