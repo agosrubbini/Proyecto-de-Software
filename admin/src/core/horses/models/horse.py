@@ -25,7 +25,7 @@ class Horse(db.Model):
     
     employees = db.relationship("Employee", secondary=horse_employee, backref="horse")
 
-    files = db.relationship("Horse_file", backref="horse")
+    files = db.relationship("Horse_file", backref="horse" , cascade='all, delete-orphan')
 
     __mapper_args__ = {
         'polymorphic_identity': 'ecuestre',
