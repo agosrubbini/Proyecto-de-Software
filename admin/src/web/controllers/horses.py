@@ -22,7 +22,6 @@ def show_horses(request):
     else:
         order_by = request.args.get('order_option', 'name_asc', type=str)
     
-    app.logger.info("Call to showHorsemen function with order_option: %s", order_by)
 
     # Map order options to actual column sorting
     order_mapping = {
@@ -43,7 +42,6 @@ def show_horses(request):
     name = request.args.get('name', '', type=str)
     type_jya_assigned = request.args.get('type_jya_assigned', '', type=str)
 
-    app.logger.info("Name: %s,  Type jya: %s", name, type_jya_assigned)
 
     # Build the query
     query = Horse.query
@@ -51,7 +49,7 @@ def show_horses(request):
     if name:
         query = query.filter(Horse.name.like(f'%{name}%'))
     if type_jya_assigned:
-        query = query.filter(Horse.type_jya_assigned.like(f'%{type_jya_assigned}%'))
+        query = query.filter(Horse.type_jya_assigned.contains([type_jya_assigned]))
     
     # Apply ordering and pagination
     horse = query.order_by(order_criteria).paginate(page=page, per_page=2)
@@ -184,7 +182,7 @@ def list_info_by_id(horse_id):
 
     horse = find_horse_by_id(horse_id)
     files = get_files_by_horse_id(horse_id)
-    horse_json = horse.to_dict()
+    horse_json = horse.to_dict()  
     files_json = []
 
     files, page, order_by, search, document_type = show_files(request)
@@ -196,11 +194,10 @@ def list_info_by_id(horse_id):
     context = {
         'pagination': files,
         'files': files_json,
-        'user': horse_json,
+        'horse': horse_json,
         'id': horse_id,
     }
 
-    app.logger.info("End of call to index function")
     
     return render_template('ecuestre/horses_info.html', context=context, page=page, order_by=order_by, search=search, document_type=document_type)
 

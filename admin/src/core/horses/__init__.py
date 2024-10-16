@@ -37,7 +37,7 @@ def create_file(**kwargs):
 
 def get_files_by_horse_id(horse_id):
 
-    return Horse_file.query.filter_by(horse_id = horse_id).all()
+    return Horse_file.query.filter_by(horses_id = horse_id).all()
 
 def delete_file_by_id(file_id):
 

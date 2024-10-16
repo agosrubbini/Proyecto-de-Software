@@ -38,7 +38,14 @@
                     <span class="icon is-small is-left">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </span>
-                    <input class="input" type="enum" name="type_jya_assigned" placeholder="Tipo de jinetes y amazonas asignados" value="{{ type_jya_assigned }}" />
+                    <select name="type_jya_assigned" class="input">
+                        <option value="">Selecciona un tipo</option>
+                        <option value="Hipoterapia">Hipoterapia</option>
+                        <option value="Monta Terapeutica">Monta Terapeutica</option>
+                        <option value="Deporte Ecuestre Adaptado">Deporte Ecuestre Adaptado</option>
+                        <option value="Actividades Recreativas">Actividades Recreativas</option>
+                        <option value="Equitacion">Equitacion</option>
+                    </select>
                 </div>
             </div>
             <button class="boton filter" type="submit">Buscar</button>
@@ -75,28 +82,27 @@
         <tbody>
             {% if horses.items %}
                 {% for horse in horses.items %}
-                    <a href="url_for('horses.list_info_by_id')">
-                        <tr onclick="window.location.href='{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}'">
-                            <td> {{horse.name}} </td>
-                            <td>{{ horse.date_of_birth.strftime('%d-%m-%Y') }}</td>
-                            <td> {{horse.gender}} </td>
-                            <td> {{horse.race}} </td>
-                            <td> {{horse.fur}} </td>
-                            <td> {{horse.purchase_or_donation}} </td>
-                            <td> {{  horse.date_of_entry.strftime('%d-%m-%Y')  }} </td>
-                            <td> {{horse.sede}} </td>
-                            <td>
-                                {% for type in horse.type_jya_assigned %}
-                                    {{ type }}{% if not loop.last %}, {% endif %}
-                                {% endfor %}
-                            </td>                   
-                            <td>
-                                {% for employee in horse.employees %}
-                                    {{ employee.name }}{% if not loop.last %}, {% endif %}
-                                {% endfor %}
-                            </td>
-                        </tr>
-                    </a>
+                    <tr onclick="window.location.href='{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}'">
+                        <td> {{horse.name}} </td>
+                        <td>{{ horse.date_of_birth.strftime('%d-%m-%Y') }}</td>
+                        <td> {{horse.gender}} </td>
+                        <td> {{horse.race}} </td>
+                        <td> {{horse.fur}} </td>
+                        <td> {{horse.purchase_or_donation}} </td>
+                        <td> {{  horse.date_of_entry.strftime('%d-%m-%Y')  }} </td>
+                        <td> {{horse.sede}} </td>
+                        <td>
+                        {% for type in horse.type_jya_assigned %}
+                            {{ type }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                        </td>                   
+                        <td>
+                        {% for employee in horse.employees %}
+                            {{ employee.name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                        </td>
+                    </tr>
+                
                 {% endfor %}
             {% else %}
                 <p style="text-align: center;">No hay caballos registrados en el sistema</p>

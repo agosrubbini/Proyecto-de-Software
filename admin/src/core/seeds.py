@@ -73,6 +73,20 @@ def run():
         healthcare_plan_id_employee=healthcare_plan1.id
     )
 
+    employee2 = create_employee(
+        name="Agostina",
+        last_name="R",
+        DNI="123456",
+        age=20,
+        phone_number="222",
+        address_id=address1.id,  # Atributos heredados de Person
+        profession=Profession.MEDICO,  # Atributo específico de Employee
+        job_position="Jefe",
+        emergency_contact_id_employee=emergency_contact1.id,
+        condition="Voluntario",
+        healthcare_plan_id_employee=healthcare_plan1.id
+    )
+
     horse1 = create_horse(
         name = "Mancha",
         date_of_birth = datetime.now(),
