@@ -1,6 +1,5 @@
 
 from datetime import datetime
-from src.core.persons.models.person import Profession, Diagnosis
 from src.core.auth import create_user, create_role, create_permission, initialice_admin_permissions, initialice_tecnica_permissions, initialice_ecuestre_permissions
 from src.core.horses import create_horse
 from src.core.institutions import create_institutional_work, create_school
@@ -95,6 +94,14 @@ def run():
         observation = "Se vence en 1 mes",
     )
 
+    school1 = create_school(
+        name = "Sagrado Corazon",
+        addres_id = address1.id,
+        phone_number = "2241548363",
+        current_year = "1ero",
+        observation = "La primer escuela",
+    )
+
     employee1 = create_employee(
         name="Ramiro",
         last_name="Alvarez",
@@ -102,7 +109,7 @@ def run():
         age=32,
         phone_number="222",
         address_id=address1.id,  # Atributos heredados de Person
-        profession=Profession.MEDICO,  # Atributo específico de Employee
+        profession= "Médico",  # Atributo específico de Employee
         job_position="Jefe",
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",
@@ -131,6 +138,7 @@ def run():
         fur = "Blanco y marron",
         purchase_or_donation = "Donacion",
         date_of_entry = datetime.now(),
+        sede = "arg",
         type_jya_assigned = "Hipoterapia"
     )
 
@@ -147,7 +155,7 @@ def run():
         emergency_contact_id_jya = emergency_contact1.id,
         attending_professionals = "Lucia",
         healthcare_plan_id_jya = healthcare_plan1.id,
-        diagnosis = Diagnosis.ESCLEROSIS_MULTIPLE,
+        diagnosis = "Esclerosis múltiple",
         type_of_disability = "Mental"
     )
 

@@ -47,6 +47,8 @@
                     <a class="navbar-item" href="{{ url_for('horsemen_and_amazons.list_jya_users') }}" >
                       J&A
                     </a>
+              
+                    <a class="navbar-item" href=" {{ url_for('horses.list_horses') }}">
                     {% endif %}
 
                     {% if 'horse_index' in g.user_permissions or g.user_system_admin %}
@@ -159,7 +161,7 @@
                                 {% if category == 'info' %} fa-info-circle has-text-info 
                                 {% elif category == 'success' %} fa-check-square has-text-success
                                 {% elif category == 'warning' %} fa-exclamation-triangle has-text-warning
-                                {% elif category == 'danger' %} fa-ban has-text-danger
+                                {% elif category == 'error' %} fa-ban has-text-danger
                                 {% endif %}">
                               </i>
                             </span>

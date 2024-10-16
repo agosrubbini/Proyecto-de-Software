@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block title %}Caballos{% endblock %}
+{% block content%}
+<div class="container">
+    <h1 class="title is-size-2 has-text-centered  has-text-black-bis mt-5">Caballos</h1>
+    <div class="container">
+        <a class="has-text-link  is-size-4" href="{{ url_for('horses.create_horse_view') }}">
+            <strong>Agregar nuevo Caballo</strong>
+        </a>
+        <form method="POST" action="{{url_for('horses.order_by')}}">
+            <div class="select">
+                <select name="order_option" onchange="this.form.submit()">
+                  <option value="default">Ordenar por:</option>
+                  <option value="name_asc">Nombre: Orden ascendente</option>
+                  <option value="name_desc">Nombre: Orden descendente</option>
+                  <option value="birth_date_asc">Fecha de nacimiento: Orden ascendente</option>
+                  <option value="birth_date_desc">Fecha de nacimiento: Orden descendente</option>
+                  <option value="entry_date_asc">Fecha de ingreso: Orden ascendente</option>
+                  <option value="entry_date_desc">Fecha de ingreso: Orden descendente</option>
+                </select>
+              </div>
+        </form>
+    </div>
+    <table class="table is-striped is-bordered is-fullwidth">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Fecha de Nacimiento</th>
+                <th>Género</th>
+                <th>Raza</th>
+                <th>Pelaje</th>
+                <th>Compra/Donacion</th>
+                <th>Fecha de Ingreso</th>
+                <th>Sede</th>
+                <th>Tipo de Jinetes y Amazonas asignados</th>
+                <th>Entrenadores y Conductores</th>
+            </tr>
+        </thead>
+        {% if context.horses %}
+        {% for horse in context.horses %}
+        <tbody>
+            <tr>
+                <td>{{ horse.name }}</td>
+                <td>{{ horse.date_of_birth.strftime('%Y/%m/%d') }}</td>
+                <td>{{ 'Macho' if horse.gender == 'M' else 'Hembra' }}</td>
+                <td>{{ horse.race }}</td>
+                <td>{{ horse.fur }}</td>
+                <td>{{ 'Compra' if horse.purchase_or_donation == 'C' else 'Donación' }}</td>
+                <td>{{ horse.date_of_entry.strftime('%Y/%m/%d') }}</td>
+                <td>{{ horse.sede }}</td>
+                <td>{{ horse.type_jya_assigned }}</td>
+                <td>{{ horse.employees }}</td>
+            </tr>
+        </tbody>
+        {% endfor %}
+        {% endif %}
+    </table>
+</div>
+
+{% endblock %}

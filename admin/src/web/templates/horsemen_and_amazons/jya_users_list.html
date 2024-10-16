@@ -14,7 +14,7 @@
     </div>
     <hr class="separador">
 
-    <form method="GET" action="{{url_for('horsemen_and_amazons.list_jya_users')}}">
+    <form id="form-search" method="GET" action="{{url_for('horsemen_and_amazons.list_jya_users')}}">
         <div class="field is-grouped">
             <div class="field">
                 <label class="label">Nombre</label>
@@ -52,9 +52,13 @@
                     <input class="input" type="text" name="professionals" placeholder="Profesionales" value="{{ professionals }}" />
                 </div>
             </div>
-            <button class="boton filter" type="submit">Buscar</button>
+            <div class="field">
+                <div class="control">
+                    <button class="boton filter field is-fullwidth" type="submit">Buscar</button>
+                </div>
+            </div>
         </div>
-    </form>
+    </form>    
     <form method="GET" action="{{ url_for('horsemen_and_amazons.list_jya_users') }}">
         <div class="control order_options">
             <select id="order_option" name="order_option" onchange="this.form.submit()">
@@ -66,31 +70,76 @@
             </select>
         </div>
     </form>
-    <table class="table is-striped users">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>DNI</th>
-                <th>Edad</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if users %}
-                {% for user in users %}
-                    <a href="url_for('jya_users.list_info_by_jya')">
-                        <tr onclick="window.location.href='{{ url_for('horsemen_and_amazons.list_info_by_jya', user_id=user.id) }}'">
-                            <td> {{user.name}} </td>
-                            <td> {{user.last_name}} </td>
-                            <td> {{user.DNI}} </td>
-                            <td> {{user.age}} </td>
-                        </tr>
-                    </a>
-                {% endfor %}
-            {% else %}
-                <p style="text-align: center;">No hay jinetes registrados en el sistema</p>
-            {% endif %}
-        </tbody>
-    </table>
 
+    <div class="table-container">
+        <table class="table is-striped users">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>DNI</th>
+                    <th>Edad</th>
+                    <th>Operaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if users %}
+                    {% for user in users %}
+                            <tr onclick="window.location.href='{{ url_for('horsemen_and_amazons.list_info_by_jya', user_id=user.id) }}'">
+                                <td> {{user.name}} </td>
+                                <td> {{user.last_name}} </td>
+                                <td> {{user.DNI}} </td>
+                                <td> {{user.age}} </td>
+                                <td>
+                                    <select class="operations" data-user-id="{{ user.id }}" onclick="event.stopPropagation();">
+                                        <option value="default">Selecciona la operación</option>
+                                        <option value="edit">Editar</option>
+                                        <option value="delete">Eliminar</option>
+                                    </select>
+                                </td>
+                            </tr>
+                    {% endfor %}
+                {% else %}
+                    <p style="text-align: center;">No hay jinetes registrados en el sistema</p>
+                {% endif %}
+            </tbody>
+        </table>
+        
+        <a href="{{ url_for('horsemen_and_amazons.add_horseman') }}"><button class="boton add-horseman">Registrar jinete</button></a>
+
+    </div>
+
+
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabla = document.querySelector('.table');
+            const boton = document.querySelector('.add-horseman');
+
+            const anchoTabla = tabla.offsetWidth;
+
+            boton.style.width = anchoTabla + 'px';
+
+            // Manejo de cambios en las operaciones
+            document.addEventListener('change', (e) => {
+                if (e.target.classList.contains('operations')) {
+                    const selectedValue = e.target.value;
+                    
+                    const userId = e.target.dataset.userId;
+
+                    console.log(userId);
+                    
+                    if (selectedValue === 'delete'){
+                        const deleteUrl = "{{ url_for('horsemen_and_amazons.delete_horseman', user_id=0) }}".replace('/0', `/${userId}`);
+                        window.location.href = deleteUrl;
+                    }
+
+                    if (selectedValue === 'edit'){
+                        const editUrl = "{{ url_for('horsemen_and_amazons.edit_horseman', user_id=0) }}".replace('/0', `/${userId}`);
+                        window.location.href = editUrl;
+                    }
+                }
+            });
+    });
+
+</script>
 {% endblock %}

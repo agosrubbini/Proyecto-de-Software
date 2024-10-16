@@ -59,7 +59,7 @@
         border: 1px solid black;
     }
 
-    input {
+    .input, input {
         margin-bottom: 15px;
         border-radius: 10px;
         border: 1px solid hsl(221, 14%, 80%);
