@@ -10,7 +10,7 @@
 
 {% block content %}
 
-<form  method="POST" action="{{ url_for('registry.registry_function') }}">
+<form  method="POST" action="{{ url_for('users.new_user') }}">
     
     {{ form.csrf_token }}
     <div class="div-titulo">
@@ -23,7 +23,7 @@
         <span class="icon is-small is-left">
             <i class="fas fa-envelope"></i>
         </span>
-        <input class="input" type="email" id="email" name="{{ form.email.name }}" placeholder="Ingrese su correo electrónico" value="{{ form.email.value }}">
+        <input class="input" type="email" id="email" name="{{ form.email.name }}" placeholder="Ingrese el correo electrónico" value="{{ form.email.value }}">
     </div>  
     <hr>
     
@@ -32,7 +32,7 @@
         <span class="icon is-small is-left">
             <i class="fa-solid fa-user"></i>
         </span>
-        <input class="input" type="text" id="alias" name="{{ form.alias.name }}" placeholder="Ingrese su alias" value="{{ form.alias.value }}">
+        <input class="input" type="text" id="alias" name="{{ form.alias.name }}" placeholder="Ingrese el alias" value="{{ form.alias.value }}">
     </div>
     <hr>
     
@@ -41,7 +41,7 @@
         <span class="icon is-small is-left">
             <i class="fas fa-lock"></i>
         </span>
-        <input class="input" type="password" id="password" name="{{ form.password.name }}" placeholder="Ingrese su contraseña" value="{{ form.password.value }}">
+        <input class="input" type="password" id="password" name="{{ form.password.name }}" placeholder="Ingrese la contraseña" value="{{ form.password.value }}">
     </div> 
     <hr> 
     
@@ -68,5 +68,6 @@
     
     <button type="submit">Registrar usuario</button>
 </form>
+<a class="a-button " href="{{ url_for('users.index') }}"><button type="button" style="width: 180px;">Listado de usuarios</button></a>
 
 {% endblock %}

@@ -81,7 +81,6 @@ def run():
         locality="La Plata",
         province="Buenos Aires",
         phone_number="2241",
-
     )
 
     emergency_contact1 = create_emergency_contact(
@@ -111,6 +110,20 @@ def run():
         phone_number="222",
         address_id=address1.id,  # Atributos heredados de Person
         profession= "Médico",  # Atributo específico de Employee
+        job_position="Jefe",
+        emergency_contact_id_employee=emergency_contact1.id,
+        condition="Voluntario",
+        healthcare_plan_id_employee=healthcare_plan1.id
+    )
+
+    employee2 = create_employee(
+        name="Agostina",
+        last_name="Rubbini",
+        DNI="654321",
+        age=36,
+        phone_number="333",
+        address_id=address1.id,  # Atributos heredados de Person
+        profession=Profession.DOCENTE,  # Atributo específico de Employee
         job_position="Jefe",
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",
@@ -180,6 +193,34 @@ def run():
         amount=2000,
         payment_method="Efectivo",
         observation="Se abona en efectivo",
+    )
+
+    payment1 = create_payment(
+        beneficiary=employee1.id,
+        amount=2000,
+        payment_date=datetime.now(),
+        payment_type="Honorarios",
+        description="Pago de honorarios",
+    )
+
+    user_index = create_permission(
+        name="user_index",
+    )
+
+    user_new = create_permission(
+        name="user_new",
+    )
+
+    user_show = create_permission(
+        name="user_show",
+    )
+
+    user_update = create_permission(
+        name="user_update",
+    )
+
+    user_destroy = create_permission(
+        name="user_destroy",
     )
 
     team_index = create_permission(

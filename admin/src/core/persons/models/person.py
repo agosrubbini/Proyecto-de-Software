@@ -100,15 +100,15 @@ class JyA(Person):
     family_allowance = db.Column(db.Enum("No recibe asignación","Asignación universal por hijo","Asignación universal por hijo con Discapacidad", "Asignación por ayuda escolar anual", name="family_allowance"), 
                                          nullable=True,)
     is_beneficiary_of_pension = db.Column(db.Boolean, default=False)
-    pension = db.Column(db.Enum("No recibe pensión", "Nacional", "Provincial", name="pension"), default="No recibe pensión",nullable=True)
+    pension = db.Column(db.Enum("No recibe pensión", "Nacional", "Provincial", name="pension"), default="No recibe pensión", nullable=True)
     school_id = db.Column(db.Integer, db.ForeignKey("schools.id"), nullable=True)
 
     # emergency_contact = db.relationship("EmergencyContact", backref="emergency_contact") Creo que no seria necesario porque ya tengo el id
     # healthcare_plan = db.relationship("HealthcarePlan", backref="healthcare_plan") Creo que no seria necesario porque ya tengo el id
     # school = db.relationship("School", backref="school") Creo que no seria necesario porque ya tengo el id
 
-    billings = db.relationship("Billing", backref="billings_jya", foreign_keys="Billing.jya_id")
-    files = db.relationship("File", backref="files")
+    billings = db.relationship("Billing", backref="billings_jya", foreign_keys="Billing.jya_id", cascade='all, delete-orphan')
+    files = db.relationship("File", backref="files", cascade='all, delete-orphan')
 
     __mapper_args__ = {
         'polymorphic_identity': 'jya',
