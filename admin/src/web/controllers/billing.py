@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash
 from core.auth import find_user_by_email
+from src.core.payments import create_billing
 from src.core.database import db
 from src.core.payments.models.billing import Billing
 from src.core.persons.models.person import Employee, JyA, Person
@@ -19,6 +20,12 @@ def get_person_name_and_last_name(person_id):
 @permission_required('billing_index')
 @inject_user_permissions
 def list_billings():
+
+    """
+    Esta funcion se encarga de listar los cobros realizados y aplicar filtros de busqueda.
+
+    """
+
     order = request.args.get('order', 'asc')
     q = request.args.get('q', None)
     start_date_str = request.args.get('start_date', None)
@@ -62,6 +69,11 @@ def list_billings():
 @permission_required('billing_new')
 @inject_user_permissions
 def new_billing():
+
+    """
+        Esta funcion se encarga de crear un nuevo cobro.
+    """
+
     form = BillingForm()
     jya_list = JyA.query.all()
     employee_list = Employee.query.all()
@@ -74,15 +86,13 @@ def new_billing():
         employee_list = employee_list.remove(employee_actual)
 
     if form.validate_on_submit():
-        new_billing = Billing(
+        create_billing(
             employee_id=form.employee_id.data,
             jya_id=form.jya_id.data,
             amount=form.amount.data,
             payment_method=form.payment_method.data,
             observation=form.observation.data
         )
-        db.session.add(new_billing)
-        db.session.commit()
         flash('Billing created successfully!', 'success')
         return redirect(url_for('billing.list_billings'))
     return render_template('billing/billing_new.html', form=form, jya_list=jya_list, employee_list=employee_list, employee_actual=employee_actual)
@@ -91,6 +101,11 @@ def new_billing():
 @permission_required('billing_show')
 @inject_user_permissions
 def show_billing(billing_id):
+
+    """
+        Esta funcion se encarga de mostrar un cobro en especifico asociado a un id.
+    """
+
     billing = Billing.query.get(billing_id)
     billing.employee_name = get_person_name_and_last_name(billing.employee_id)
     billing.jya_name = get_person_name_and_last_name(billing.jya_id)
@@ -100,6 +115,11 @@ def show_billing(billing_id):
 @permission_required('billing_edit')
 @inject_user_permissions
 def edit_billing(billing_id):
+
+    """
+        Esta funcion se encarga de editar un cobro en especifico asociado a un id.
+    """
+
     billing = Billing.query.get(billing_id)
     form = BillingForm(obj=billing)
     jya_list = JyA.query.all()
@@ -120,6 +140,11 @@ def edit_billing(billing_id):
 @permission_required('billing_delete')
 @inject_user_permissions
 def delete_billing(billing_id):
+
+    """
+    Esta funcion se encarga de eliminar un cobro en especifico asociado a un id.
+    """
+
     billing = Billing.query.get(billing_id)
     if billing:
         db.session.delete(billing)

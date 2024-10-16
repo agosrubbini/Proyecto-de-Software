@@ -27,6 +27,20 @@ def create_user(**kwargs):
 
     return user
 
+def edit_user(**kwargs):
+
+    """
+        Edita un objeto User con los valores recibidos por parámetro
+    """
+    user = kwargs['user']
+    hash = bcrypt.generate_password_hash(kwargs['password'].encode('utf-8'))
+    user.email = kwargs['email']
+    user.alias = kwargs['alias']
+    user.password = hash.decode('utf-8')
+    user.role_id = kwargs['role_id']
+    db.session.commit()
+
+    return user
 
 def create_role(**kwargs):
 
