@@ -14,7 +14,7 @@ class Horse_file(db.Model):
     title = db.Column(db.String(70), nullable=True)
     upload_date = db.Column(db.DateTime, default=datetime.now())
 
-def __init__(self, id=None, file_url=None, file_type=None, document_type=None, horses_id=None, title=None, upload_date=None):
+    def __init__(self, id=None, file_url=None, file_type=None, document_type=None, horses_id=None, title=None, upload_date=None):
 
         self.id = id 
         self.file_url = file_url
@@ -23,7 +23,7 @@ def __init__(self, id=None, file_url=None, file_type=None, document_type=None, h
         self.horses_id = horses_id
         self.title = title
 
-def to_dict(self):
+    def to_dict(self):
         return {
             "id": self.id,
             "title": self.title,

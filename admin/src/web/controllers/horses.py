@@ -178,7 +178,6 @@ def list_info_by_id(horse_id):
     """
         Esta función retorna la información del caballo asociado al id pasado por parámetro en la url.
     """
-    app.logger.info("Call to index function")
 
     horse = find_horse_by_id(horse_id)
     files = get_files_by_horse_id(horse_id)

@@ -8,6 +8,7 @@ from src.core.payments import create_payment, create_billing
 from src.core.persons import (
     create_person, create_employee, create_JyA, create_family_member_or_tutor, create_address, create_emergency_contact, 
     create_healthcare_plan)
+from src.core.horses.__init__ import create_file
 
 
 
@@ -119,16 +120,16 @@ def run():
     file1 = create_file(
         file_url = "hola",
         file_type = "Link",
-        document_type = "Entrevista",
-        horsemen_and_amazons_id = JyA1.id,
+        document_type = "Ficha general del caballo",
+        horses_id = horse1.id,
         title = "LINK DE PRUEBA",
     )
 
     file2 = create_file(
         file_url = "chau",
         file_type = "Documento",
-        document_type = "Evaluación",
-        horsemen_and_amazons_id = JyA1.id,
+        document_type = "Registro veterinario",
+        horses_id = horse1.id,
         title = "ARCHIVO DE PRUEBA",
     )
 
