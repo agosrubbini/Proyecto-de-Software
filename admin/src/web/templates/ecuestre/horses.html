@@ -70,25 +70,27 @@
                 <th>Sede</th>
                 <th>Tipo Jinetes/Amazonas asignados</th>
                 <th>Empleados</th>
-                <th>Archivos</th>
             </tr>
         </thead>
         <tbody>
-            {% if horses %}
-                {% for horse in horses %}
+            {% if horses.items %}
+                {% for horse in horses.items %}
                     <a href="url_for('horses.list_info_by_id')">
                         <tr onclick="window.location.href='{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}'">
                             <td> {{horse.name}} </td>
-                            <td> {{horse.date_of_birth}} </td>
+                            <td>{{ horse.date_of_birth.strftime('%d-%m-%Y') }}</td>
                             <td> {{horse.gender}} </td>
                             <td> {{horse.race}} </td>
                             <td> {{horse.fur}} </td>
                             <td> {{horse.purchase_or_donation}} </td>
-                            <td> {{horse.date_of_entry}} </td>
+                            <td> {{  horse.date_of_entry.strftime('%d-%m-%Y')  }} </td>
                             <td> {{horse.sede}} </td>
                             <td> {{horse.type_jya_assigned}} </td>
-                            <td> {{horse.employees}} </td>
-                            <td> {{horse.files}} </td>
+                            <td>
+                                {% for employee in horse.employees %}
+                                    {{ employee.name }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
                         </tr>
                     </a>
                 {% endfor %}
@@ -97,5 +99,21 @@
             {% endif %}
         </tbody>
     </table>
+<!-- Controles de paginación -->
+<div class="pagination">
+    {% if horses.has_prev %}
+        <a href="{{ url_for('horses.list_horses', page=horses.prev_num, order_option=order_by, name=name, type_jya_assigned=type_jya_assigned) }}">
+            Anterior
+        </a>
+    {% endif %}
+
+    <span>Página {{ horses.page }} de {{ horses.pages }}</span>
+
+    {% if horses.has_next %}
+        <a href="{{ url_for('horses.list_horses', page=horses.next_num, order_option=order_by, name=name, type_jya_assigned=type_jya_assigned) }}">
+            Siguiente
+        </a>
+    {% endif %}
+</div>
 
 {% endblock %}
