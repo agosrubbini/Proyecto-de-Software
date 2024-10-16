@@ -74,17 +74,25 @@ def list_horses():
 @bp.route('/create', methods=['GET', 'POST'])
 def create_horse_view():
     form = create_horse_Form()
-    app.logger.info("El formulario de creación de caballo ha sido enviado: %s", form.validate_on_submit())
-    
-    form.employees.choices = [(employee.id, employee.name) for employee in Employee.query.all()]
+
+    form.employees.choices = [(e.id, e.name) for e in Employee.query.all()]  # Cargar empleados
     
     if form.validate_on_submit():
         try:
-            # Obtener empleados seleccionados por el usuario como una lista de objetos Employee
-            selected_employees = Employee.query.filter(Employee.id.in_(form.employees.data)).all()
-
-            # Crear el caballo en la base de datos usando la función importada
-            new_horse = create_horse(
+            type_jya_assigned=[]
+            if form.type_jya_hipoterapia.data:
+                type_jya_assigned.append ("Hipoterapia")
+            if form.type_jya_monta_terapeutica.data:
+                type_jya_assigned.append ("Monta Terapeutica")
+            if form.type_jya_dea.data:
+                type_jya_assigned.append ("Deporte Ecuestre Adaptado")
+            if form.type_jya_ar.data:
+                type_jya_assigned.append ("Actividades Recreativas")
+            if form.type_jya_equitacion.data:
+                type_jya_assigned.append ("Equitacion")
+            
+            
+            new_horse = Horse(
                 name=form.name.data,
                 date_of_birth=form.date_of_birth.data,
                 gender=form.gender.data,
@@ -93,11 +101,17 @@ def create_horse_view():
                 purchase_or_donation=form.purchase_or_donation.data,
                 date_of_entry=form.date_of_entry.data,
                 sede=form.sede.data,
-                type_jya_assigned=form.type_jya_assigned.data,
-                employees = selected_employees
-            #employees=form.employees.data
+                type_jya_assigned=type_jya_assigned,
             )
-        
+
+
+            for empleado_id in form.employees.data:
+                empleado = Employee.query.get(empleado_id)
+                new_horse.employees.append(empleado)
+
+
+            db.session.add(new_horse)
+            db.session.commit()
             
             app.logger.info("Caballo creado exitosamente: %s", form.name.data)#controlar
             flash("Caballo creado exitosamente", "success")

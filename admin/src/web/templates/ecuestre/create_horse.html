@@ -88,18 +88,21 @@
 
         <div class="field">
             <label class="label">Tipo de Jinetes y Amazonas Asignados</label>
-            <div class="control">
-                {{ context.form.type_jya_assigned(class="select") }}
-            </div>
-            {% for error in context.form.type_jya_assigned.errors %}
-            <p class="help is-danger">{{ error }}</p>
-            {% endfor %}
+            <input type="checkbox" name="type_jya_hipoterapia">Hipoterapia
+            <input type="checkbox" name="type_jya_monta_terapeutica">Monta Terapeutica
+            <input type="checkbox" name="type_jya_dea">Deporte Ecuestre Adaptado
+            <input type="checkbox" name="type_jya_ar">Actividades Recreativas
+            <input type="checkbox" name="type_jya_equitacion">Equitacion
         </div>
 
         <div class="field">
             <label class="label">Asociar Entrenadores y Conductores</label>
             <div class="control">
-                {{ context.form.employees(class="input") }}
+                {% for id, name in context.form.employees.choices %}
+            <label>
+                <input type="checkbox" name="employees" value="{{ id }}"> {{ name }}
+            </label><br>
+                {% endfor %}
             </div>
             {% for error in context.form.employees.errors %}
             <p class="help is-danger">{{ error }}</p>

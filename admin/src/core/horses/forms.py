@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, DateField, SelectMultipleField, SelectField, FileField
-from wtforms.validators import InputRequired, Length, Optional, Length
+from wtforms import StringField, SelectField, DateField, SelectMultipleField, SelectField, FileField, BooleanField
+from wtforms.validators import InputRequired, Length, Optional
 
 
 
@@ -28,22 +28,17 @@ class create_horse_Form(FlaskForm):
 
     sede = StringField("Sede", validators=[InputRequired(), Length(max=255)])
 
-    type_jya_assigned = SelectField(
-        'Tipo de Jinetes y Amazonas asignados',
-        choices=[("Hipoterapia", "Hipoterapia"), 
-                 ("Monta Terapeutica", "Monta Terapeutica"), 
-                 ("Deporte Ecuestre Adaptado", "Deporte Ecuestre Adaptado"),
-                 ("Actividades Recreativas", "Actividades Recreativas"), 
-                 ("Equitación", "Equitación")]  # revisar
-    )
+    type_jya_hipoterapia = BooleanField (default=False) 
+    type_jya_monta_terapeutica = BooleanField (default=False) 
+    type_jya_dea = BooleanField (default=False) 
+    type_jya_ar = BooleanField (default=False) 
+    type_jya_equitacion = BooleanField (default=False) 
+    
+    
 
-    employees = StringField("Asociar entrenadores y conductores", validators=[InputRequired(), Length(max=15)]) #terminar de hacer 
+    #employees = StringField("Asociar entrenadores y conductores", validators=[InputRequired(), Length(max=15)]) #terminar de hacer 
 
-    employees = SelectMultipleField(
-        "Asociar entrenadores y conductores", 
-        choices=[],  # Se cargará dinámicamente con los empleados disponibles
-        coerce=int  # Convertirá el valor a entero (ID de empleados)
-    )
+    employees = SelectMultipleField('Empleados', coerce=int)
 class registryFileForm(FlaskForm):
 
     file_url = StringField("file_url", validators=[InputRequired(), Length(max=60)])

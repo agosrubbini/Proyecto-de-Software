@@ -85,7 +85,11 @@
                             <td> {{horse.purchase_or_donation}} </td>
                             <td> {{  horse.date_of_entry.strftime('%d-%m-%Y')  }} </td>
                             <td> {{horse.sede}} </td>
-                            <td> {{horse.type_jya_assigned}} </td>
+                            <td>
+                                {% for type in horse.type_jya_assigned %}
+                                    {{ type }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>                   
                             <td>
                                 {% for employee in horse.employees %}
                                     {{ employee.name }}{% if not loop.last %}, {% endif %}

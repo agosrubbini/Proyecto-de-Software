@@ -82,7 +82,7 @@ def run():
         purchase_or_donation = "Donacion",
         date_of_entry = datetime.now(),
         sede = "arg",
-        type_jya_assigned = "Hipoterapia"
+        type_jya_assigned = ["Hipoterapia","Equitacion"]
     )
 
     JyA1 = create_JyA(
