@@ -88,9 +88,9 @@
                         <div class="dropdown-content" id="userDropdown">
                           <div class="user-info">
                             <div class="user-alias"> {{ user(session).alias}}</div>
-                            <div class="user-email"> {{ user(session).email }} </div>
+                            <div class="user-email"> {{ session["user"] }} </div>
                           </div>
-                          <a class="dropdown-item" href="/perfil">
+                          <a class="dropdown-item" href="{{ url_for('users.show_user', id=session["user_id"]) }}">
                             <i class="fas fa-user"></i>
                             <span>Mi Perfil</span>
                           </a>

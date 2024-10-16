@@ -12,6 +12,10 @@ from src.core.auth.auth import inject_user_permissions, permission_required
 bp = Blueprint('users', __name__, url_prefix='/users')
 
 def showUsers(request):
+    '''
+        La siguiente funcion se encarga de mostrar la lista de usuarios, aplicando filtros y ordenamientos
+        y realizando una paginacion de los mismos.
+    '''
     app.logger.info("Call to showUsers function")
     
     order_option = request.args.get('order_option', 'email_asc', type=str)
@@ -64,6 +68,9 @@ def showUsers(request):
 @permission_required('user_index')
 @inject_user_permissions
 def index():
+    '''
+        Esta funcion retorna el listado de usuarios registrados en el sistema.
+    '''
     app.logger.info("Call to index function")
     context, page, order_option, search, role, activity = showUsers(request)
     app.logger.info("End of call to index function")
@@ -75,11 +82,12 @@ def index():
 @permission_required('user_new')
 @inject_user_permissions
 def new_user():
-    
+
     """
-    Muestra la vista del registro, además valida los parametros, y guarda al usuario en la base de datos si
-    se recibió el formulario y el mismo es válido.
+        Esta función muestra la vista del registro, además valida los parametros, y guarda al usuario en la base de datos si
+        se recibió el formulario y el mismo es válido.
     """
+
     app.logger.info("Call to registry_function")
     form = registryForm()
     app.logger.info("El formulario es valido: %s", form.validate_on_submit())
@@ -108,6 +116,9 @@ def new_user():
 @permission_required('user_show')
 @inject_user_permissions
 def show_user(id):
+    '''
+        Esta funcion muestra la informacion de un usuario en particular pasado por parametro.
+    '''
     user = find_user_by_id(id)
     roles = get_all_roles()
     context = {
@@ -121,6 +132,10 @@ def show_user(id):
 @permission_required('user_update')
 @inject_user_permissions
 def block_user(id):
+    '''
+        Esta funcion se encarga de bloquear o desbloquear a un usuario pasado por id del sistema..
+    '''
+
     app.logger.info("Call to block_user function")
     context, page, order_option, search, role, activity = showUsers(request)
     user = find_user_by_id(id)
@@ -137,6 +152,10 @@ def block_user(id):
 @permission_required('user_update')
 @inject_user_permissions
 def update_user(id):
+    '''
+        Esta funcion se encarga de actualizar la informacion de un usuario pasado por id del sistema..
+    '''
+
     app.logger.info("Call to update_user function")
     user = User.query.get(id)
     form = registryForm()
@@ -170,6 +189,10 @@ def update_user(id):
 @permission_required('user_destroy')
 @inject_user_permissions
 def delete_user(id):
+    '''
+        Esta funcion se encarga de eliminar a un usuario pasado por id del sistema.
+    '''
+
     app.logger.info("Call to delete_user function")
     user = find_user_by_id(id)
     if user:
