@@ -90,3 +90,51 @@ input {
     border: none;  
 }
 
+.modal.is-active {
+    display: flex;
+  }
+
+.modal-card-head,
+.modal-card-foot,
+.modal-card-body {
+  background-color: white; 
+}
+
+.modal-card-head {
+  padding: 20px;
+  border-bottom: none;  
+}
+
+.modal-card-title {
+  color: #363636;
+  font-size: 1.5rem;  
+  font-weight: bold;
+}
+
+.modal-card-foot {
+  padding: 10px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #dbdbdb; 
+}
+
+.modal-card-foot .button {
+  margin-left: 10px; 
+}
+
+.action-button i {
+    width: 20px;  /* Ajusta el tamaño según tus necesidades */
+    height: 20px; /* Ajusta el tamaño según tus necesidades */
+    display: inline-block; /* Permite que el tamaño funcione correctamente */
+    font-size: 16px; /* Ajusta el tamaño de la fuente si es necesario */
+}
+.action-button {
+    padding: 5px;  /* Ajusta según sea necesario */
+    margin: 0 5px; /* Margen entre botones */
+    display: flex;  /* Asegura que los contenidos se alineen */
+    justify-content: center; /* Centra el contenido del botón */
+    align-items: center; /* Alinea verticalmente el contenido */
+}
+
+
+
