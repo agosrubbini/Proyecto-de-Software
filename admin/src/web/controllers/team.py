@@ -1,6 +1,9 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash
 from src.core.auth.auth import inject_user_permissions, permission_required
 from src.core.persons.models.person import Employee
+from src.core.persons.models.address import Address
+from src.core.persons.models.healthcare_plan import HealthcarePlan
+from src.core.persons.models.emergency_contact import EmergencyContact
 from src.core.persons.forms import EmployeeForm
 from src.core.database import db
 
@@ -41,11 +44,73 @@ def list_team():
 
     return render_template('team/team_list.html', employees=employees, order=order, q=q, pagination=employees_pagination, job_position=job_position,form=EmployeeForm())
 
-@bp.route('/crear')
+@bp.route('/crear', methods=['GET', 'POST'])
 @permission_required('team_new')
 @inject_user_permissions
 def new_employee():
-    return render_template('team/team_new.html')
+    form = EmployeeForm()
+    form.address_id.choices = [(address.id, address.string()) for address in Address.query.all()]
+    form.emergency_contact.choices = [(emergency_contact.id, emergency_contact.name, emergency_contact.phone_number) for emergency_contact in EmergencyContact.query.all()]
+    professions = ["Psicólogo", "Psicomotricista", "Médico", "Kinesiólogo", "Terapista Ocupacional", "Psicopedagogo", "Docente", "Profesor", "Fonoaudiólogo",
+    "Veterinario", "Otro"]
+    
+    if form.validate_on_submit():
+        if form.address_id.data:
+            address = Address.query.get(form.address_id.data)
+        else:
+            address = Address(
+                street=form.new_address.street.data,
+                number=form.new_address.number.data,
+                department=form.new_address.department.data,
+                locality=form.new_address.locality.data,
+                province=form.new_address.province.data,
+                phone_number=form.new_address.phone_number.data
+            )
+            db.session.add(address)
+            db.session.commit()
+        
+        healthcare_plan = HealthcarePlan(
+            social_security=form.healthcare_plan.social_security.data,
+            affiliate_number=form.healthcare_plan.affiliate_number.data,
+            has_guardianship=form.healthcare_plan.has_guardianship.data,
+            observation=form.healthcare_plan.observation.data
+        )
+        db.session.add(healthcare_plan)
+        db.session.commit()
+        
+        if form.emergency_contact.data:
+            emergency_contact = EmergencyContact.query.get(form.emergency_contact.data)
+        else:
+            emergency_contact = EmergencyContact(
+                name=form.new_emergency_contact.name.data,
+                phone_number=form.new_emergency_contact.phone_number.data
+            )
+            db.session.add(emergency_contact)
+            db.session.commit()
+
+        employee = Employee(
+            name=form.name.data,
+            last_name=form.last_name.data,
+            DNI=form.dni.data,
+            phone_number=form.phone_number.data,
+            address_id=address.id,
+            profession=form.profession.data,
+            job_position=form.job_position.data,
+            start_date=form.start_date.data,
+            end_date=form.end_date.data,
+            emergency_contact=emergency_contact.id,
+            condition=form.condition.data,
+            active=True,
+            healthcare_plan_id_employee=healthcare_plan.id,
+            email=form.email.data,
+            birth_date=form.birth_date.data
+        )
+        db.session.add(employee)
+        db.session.commit()
+        flash('Employee created successfully!', 'success')
+        return redirect(url_for('team.list'))
+
+    return render_template('team/team_new.html', form=form, professions=professions)
 
 @bp.route('/empleado/<int:id>')
 @permission_required('team_show')

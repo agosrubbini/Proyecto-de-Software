@@ -1,5 +1,5 @@
 
-from datetime import datetime
+from datetime import datetime, date
 from src.core.persons.models.person import Profession, Diagnosis
 from src.core.auth import create_user, create_role, create_permission, initialice_admin_permissions, initialice_tecnica_permissions, initialice_ecuestre_permissions
 from src.core.horses import create_horse
@@ -108,7 +108,8 @@ def run():
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",
         healthcare_plan_id_employee=healthcare_plan1.id,
-        email="empleado@gmail.com"
+        email="empleado@gmail.com",
+        birth_date = datetime.now(),
     )
 
     horse1 = create_horse(
