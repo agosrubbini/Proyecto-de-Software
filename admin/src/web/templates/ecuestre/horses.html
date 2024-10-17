@@ -84,7 +84,7 @@
                 {% for horse in horses.items %}
                     <tr onclick="window.location.href='{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}'">
                         <td> {{horse.name}} </td>
-                        <td>{{ horse.date_of_birth.strftime('%d-%m-%Y') }}</td>
+                        <td> {{ horse.date_of_birth.strftime('%d-%m-%Y') }} </td>
                         <td> {{horse.gender}} </td>
                         <td> {{horse.race}} </td>
                         <td> {{horse.fur}} </td>

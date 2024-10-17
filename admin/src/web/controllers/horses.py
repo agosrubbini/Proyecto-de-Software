@@ -185,7 +185,9 @@ def list_info_by_id(horse_id):
     horse_json = horse.to_dict()  
     files_json = []
 
-    files, page, order_by, search, document_type = show_files(request)
+    files_query = Horse_file.query.filter(Horse_file.horse_id == horse_id)
+
+    files, page, order_by, search, document_type = show_files(files_query, request)
 
     if files:
         for file in files:    
@@ -242,7 +244,7 @@ def add_file(horse_id):
         if (find_file_by_title(form.title.data)):
             
             flash("Ya existe un archivo con el titutlo ingresado", "error")
-            return redirect(url_for("horses.add_file", horses_id=horse_id))
+            return redirect(url_for("horses.add_file", horse_id=horse_id))
 
         if form.file_type.data == 'Documento':
             # Manejar el archivo
@@ -289,14 +291,14 @@ def add_file(horse_id):
             )
 
         flash("El archivo se ha creado correctamente", "success")
-        return redirect(url_for('horses.list_info_by_id', horses_id=horse_id))
+        return redirect(url_for('horses.list_info_by_id', horse_id=horse_id))
     
     else:
         for field, errors in form.errors.items():
             for error in errors:
                 flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
 
-    return render_template("ecuestre/registry_file.html", form=form, horses_id=horse_id)
+    return render_template("ecuestre/registry_file.html", form=form, horse_id=horse_id)
 
 
 @bp.route("/<int:horse_id>/download_file/<file_id>", methods=['GET'])

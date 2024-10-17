@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
 
-{% block title %}Información y documentos del jinete{% endblock %}
+{% block title %}Información y documentos del caballo{% endblock %}
 {% block head %}
     {{ super() }}
     <link
           rel="stylesheet"
-          href="{{ url_for('static', filename='styles/ecuestre/horses_info.css') }}"/>
+          href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_info.css') }}"/>
     <link
           rel="stylesheet"
-          href="{{ url_for('static', filename='styles/ecuestre/horses_list.css') }}"/>
+          href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_list.css') }}"/>
 {% endblock %}
 {% block content %}
 
@@ -21,19 +21,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const horse = {{ context.horse| tojson | safe }};
-            const files = {{ context.files | tojson | safe }};
+            const horseData = JSON.parse(`{{ context.horse | tojson | safe }}`);
+            const filesData = {{ context.files | tojson | safe }};
             const buttonInfo = document.getElementById('info');
             const buttonDocs = document.getElementById('docs');
             const contenedor = document.getElementById('contenedor');
 
-            // Función para cargar la información del usuario
+            // Función para cargar la información del cabalo
             function cargarInformacion() {
                 buttonInfo.classList.add('clicked');
                 buttonDocs.classList.remove('clicked');
                 contenedor.classList.remove('docs');
 
-                let table_users = `<table class="table is-striped">
+                let table_horses = `<table class="table is-striped">
                                     <thead>
                                         <tr>
                                             <th>Campo</th>
@@ -41,13 +41,14 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr><td>Nombre</td><td>${horse.name}</td></tr>
-                                        <tr><td>Fecha de nacimiento</td><td>${horse.date_of_birth}</td></tr>
-                                        <tr><td>Genero</td><td>${horse.gender}</td></tr>
-                                        <tr><td>Raza</td><td>${horse.race}</td></tr>
-                                        <tr><td>Pelaje</td><td>${horse.fur}</td></tr>
-                                        <tr><td>Sede</td><td>${horse.sede}</td></tr>
-                                        <tr><td>tipo de jinetes y amazonas asignados</td><td>${horse.type_jya_assigned}</td></tr>
+                                        <tr><td>Nombre</td><td>${horseData.name}</td></tr>
+                                        <tr><td>Fecha de nacimiento</td><td>${horseData.date_of_birth}</td></tr>
+                                        <tr><td>Fecha de entrada</td><td>${horseData.date_of_entry}</td></tr>
+                                        <tr><td>Genero</td><td>${horseData.gender}</td></tr>
+                                        <tr><td>Raza</td><td>${horseData.race}</td></tr>
+                                        <tr><td>Pelaje</td><td>${horseData.fur}</td></tr>
+                                        <tr><td>Sede</td><td>${horseData.sede}</td></tr>
+                                        <tr><td>tipo de jinetes y amazonas asignados</td><td>${horseData.type_jya_assigned}</td></tr>
                                     </tbody>
                                 </table>`;
 
@@ -103,7 +104,7 @@
 
                 contenedor.innerHTML = inputs;
 
-                if (files.length > 0) {
+                if (filesData.length > 0) {
                     let table_docs = `
                         <table class="table is-striped">
                             <thead>
@@ -116,19 +117,19 @@
                             </thead>
                             <tbody>
                     `;
-                    files.forEach(file => {
+                    filesData.forEach(f => {
                         table_docs += `
                             <tr>
-                                <td>${file.title}</td>
-                                <td>${file.upload_date}</td>
-                                <td>${file.document_type}</td>
+                                <td>${f.title}</td>
+                                <td>${f.upload_date}</td>
+                                <td>${f.document_type}</td>
                                 <td>
-                                    <select class="operations" data-file-id="${file.id}" data-file-type="${file.file_type}">
+                                    <select class="operations" data-file-id="${f.id}" data-file-type="${f.file_type}">
                                         <option value="default">Selecciona la operación</option>
                                         <option value="edit">Editar</option>
                                         <option value="delete">Eliminar</option>
-                                        <option value="${file.file_type === 'Link' ? 'open' : 'download'}">
-                                            ${file.file_type === 'Link' ? 'Ir al documento' : 'Descargar'}
+                                        <option value="${f.file_type === 'Link' ? 'open' : 'download'}">
+                                            ${f.file_type === 'Link' ? 'Ir al documento' : 'Descargar'}
                                         </option>
                                     </select>
                                 </td>

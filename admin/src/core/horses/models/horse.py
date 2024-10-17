@@ -48,7 +48,8 @@ class Horse(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "date_of_birth": self.date_of_birth,
+            "date_of_birth": self.date_of_birth.strftime('%d-%m-%Y'),
+            "date_of_entry": self.date_of_entry.strftime('%d-%m-%Y'),
             "gender": self.gender,
             "race": self.race,
             "fur": self.fur,
