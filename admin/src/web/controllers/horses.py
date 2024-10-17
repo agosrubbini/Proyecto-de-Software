@@ -181,20 +181,20 @@ def list_info_by_id(horse_id):
     """
 
     horse = find_horse_by_id(horse_id)
-    files = get_files_by_horse_id(horse_id)
+    files = get_files_by_horse_id(horse.id)
     horse_json = horse.to_dict()  
     files_json = []
 
-    files_query = Horse_file.query.filter(Horse_file.horse_id == horse_id)
 
-    files, page, order_by, search, document_type = show_files(files_query, request)
+
+    pagination, page, order_by, search, document_type = show_files( request)
 
     if files:
         for file in files:    
             files_json.append(file.to_dict())
 
     context = {
-        'pagination': files,
+        'pagination': pagination,
         'files': files_json,
         'horse': horse_json,
         'id': horse_id,
