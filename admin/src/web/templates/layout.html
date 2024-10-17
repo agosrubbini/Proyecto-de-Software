@@ -47,12 +47,10 @@
                     <a class="navbar-item" href="{{ url_for('horsemen_and_amazons.list_jya_users') }}" >
                       J&A
                     </a>
-              
-                    <a class="navbar-item" href=" {{ url_for('horses.list_horses') }}">
                     {% endif %}
 
                     {% if 'horse_index' in g.user_permissions or g.user_system_admin %}
-                    <a class="navbar-item">
+                    <a class="navbar-item" href=" {{ url_for('horses.list_horses') }}">
                       Ecuestre
                     </a>
                     {% endif %}
@@ -89,7 +87,7 @@
                         <i class="fas fa-user-circle user-icon" id="userIcon"></i>
                         <div class="dropdown-content" id="userDropdown">
                           <div class="user-info">
-                            <div class="user-alias"> {{ user(session).alias}}</div>
+                            <div class="user-alias"> {{ user(session).alias }}</div>
                             <div class="user-email"> {{ user(session).email }} </div>
                           </div>
                           <a class="dropdown-item" href="/perfil">
