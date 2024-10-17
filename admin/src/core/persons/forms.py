@@ -43,7 +43,6 @@ class EmployeeForm(FlaskForm):
     name = StringField("Name", validators=[InputRequired(), Length(max=255)])
     last_name = StringField("Last Name", validators=[InputRequired(), Length(max=255)])
     dni = StringField("DNI", validators=[InputRequired(), Length(max=12)])
-    age = StringField("Age", validators=[InputRequired()])
     phone_number = StringField("Phone Number", validators=[InputRequired(), Length(max=255)])
     
     # Campos de Employee

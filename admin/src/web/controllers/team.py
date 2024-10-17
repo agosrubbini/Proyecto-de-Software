@@ -4,7 +4,7 @@ from src.core.persons.models.person import Employee
 from src.core.persons.models.address import Address
 from src.core.persons.models.healthcare_plan import HealthcarePlan
 from src.core.persons.models.emergency_contact import EmergencyContact
-from src.core.persons.forms import EmployeeForm
+from src.core.persons.forms import EmployeeForm, HealthcarePlanForm
 from src.core.database import db
 
 bp = Blueprint('team', __name__, url_prefix='/empleados')
@@ -49,6 +49,7 @@ def list_team():
 @inject_user_permissions
 def new_employee():
     form = EmployeeForm()
+    form_hp = HealthcarePlanForm()
     form.address_id.choices = [(address.id, address.string()) for address in Address.query.all()]
     form.emergency_contact.choices = [(emergency_contact.id, emergency_contact.name, emergency_contact.phone_number) for emergency_contact in EmergencyContact.query.all()]
     professions = ["Psicólogo", "Psicomotricista", "Médico", "Kinesiólogo", "Terapista Ocupacional", "Psicopedagogo", "Docente", "Profesor", "Fonoaudiólogo",
@@ -98,7 +99,7 @@ def new_employee():
             job_position=form.job_position.data,
             start_date=form.start_date.data,
             end_date=form.end_date.data,
-            emergency_contact=emergency_contact.id,
+            emergency_contact_id_employee=emergency_contact.id,
             condition=form.condition.data,
             active=True,
             healthcare_plan_id_employee=healthcare_plan.id,
@@ -108,9 +109,9 @@ def new_employee():
         db.session.add(employee)
         db.session.commit()
         flash('Employee created successfully!', 'success')
-        return redirect(url_for('team.list'))
+        return redirect(url_for('team.list_team'))
 
-    return render_template('team/team_new.html', form=form, professions=professions)
+    return render_template('team/team_new.html', form=form, form_hp=form_hp, professions=professions)
 
 @bp.route('/empleado/<int:id>')
 @permission_required('team_show')

@@ -1,12 +1,11 @@
 
-from datetime import datetime, date
-from src.core.persons.models.person import Profession, Diagnosis
+from datetime import datetime
 from src.core.auth import create_user, create_role, create_permission, initialice_admin_permissions, initialice_tecnica_permissions, initialice_ecuestre_permissions
 from src.core.horses import create_horse
-from src.core.institutions import create_institutional_work, create_school
-from src.core.payments import create_payment, create_billing
+from src.core.institutions import create_institutional_work
+from src.core.payments import create_billing
 from src.core.persons import (
-    create_person, create_employee, create_JyA, create_family_member_or_tutor, create_address, create_emergency_contact, 
+    create_person, create_employee, create_JyA, create_address, create_emergency_contact, 
     create_healthcare_plan, create_file)
 
 
@@ -103,7 +102,7 @@ def run():
         age=32,
         phone_number="222",
         address_id=address1.id,  # Atributos heredados de Person
-        profession=Profession.MEDICO,  # Atributo específico de Employee
+        profession="Médico",  # Atributo específico de Employee
         job_position="Jefe",
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",
@@ -137,7 +136,7 @@ def run():
         emergency_contact_id_jya = emergency_contact1.id,
         attending_professionals = "Lucia",
         healthcare_plan_id_jya = healthcare_plan1.id,
-        diagnosis = Diagnosis.ESCLEROSIS_MULTIPLE,
+        diagnosis = "Ecne",
         type_of_disability = "Mental"
     )
 
