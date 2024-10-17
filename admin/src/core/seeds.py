@@ -123,7 +123,7 @@ def run():
         age=36,
         phone_number="333",
         address_id=address1.id,  # Atributos heredados de Person
-        profession=Profession.DOCENTE,  # Atributo específico de Employee
+        profession="Docente",  # Atributo específico de Employee
         job_position="Jefe",
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",

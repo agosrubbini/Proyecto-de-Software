@@ -6,6 +6,7 @@ from web.controllers.auth.users import bp as bp_users
 from web.controllers.payment import bp as bp_payment
 from web.controllers.horsemen_and_amazons import bp as bp_jya
 from web.controllers.billing import bp as bp_billing
+from src.web.controllers.horses import bp as bp_horses
 from src.core import database
 from src.core.config import config
 from src.core.bcrypt import bcrypt
@@ -14,7 +15,6 @@ from src.web.storage import storage
 from src.web import commands
 from src.web import routes
 from src.web.handlers.auth import is_authenticated, get_user_info
-from src.web.controllers.horses import bp as bp_horses
 
 
 session = Session()

@@ -123,17 +123,17 @@ input {
 }
 
 .action-button i {
-    width: 20px;  /* Ajusta el tamaño según tus necesidades */
-    height: 20px; /* Ajusta el tamaño según tus necesidades */
-    display: inline-block; /* Permite que el tamaño funcione correctamente */
-    font-size: 16px; /* Ajusta el tamaño de la fuente si es necesario */
+    width: 20px;  
+    height: 20px; 
+    display: inline-block; 
+    font-size: 16px; 
 }
 .action-button {
-    padding: 5px;  /* Ajusta según sea necesario */
-    margin: 0 5px; /* Margen entre botones */
-    display: flex;  /* Asegura que los contenidos se alineen */
-    justify-content: center; /* Centra el contenido del botón */
-    align-items: center; /* Alinea verticalmente el contenido */
+    padding: 5px;  
+    margin: 0 5px; 
+    display: flex;  
+    justify-content: center; 
+    align-items: center; 
 }
 
 
