@@ -1,0 +1,140 @@
+.container {
+    width: 70%;
+} 
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+table, table th, table td{
+    margin: auto;
+    background-color: white !important;
+}
+
+table, table th, table td {
+    color:black !important;
+}
+
+select{
+    border-radius: 10px !important;
+    border: 1px solid hsl(221, 14%, 80%) !important;
+    height: 40px !important;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease !important;
+    color: black !important;
+    background-color: white !important;
+}
+
+input {
+    border-radius: 10px !important;
+    border: 1px solid hsl(221, 14%, 80%) !important;
+    height: 40px !important;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease !important;
+    width: 100% !important;
+    color: black !important;
+    background-color: white !important;
+}
+
+.input, .input::placeholder, .label, .button {
+    color: black;
+    font-weight: 600;
+    font-style: bold;
+}
+
+
+.table-container {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.table {
+    width: 100%;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 8px;
+}
+
+.table th {
+    text-align: left;
+}
+
+.search-button{
+    background-color: var(--primary-color);
+    font-weight: bold;
+    border: none;  
+}
+
+.restore-button{
+    background-color: var(--tertiary-color);
+    font-weight: bold;
+    border: none;  
+}
+
+.modal.is-active {
+    display: flex;
+  }
+
+.modal-card-head,
+.modal-card-foot,
+.modal-card-body {
+  background-color: white; 
+}
+
+.modal-card-head {
+  padding: 20px;
+  border-bottom: none;  
+}
+
+.modal-card-title {
+  color: #363636;
+  font-size: 1.5rem;  
+  font-weight: bold;
+}
+
+.modal-card-foot {
+  padding: 10px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #dbdbdb; 
+}
+
+.modal-card-foot .button {
+  margin-left: 10px; 
+}
+
+.action-button i {
+    width: 20px;  /* Ajusta el tamaño según tus necesidades */
+    height: 20px; /* Ajusta el tamaño según tus necesidades */
+    display: inline-block; /* Permite que el tamaño funcione correctamente */
+    font-size: 16px; /* Ajusta el tamaño de la fuente si es necesario */
+}
+.action-button {
+    padding: 5px;  /* Ajusta según sea necesario */
+    margin: 0 5px; /* Margen entre botones */
+    display: flex;  /* Asegura que los contenidos se alineen */
+    justify-content: center; /* Centra el contenido del botón */
+    align-items: center; /* Alinea verticalmente el contenido */
+}
+
+
+

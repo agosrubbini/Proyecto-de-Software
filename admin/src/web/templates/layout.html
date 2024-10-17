@@ -60,14 +60,14 @@
                         Equipo
                     </a>
                     {% endif %}
-                    {% if 'team_index' in g.user_permissions or g.user_system_admin %}
+                    {% if 'billing_index' in g.user_permissions or g.user_system_admin %}
                     <a class="navbar-item" href="{{ url_for('billing.list_billings') }}">
                         Cobros
                     </a>
                     {% endif %}
 
-                    {% if 'team_index' in g.user_permissions or g.user_system_admin %}
-                    <a class="navbar-item" href=#>
+                    {% if 'payment_index' in g.user_permissions or g.user_system_admin %}
+                    <a class="navbar-item" href="{{url_for('payment.list_payments')}}">
                         Pagos
                     </a>
                     {% endif %}
@@ -90,7 +90,7 @@
                             <div class="user-alias"> {{ user(session).alias }}</div>
                             <div class="user-email"> {{ user(session).email }} </div>
                           </div>
-                          <a class="dropdown-item" href="/perfil">
+                          <a class="dropdown-item" href="{{ url_for('users.show_user', id=session["user_id"]) }}">
                             <i class="fas fa-user"></i>
                             <span>Mi Perfil</span>
                           </a>
