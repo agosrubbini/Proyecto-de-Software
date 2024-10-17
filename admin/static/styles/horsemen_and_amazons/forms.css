@@ -1,8 +1,4 @@
 
-body {
-    font-family: 'Poppins', sans-serif;
-}
-
 h1 {
     padding-top: 20px;
     font-size: 24px !important;
@@ -96,7 +92,7 @@ button:hover {
     transform: scale(1.05);
 }   
 
-.input, .input::placeholder, .label, .button {
+.input, .input::placeholder, .label{
     color: black;
     font-weight: 600;
     font-style: bold;

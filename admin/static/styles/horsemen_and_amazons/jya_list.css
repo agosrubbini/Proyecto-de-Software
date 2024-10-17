@@ -13,10 +13,6 @@ table.users tbody tr:hover {
     transition: background-color 0.3s; /* Suaviza el cambio de color */
 }
 
-.add-horseman {
-    width: auto;
-}
-
 .separador{
     margin: auto;
     margin-top: 15px;
@@ -33,29 +29,20 @@ table.users tbody tr:hover {
     width: 100%;
 }
 
-#form-search {
-    display: flex;
-    flex-wrap: wrap;
-    margin:auto;
-    justify-content: space-between;
-    width: 90%;
-    max-width: 800px;
+.boton-busqueda{
+    width: 100% !important;
+    padding: 0px 10px 0px 10px;
 }
 
-.field {
-    flex: 1 1 45%; /* Ajusta el tamaño de los campos, permitiendo flexibilidad */
-    min-width: 185px; /* Define un ancho mínimo para los campos */
-    margin-bottom: 10px;
+.boton-filtrado {
+    width: 100% !important;
+    padding: 0px 20px 0px 20px;
 }
 
 div.field.is-grouped {
     margin: auto;
-}
-
-.boton {
-    flex-basis: 100%; /* Botón de búsqueda ocupará todo el ancho en pantallas pequeñas */
-    margin-top: 10px;
-    width: 100%;
+    justify-content: center !important;
+    width: 80%;
 }
 
 h1 {
@@ -72,7 +59,7 @@ input {
     background-color: white !important;
 }
 
-p{
+p {
     padding-left: 10px;
     margin-bottom: -2px ;
 }
@@ -88,27 +75,15 @@ p{
     margin-left: 5px !important;
 }
 
-.order_options {
-    display: flex;
-    justify-content: center;
-    margin-right: 165px;
-}
-
-.order_options_docs {
-    display: flex;
-    justify-content: center;
-    margin-right: 385px;
-}
 
 .boton {
     background-color: var(--primary-color);
-    width: 40%;
+    width: 30%;
     height: 40px;
     color: white;
     font-weight: bold;
     display: block;
     margin: 23px auto;
-    margin-bottom: 10px;
     border-radius: 20px;
     border: none;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -134,4 +109,47 @@ input:focus {
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2) !important;
     border-color: hsl(221, 14%, 50%) !important;
     outline: none !important;
+}
+
+select {
+    border-radius: 10px;
+    background-color: hsl(221, 14%, 93%);
+    width: 175px;
+    height: 40px;
+    text-align: center;
+    color: hsl(221, 14%, 20%);
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 15px;
+    border-color: white;
+    padding-inline-end: 2px;
+    transition: background-color 0.3s ease;
+}
+
+select:hover {
+    background-color: hsl(221, 14%, 88%);
+}
+
+.pagination-previous, .pagination-next {
+    width: 10% ;
+    margin-top: 0px;
+}
+
+.pagination {
+    max-width: 100%;
+}
+
+.box{
+    background-color: white !important;
+    text-align: center;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.box p {
+    margin-bottom: 10px;
+    color: black;
+}
+
+.box button{
+    color: white!;
 }

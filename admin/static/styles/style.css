@@ -12,4 +12,6 @@
     color: var(--font-color) !important;
   }
 
-  
+  .user-icon {
+    color: var(--primary-color) !important;
+  }
