@@ -109,7 +109,8 @@ class registryHorsemanForm(FlaskForm):
             
             if self.diagnosis.data == "Otro":
                 
-                if not self.other_diagnosis.data:
+                if self.other_diagnosis.data == " ":
+                    
                     self.has_disability_certificate.errors.append("Este campo es obligatorio cuando el diagnóstico es otro")
                     return False
 

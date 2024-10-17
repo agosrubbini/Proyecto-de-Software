@@ -65,13 +65,17 @@
 
     <label class="label">Ingrese la dirección del jinete</label>
     <div class="control">
-        {{ form.address(value=address, required=True) }}
+        <select name="address">
+            {% for value, label in form.address.choices %}
+                <option value="{{ value }}" {% if horseman.address_id == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
     </div>
     <hr>
 
     <label class="label">Fecha de nacimiento</label>
     <div class="control has-icons-left">
-        {{ form.birthdate(value=horseman.birthdate, required=True) }}
+        {{ form.birthdate(class="input_fecha", value=horseman.birthdate, required=True) }}
     </div>
     <hr>
 
@@ -95,7 +99,11 @@
 
     <label class="label">Contacto de Emergencia</label>
     <div class="control">
-        {{ form.emergency_contact_id_jya(value=emergency_contact, required=True) }}
+        <select name="emergency_contact_id_jya">
+            {% for value, label in form.emergency_contact_id_jya.choices %}
+                <option value="{{ value }}" {% if horseman.emergency_contact_id_jya == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
     </div>
     <hr>
 
@@ -124,8 +132,11 @@
     </div>
 
     <label class="label">Obra Social</label>
-    {{ form.healthcare_plan_id_jya(value=healthcare_plan, required=True) }}
-    
+    <select name="healthcare_plan_id_jya">
+        {% for value, label in form.healthcare_plan_id_jya.choices %}
+            <option value="{{ value }}" {% if horseman.healthcare_plan_id_jya == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
 
     <div class="custom-checkbox">
         <input type="checkbox" id="checkbox-discapacidad" name="has_disability_certificate" value="True" {% if horseman.has_disability_certificate %}checked{% endif %}>
@@ -135,7 +146,7 @@
     
     <div id="contenedor-cerficado-discapacidad" class="hidden">
         <label class="label">¿Con qué diagnóstico?</label>
-        <select class="diagnosis" name="diagnosis">
+        <select name="diagnosis">
             {% for value, label in form.diagnosis.choices %}
                 <option value="{{ value }}" {% if horseman.diagnosis == value %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
@@ -152,7 +163,7 @@
         <hr>
 
         <label class="label">Tipo de discapacidad</label>
-            <select class="diagnosis" name="diagnosis">
+            <select name="type_of_disability">
                 {% for value, label in form.type_of_disability.choices %}
                     <option value="{{ value }}" {% if horseman.type_of_disability == value %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
@@ -170,7 +181,7 @@
 
     <div id="contenedor-asignacion" class="hidden">
         <label class="label">¿Cuál?</label>
-        <select class="diagnosis" name="diagnosis">
+        <select name="family_allowance">
             {% for value, label in form.family_allowance.choices %}
                 <option value="{{ value }}" {% if horseman.family_allowance == value %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
@@ -188,12 +199,20 @@
 
     <div id="contenedor-pension" class="hidden">
         <label class="label">Pensión</label>
-        {{ form.pension(value=horseman.pension) }}
+        <select name="pension">
+            {% for value, label in form.pension.choices %}
+                <option value="{{ value }}" {% if horseman.pension == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
         <hr>
     </div>
 
     <label class="label">Institución escolar a la que concurre actualmente</label>
-    {{ form.school(value=school, required=True) }}
+        <select name="school">
+            {% for value, label in form.school.choices %}
+                <option value="{{ value }}" {% if horseman.school_id == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
     <hr>
 
     <div class="buttons">
