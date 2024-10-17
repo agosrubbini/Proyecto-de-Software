@@ -104,35 +104,8 @@ def obtenerChoices(form):
         Parámetros:
             - form (FlaskForm): Formulario de jinetes y amazonas.
         
-        Retorna:
-        tuple: Una tupla que contiene:
-            -
     """
-        Muestra una lista paginada de jinetes y amazonas (JyA) con opciones de filtrado y ordenación.
-
-        Esta función permite filtrar y ordenar los registros de jinetes y amazonas según varios criterios 
-        como nombre, apellido, DNI y profesionales a cargo. Además, la lista se presenta de forma paginada.
-
-        Parámetros:
-        request (Request): El objeto de la solicitud HTTP que contiene los parámetros de la consulta. 
-            - order_option (str): Opción de ordenación, como 'name_asc', 'name_desc', 'last_name_asc', o 'last_name_desc'.
-            - page (int): El número de página para la paginación (predeterminado: 1).
-            - name (str): Filtro por nombre del jinete/amazona (opcional).
-            - last_name (str): Filtro por apellido del jinete/amazona (opcional).
-            - dni (str): Filtro por DNI del jinete/amazona (opcional).
-            - professionals (str): Filtro por nombre de los profesionales a cargo (opcional).
-
-        Retorna:
-        tuple: Una tupla que contiene:
-            - horsemen (Pagination): Un objeto de paginación con los registros filtrados y ordenados de jinetes y amazonas.
-            - page (int): El número de página actual.
-            - order_by (str): La opción de ordenación seleccionada.
-            - name (str): El filtro aplicado por nombre.
-            - last_name (str): El filtro aplicado por apellido.
-            - dni (str): El filtro aplicado por DNI.
-            - attending_professionals (str): El filtro aplicado por profesionales a cargo.
-
-    """
+       
     schools = get_schools()
 
     emergency_contacts = get_emergency_contacts()
