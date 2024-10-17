@@ -11,6 +11,7 @@ from src.core.horses.models.horses_file import Horse_file
 from datetime import timedelta
 import json
 import io
+from os import fstat
 
 bp = Blueprint('horses', __name__, url_prefix='/horses')
 
@@ -229,28 +230,25 @@ def add_file(horse_id):
     Muestra la vista del registro,  valida los parametros, y guarda al archivo en la base de datos si
     se recibió el formulario y el mismo es válido.
     """
-    app.logger.info("Call to add_file")
+
     form = registryFileForm()
 
     minio_client = app.storage.client
     bucket_name = app.config['BUCKET_NAME']
     
-    app.logger.info("El formulario del archivo es valido: %s", form.validate_on_submit())
+    
     if (form.validate_on_submit()):
         
         if (find_file_by_title(form.title.data)):
-            app.logger.error("The following title is already registered: %s ", form.title.data)
+            
             flash("Ya existe un archivo con el titutlo ingresado", "error")
-            return redirect(url_for("horses.add_file", horse_id=horse_id))
+            return redirect(url_for("horses.add_file", horses_id=horse_id))
 
         if form.file_type.data == 'Documento':
             # Manejar el archivo
             file = request.files['file_url']
+            size = fstat(file.fileno()).st_size
 
-            # Obtener el tamaño del archivo
-            file.seek(0, 2)  # Mover el cursor al final para obtener el tamaño
-            size = file.tell()
-            file.seek(0)  # Volver al inicio del archivo
 
             minio_client.put_object(bucket_name,file.filename,file,size,content_type=file.content_type)
 
@@ -259,7 +257,7 @@ def add_file(horse_id):
                 file_type = form.file_type.data,
                 document_type = form.document_type.data,
                 title = form.title.data,
-                horse_id = horse_id,
+                horses_id = horse_id,
             )
 
             
@@ -268,7 +266,6 @@ def add_file(horse_id):
             # Manejar el enlace
             link = form.link_url.data
 
-            print(link)
 
             link_filename = f"{form.title.data}_link.txt"
             link_content = link.encode('utf-8')  # Convertir el enlace a bytes
@@ -288,18 +285,18 @@ def add_file(horse_id):
                 file_type=form.file_type.data,
                 document_type=form.document_type.data,
                 title=form.title.data,
-                horse_id=horse_id,
+                horses_id=horse_id,
             )
 
         flash("El archivo se ha creado correctamente", "success")
-        return redirect(url_for('horses.list_info_by_id', horse_id=horse_id))
+        return redirect(url_for('horses.list_info_by_id', horses_id=horse_id))
     
     else:
         for field, errors in form.errors.items():
             for error in errors:
                 flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
 
-    return render_template("ecuestre/registry_file.html", form=form, horse_id=horse_id)
+    return render_template("ecuestre/registry_file.html", form=form, horses_id=horse_id)
 
 
 @bp.route("/<int:horse_id>/download_file/<file_id>", methods=['GET'])
