@@ -83,9 +83,24 @@ def run():
         phone_number="2241",
     )
 
+    address2 = create_address (
+        street="Calle 46",
+        number="123",
+        department="4A",
+        locality="La Plata",
+        province="Buenos Aires",
+        phone_number="1234",
+    )
+
+
     emergency_contact1 = create_emergency_contact(
         name="El celu del abuelo",
         phone_number="4444",
+    )
+
+    emergency_contact2 = create_emergency_contact(
+        name="El celu de mamá",
+        phone_number="2222",
     )
 
     healthcare_plan1 = create_healthcare_plan(
@@ -94,12 +109,26 @@ def run():
         observation = "Se vence en 1 mes",
     )
 
+    healthcare_plan2 = create_healthcare_plan(
+        social_security = "SANCOR",
+        affiliate_number = "2233",
+        observation = "Es muy cara",
+    )
+
     school1 = create_school(
         name = "Sagrado Corazon",
         addres_id = address1.id,
         phone_number = "2241548363",
         current_year = "1ero",
         observation = "La primer escuela",
+    )
+
+    school2 = create_school(
+        name = "Jesus de Nazaret",
+        addres_id = address2.id,
+        phone_number = "44332251",
+        current_year = "4to",
+        observation = "La segunda escuela",
     )
 
     employee1 = create_employee(
@@ -123,7 +152,7 @@ def run():
         age=36,
         phone_number="333",
         address_id=address1.id,  # Atributos heredados de Person
-        profession=Profession.DOCENTE,  # Atributo específico de Employee
+        profession= "Docente",  # Atributo específico de Employee
         job_position="Jefe",
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",

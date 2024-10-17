@@ -65,13 +65,13 @@
 
     <label class="label">Ingrese la dirección del jinete</label>
     <div class="control">
-        {{ form.address(class="address", required=True) }}
+        {{ form.address(required=True) }}
     </div>
     <hr>
 
     <label class="label">Fecha de nacimiento</label>
     <div class="control has-icons-left">
-        {{ form.birthdate(class="birthdate", required=True) }}
+        {{ form.birthdate(class="input_fecha", required=True) }}
     </div>
     <hr>
 
@@ -137,9 +137,7 @@
 
     <div id="contenedor-cerficado-discapacidad" class="hidden">
         <label class="label">¿Con qué diagnóstico?</label>
-        <div class="control has-icons-left">
             {{ form.diagnosis(class="diagnosis") }}
-        </div>
         <hr>
 
         <label class="label">Si es otro, indicar cuál:</label>
@@ -150,13 +148,11 @@
             {{ form.other_diagnosis(class="input") }}
         </div>
         <hr>
-    </div>
 
-    <label class="label">Tipo de discapacidad</label>
-    <div class="control has-icons-left">
+        <label class="label">Tipo de discapacidad</label>
         {{ form.type_of_disability(class="type_of_disability", required=True) }}
+        <hr>
     </div>
-    <hr>
 
     <div class="custom-checkbox">
         {{ form.receives_family_allowance(id="checkbox-asignacion") }}
@@ -167,9 +163,7 @@
 
     <div id="contenedor-asignacion" class="hidden">
         <label class="label">¿Cuál?</label>
-        <div class="control has-icons-left">
-            {{ form.family_allowance(class="family_allowance") }}
-        </div>
+        {{ form.family_allowance(class="family_allowance") }}
         <hr>
     </div>
 
@@ -183,9 +177,7 @@
 
     <div id="contenedor-pension" class="hidden">
         <label class="label">Pensión</label>
-        <div class="control has-icons-left">
-            {{ form.pension(class="pension") }}
-        </div>
+        {{ form.pension(class="pension") }}
         <hr>
     </div>
 

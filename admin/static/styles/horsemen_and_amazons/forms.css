@@ -164,3 +164,8 @@ i {
     color: white;
 }
 
+.input_fecha {
+    color: black;
+    font-weight: 600;
+    font-style: bold;
+}

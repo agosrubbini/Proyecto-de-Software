@@ -98,7 +98,7 @@ class JyA(Person):
     type_of_disability = db.Column(db.Enum("No padece una discapacidad","Mental", "Motora", "Sensorial", "Visceral", name="type_of_disability"), nullable=True)
     receives_family_allowance = db.Column(db.Boolean, default=False)
     family_allowance = db.Column(db.Enum("No recibe asignación","Asignación universal por hijo","Asignación universal por hijo con Discapacidad", "Asignación por ayuda escolar anual", name="family_allowance"), 
-                                         nullable=True,)
+                                         nullable=True)
     is_beneficiary_of_pension = db.Column(db.Boolean, default=False)
     pension = db.Column(db.Enum("No recibe pensión", "Nacional", "Provincial", name="pension"), default="No recibe pensión", nullable=True)
     school_id = db.Column(db.Integer, db.ForeignKey("schools.id"), nullable=True)
