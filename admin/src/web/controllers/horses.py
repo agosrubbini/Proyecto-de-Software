@@ -166,8 +166,9 @@ def show_files(request):
     if document_type and document_type != 'Selecciona un tipo':
         query = query.filter(Horse_file.document_type == document_type)
     
+    per_page = 2
     # Apply ordering and pagination
-    files = query.order_by(order_criteria).paginate(page=page, per_page=2)
+    files = query.order_by(order_criteria).paginate(page=page, per_page=per_page, error_out=False)
 
     return files, page, order_by, search, document_type
 
@@ -187,7 +188,9 @@ def list_info_by_id(horse_id):
 
 
 
-    pagination, page, order_by, search, document_type = show_files( request)
+    pagination, page, order_by, search, document_type = show_files(request)
+
+    
 
     if files:
         for file in files:    

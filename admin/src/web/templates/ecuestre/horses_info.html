@@ -21,7 +21,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const horseData = JSON.parse(`{{ context.horse | tojson | safe }}`);
+            const horseData = {{ context.horse | tojson | safe }};
             const filesData = {{ context.files | tojson | safe }};
             const buttonInfo = document.getElementById('info');
             const buttonDocs = document.getElementById('docs');
@@ -90,6 +90,7 @@
                         </div>
                     </form>
                     <form method="GET" action="{{ url_for('horses.list_info_by_id', horse_id=context.id) }}">
+                        <input type="hidden" name="page" value="{{ page }}">
                         <div class="control order_options_docs">
                             <select id="order_option" name="order_option" onchange="this.form.submit()">
                                 <option value="default">Selecciona un orden</option>
