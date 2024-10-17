@@ -63,6 +63,13 @@
 
 </form>
 
+      <!-- Modal personalizado -->
+    <div id="customAlert" class="modal">
+        <div class="modal-content">
+            <p id="alertMessage">Este es un mensaje de alerta personalizado.</p>
+            <button id="closeAlert">Cerrar</button>
+        </div>
+    </div>
 <script>    
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -108,24 +115,34 @@
                     }
                 });
 
+                function showCustomAlert(message) {
+                    document.getElementById('alertMessage').innerText = message;
+                    document.getElementById('customAlert').style.display = 'flex';
+                }
+
+                    // Función para cerrar el modal
+                document.getElementById('closeAlert').addEventListener('click', function() {
+                    document.getElementById('customAlert').style.display = 'none';
+                });
+
                 document.getElementById('fileForm').addEventListener('submit', function(event) {
                     const fileInput = document.getElementById('fileInput');
                     const file = fileInput.files[0];
                     
                     if (file) {
-                    const allowedExtensions = ['pdf', 'jpg', 'png']; // Extensiones permitidas
-                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                        const allowedExtensions = ['pdf', 'jpeg', 'doc', 'xls']; // Extensiones permitidas
+                        const fileExtension = file.name.split('.').pop().toLowerCase();
                     
-                    if (!allowedExtensions.includes(fileExtension)) {
+                        if (!allowedExtensions.includes(fileExtension)) {
+                            event.preventDefault();
+                            showCustomAlert('Solo se permiten archivos con las extensiones: ' + allowedExtensions.join(', '));
+                        } else {
+                            // Archivo válido, puede continuar con el envío
+                            showCustomAlert('Archivo válido, se procederá con el envío.');
+                        }
+                    } else {
                         event.preventDefault();
-                        alert('Solo se permiten archivos con las extensiones: ' + allowedExtensions.join(', '));
-                    } else {
-                        // Archivo válido, puede continuar con el envío
-                        alert('Archivo válido, se procederá con el envío.');
-                    }
-                    } else {
-                    event.preventDefault();
-                    alert('Por favor, selecciona un archivo.');
+                        showCustomAlert('Por favor, selecciona un archivo.');
                     }
                 });
         });
