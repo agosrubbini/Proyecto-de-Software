@@ -81,18 +81,54 @@ def run():
         locality="La Plata",
         province="Buenos Aires",
         phone_number="2241",
-
     )
+
+    address2 = create_address (
+        street="Calle 46",
+        number="123",
+        department="4A",
+        locality="La Plata",
+        province="Buenos Aires",
+        phone_number="1234",
+    )
+
 
     emergency_contact1 = create_emergency_contact(
         name="El celu del abuelo",
         phone_number="4444",
     )
 
+    emergency_contact2 = create_emergency_contact(
+        name="El celu de mamá",
+        phone_number="2222",
+    )
+
     healthcare_plan1 = create_healthcare_plan(
         social_security = "IOMA",
         affiliate_number = "6666",
         observation = "Se vence en 1 mes",
+    )
+
+    healthcare_plan2 = create_healthcare_plan(
+        social_security = "SANCOR",
+        affiliate_number = "2233",
+        observation = "Es muy cara",
+    )
+
+    school1 = create_school(
+        name = "Sagrado Corazon",
+        addres_id = address1.id,
+        phone_number = "2241548363",
+        current_year = "1ero",
+        observation = "La primer escuela",
+    )
+
+    school2 = create_school(
+        name = "Jesus de Nazaret",
+        addres_id = address2.id,
+        phone_number = "44332251",
+        current_year = "4to",
+        observation = "La segunda escuela",
     )
 
     employee1 = create_employee(
@@ -102,7 +138,21 @@ def run():
         age=32,
         phone_number="222",
         address_id=address1.id,  # Atributos heredados de Person
-        profession="Médico",  # Atributo específico de Employee
+        profession= "Médico",  # Atributo específico de Employee
+        job_position="Jefe",
+        emergency_contact_id_employee=emergency_contact1.id,
+        condition="Voluntario",
+        healthcare_plan_id_employee=healthcare_plan1.id
+    )
+
+    employee2 = create_employee(
+        name="Agostina",
+        last_name="Rubbini",
+        DNI="654321",
+        age=36,
+        phone_number="333",
+        address_id=address1.id,  # Atributos heredados de Person
+        profession= "Docente",  # Atributo específico de Employee
         job_position="Jefe",
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",
@@ -136,7 +186,7 @@ def run():
         emergency_contact_id_jya = emergency_contact1.id,
         attending_professionals = "Lucia",
         healthcare_plan_id_jya = healthcare_plan1.id,
-        diagnosis = "Ecne",
+        diagnosis = "Esclerosis múltiple",
         type_of_disability = "Mental"
     )
 
@@ -174,6 +224,34 @@ def run():
         amount=2000,
         payment_method="Efectivo",
         observation="Se abona en efectivo",
+    )
+
+    payment1 = create_payment(
+        beneficiary=employee1.id,
+        amount=2000,
+        payment_date=datetime.now(),
+        payment_type="Honorarios",
+        description="Pago de honorarios",
+    )
+
+    user_index = create_permission(
+        name="user_index",
+    )
+
+    user_new = create_permission(
+        name="user_new",
+    )
+
+    user_show = create_permission(
+        name="user_show",
+    )
+
+    user_update = create_permission(
+        name="user_update",
+    )
+
+    user_destroy = create_permission(
+        name="user_destroy",
     )
 
     team_index = create_permission(

@@ -1,10 +1,9 @@
 import logging
 from flask import Flask
 from flask_session import Session
-from web.controllers.auth.registry import bp as bp_registry
 from web.controllers.auth.login import bp as bp_login
 from web.controllers.auth.users import bp as bp_users
-from web.controllers.auth.profile import bp as bp_profile
+from web.controllers.payment import bp as bp_payment
 from web.controllers.horsemen_and_amazons import bp as bp_jya
 from web.controllers.billing import bp as bp_billing
 from web.controllers.team import bp as bp_team
@@ -40,13 +39,12 @@ def create_app(env="development", static_folder="../../static"):
     session.init_app(app)
 
     # Register blueprints
-    app.register_blueprint(bp_registry)
     app.register_blueprint(bp_login)
     app.register_blueprint(bp_users)
     app.register_blueprint(bp_horses)
-    app.register_blueprint(bp_profile)
     app.register_blueprint(bp_jya)
     app.register_blueprint(bp_billing)
+    app.register_blueprint(bp_payment)
     app.register_blueprint(bp_team)
 
     # Register error handlers

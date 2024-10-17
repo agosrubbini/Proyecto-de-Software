@@ -8,7 +8,7 @@ class User(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False)
     alias = db.Column(db.String(255), nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
+    role_id = db.Column(db.Integer, db.ForeignKey("roles.id", ondelete='CASCADE'), nullable=False)
     role = db.relationship("Role", backref="role")
     system_admin = db.Column(db.Boolean, default=False)
     active = db.Column(db.Boolean, default=True)

@@ -1,4 +1,8 @@
 
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    
     h1 {
         padding-top: 20px;
         font-size: 24px !important;
@@ -55,7 +59,7 @@
         border: 1px solid black;
     }
 
-    .input, input {
+    input {
         margin-bottom: 15px;
         border-radius: 10px;
         border: 1px solid hsl(221, 14%, 80%);
@@ -96,7 +100,17 @@
         font-style: bold;
     }
     
-    i{
+    i {
         color: black;
     }
-    
+
+    .buttons {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+    }
+
+    .a-button {
+        width: 100%;
+        color: white;
+    }

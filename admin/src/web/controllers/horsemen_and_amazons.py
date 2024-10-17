@@ -1,6 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from src.core.persons import get_jya_users, find_adress_by_id, find_jya_by_id, get_files_by_horseman_id, delete_file_by_id, create_JyA, create_file, find_file_by_title, find_file_by_id, updated_file
-from src.core.persons.forms import registryFileForm
+from src.core.persons import (get_jya_users, find_address_by_id, find_jya_by_id, delete_jya_by_id, get_files_by_horseman_id, delete_file_by_id, 
+                              create_JyA, create_file, updated_jya, find_file_by_title, find_file_by_id, updated_file, get_emergency_contacts, get_address, 
+                              get_healthcare_plans, get_emergency_contact_by_id, get_healthcare_plan_by_id)
+from src.core.institutions import get_schools, get_school_by_id
+from src.core.persons.forms import registryFileForm, registryHorsemanForm
+from src.core.auth.auth import inject_user_permissions
 from flask import current_app as app
 from datetime import timedelta
 from src.core.persons.models.file import File
@@ -8,13 +12,39 @@ from src.core.persons.models.person import JyA
 from sqlalchemy import desc
 import json
 import io
-from src.core.auth.auth import inject_user_permissions
+from os import fstat
 
 
 bp = Blueprint("horsemen_and_amazons", __name__, url_prefix="/users-jya")
 
 def showHorsemen(request):
-   
+    
+    """
+        Muestra una lista paginada de jinetes y amazonas (JyA) con opciones de filtrado y ordenación.
+
+        Esta función permite filtrar y ordenar los registros de jinetes y amazonas según varios criterios 
+        como nombre, apellido, DNI y profesionales a cargo. Además, la lista se presenta de forma paginada.
+
+        Parámetros:
+        request (Request): El objeto de la solicitud HTTP que contiene los parámetros de la consulta. 
+            - order_option (str): Opción de ordenación, como 'name_asc', 'name_desc', 'last_name_asc', o 'last_name_desc'.
+            - page (int): El número de página para la paginación (predeterminado: 1).
+            - name (str): Filtro por nombre del jinete/amazona (opcional).
+            - last_name (str): Filtro por apellido del jinete/amazona (opcional).
+            - dni (str): Filtro por DNI del jinete/amazona (opcional).
+            - professionals (str): Filtro por nombre de los profesionales a cargo (opcional).
+
+        Retorna:
+        tuple: Una tupla que contiene:
+            - horsemen (Pagination): Un objeto de paginación con los registros filtrados y ordenados de jinetes y amazonas.
+            - page (int): El número de página actual.
+            - order_by (str): La opción de ordenación seleccionada.
+            - name (str): El filtro aplicado por nombre.
+            - last_name (str): El filtro aplicado por apellido.
+            - dni (str): El filtro aplicado por DNI.
+            - attending_professionals (str): El filtro aplicado por profesionales a cargo.
+
+    """
     # Determine the order option
     if request.method == 'POST':
         order_by = request.args.get('order_option', 'name_asc', type=str)
@@ -65,12 +95,64 @@ def showHorsemen(request):
 
     return horsemen, page, order_by, name, last_name, dni, attending_professionals
 
+def obtenerChoices(form):
+
+    """ Esta función recibe el formulario de jinetes y amazonas y devuelve las instituciones, los contactos de emergencia, las obras sociales y las direcciones, 
+        utilizadas como opciones de los distintos campos del formulario.
+
+
+        Parámetros:
+            - form (FlaskForm): Formulario de jinetes y amazonas.
+        
+        Retorna:
+        tuple: Una tupla que contiene:
+            -
+    """
+        Muestra una lista paginada de jinetes y amazonas (JyA) con opciones de filtrado y ordenación.
+
+        Esta función permite filtrar y ordenar los registros de jinetes y amazonas según varios criterios 
+        como nombre, apellido, DNI y profesionales a cargo. Además, la lista se presenta de forma paginada.
+
+        Parámetros:
+        request (Request): El objeto de la solicitud HTTP que contiene los parámetros de la consulta. 
+            - order_option (str): Opción de ordenación, como 'name_asc', 'name_desc', 'last_name_asc', o 'last_name_desc'.
+            - page (int): El número de página para la paginación (predeterminado: 1).
+            - name (str): Filtro por nombre del jinete/amazona (opcional).
+            - last_name (str): Filtro por apellido del jinete/amazona (opcional).
+            - dni (str): Filtro por DNI del jinete/amazona (opcional).
+            - professionals (str): Filtro por nombre de los profesionales a cargo (opcional).
+
+        Retorna:
+        tuple: Una tupla que contiene:
+            - horsemen (Pagination): Un objeto de paginación con los registros filtrados y ordenados de jinetes y amazonas.
+            - page (int): El número de página actual.
+            - order_by (str): La opción de ordenación seleccionada.
+            - name (str): El filtro aplicado por nombre.
+            - last_name (str): El filtro aplicado por apellido.
+            - dni (str): El filtro aplicado por DNI.
+            - attending_professionals (str): El filtro aplicado por profesionales a cargo.
+
+    """
+    schools = get_schools()
+
+    emergency_contacts = get_emergency_contacts()
+
+    healthcare_plans = get_healthcare_plans()
+
+    addresses = get_address()
+
+    # Asignar el id como value y la representación amigable como label
+    form.address.choices = [(address.id, address.string()) for address in addresses]
+    form.school.choices = [(school.id, school.name) for school in schools]
+    form.emergency_contact_id_jya.choices = [(emergency_contact.id, emergency_contact.name) for emergency_contact in emergency_contacts]
+    form.healthcare_plan_id_jya.choices = [(healthcare_plan.id, healthcare_plan.social_security) for healthcare_plan in healthcare_plans]
+
 @bp.get("/")
 @inject_user_permissions
 def list_jya_users():
 
-    """
-        Esta función retorna el listado con los jinetes y amazonas registrados en el sistema.
+    """ 
+        Muestra la vista del del listado de los jinetes y amazonas registrados en el sistema    
     """
 
     horsemen, page, order_by, name, last_name, dni, attending_professionals = showHorsemen(request)
@@ -133,19 +215,19 @@ def list_info_by_jya(user_id):
     app.logger.info("Call to index function")
 
     jya = find_jya_by_id(user_id)
-    jya_address = find_adress_by_id(jya.address_id).string()
+    jya_address = find_address_by_id(jya.address_id).string()
     files = get_files_by_horseman_id(jya.id)
     jya_json = jya.to_dict(jya_address)
     files_json = []
 
-    files, page, order_by, search, document_type = showFiles(request)
+    pagination, page, order_by, search, document_type = showFiles(request)
 
     if files:
         for file in files:    
             files_json.append(file.to_dict())
 
     context = {
-        'pagination': files,
+        'pagination': pagination,
         'files': files_json,
         'user': jya_json,
         'id': user_id,
@@ -155,11 +237,150 @@ def list_info_by_jya(user_id):
 
     return render_template('horsemen_and_amazons/jya_user_info.html', context=context, page=page, order_by=order_by, search=search, document_type=document_type)
 
+@bp.route("/add_jya", methods=['POST', 'GET'])
+@inject_user_permissions
+def add_horseman():
+
+    """
+    Muestra la vista del registro, además valida los parametros, y guarda al archivo en la base de datos si
+    se recibió el formulario y el mismo es válido.
+    """
+
+    app.logger.info("Call to add_horseman")
+    form = registryHorsemanForm()
+
+    obtenerChoices(form)
+
+    app.logger.info("El formulario del jinete es valido: %s", form.validate_on_submit())
+    if (form.validate_on_submit()):
+        
+        """if (find_jya_by_id(user_id)):
+            app.logger.error("The following jinete is already registered: %s ", form.title.data)
+            flash("Ya existe un jinete con el id ingresado registrado en el sistema", "error")
+            return redirect(url_for("horsemen_and_amazons.add_file", user_id=user_id)) """
+
+        create_JyA(
+            
+            name = form.name.data,
+            last_name = form.last_name.data,
+            DNI = form.DNI.data,
+            age = form.age.data,
+            phone_number = form.phone_number.data,
+            address_id = form.address.data,
+            birthdate = form.birthdate.data,
+            birth_place = form.birth_place.data,
+            current_phone = form.current_phone.data,
+            emergency_contact_id_jya = form.emergency_contact_id_jya.data,
+            is_scholarshipped = form.is_scholarshipped.data,
+            scholarship_percentage = form.scholarship_percentage.data,
+            attending_professionals = form.attending_professionals.data,
+            healthcare_plan_id_jya = form.healthcare_plan_id_jya.data,
+            has_disability_certificate = form.has_disability_certificate.data,
+            diagnosis = form.diagnosis.data,
+            other_diagnosis = form.other_diagnosis.data,
+            type_of_disability = form.type_of_disability.data,
+            receives_family_allowance = form.receives_family_allowance.data,
+            family_allowance = form.family_allowance.data,
+            is_beneficiary_of_pension = form.is_beneficiary_of_pension.data,
+            pension = form.pension.data,
+            school_id = form.school.data,
+        )
+
+        flash("El jinete se ha creado correctamente", "success")
+        return redirect(url_for('horsemen_and_amazons.list_jya_users'))
+    
+    else:
+        print("Entre al false")
+        for field, errors in form.errors.items():
+            for error in errors:
+                print(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
+                flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
+
+    return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
+
+@bp.route("/edit_horseman/<user_id>", methods=['POST', 'GET'])
+@inject_user_permissions
+def edit_horseman(user_id):
+
+    """
+    Muestra la vista de edición del jinete, además valida los parametros, y guarda al jinete con los datos editados en la base de datos si
+    se recibió el formulario y el mismo es válido.
+    """
+
+    app.logger.info("Call to edit_horseman")
+    horseman = find_jya_by_id(user_id)
+    
+    form = registryHorsemanForm()
+    
+    obtenerChoices(form)
+    
+    address = find_address_by_id(horseman.address_id)
+    emergency_contact = get_emergency_contact_by_id(horseman.emergency_contact_id_jya)
+    healthcare_plan = get_healthcare_plan_by_id(horseman.healthcare_plan_id_jya)
+    school = get_school_by_id(horseman.school_id)
+
+ 
+    if horseman.scholarship_percentage is None:
+        form.scholarship_percentage.data = " "
+    if horseman.other_diagnosis is None:
+        form.other_diagnosis.data = " "
+
+    app.logger.info("El formulario del archivo es valido: %s", form.validate_on_submit())
+    if (form.validate_on_submit()):
+        
+        updated_jya(
+            horseman,
+            name = form.name.data,
+            last_name = form.last_name.data,
+            DNI = form.DNI.data,
+            age = form.age.data,
+            phone_number = form.phone_number.data,
+            address_id = form.address.data,
+            birthdate = form.birthdate.data,
+            birth_place = form.birth_place.data,
+            current_phone = form.current_phone.data,
+            emergency_contact_id_jya = form.emergency_contact_id_jya.data,
+            is_scholarshipped = form.is_scholarshipped.data,
+            scholarship_percentage = form.scholarship_percentage.data,
+            attending_professionals = form.attending_professionals.data,
+            healthcare_plan_id_jya = form.healthcare_plan_id_jya.data,
+            has_disability_certificate = form.has_disability_certificate.data,
+            diagnosis = form.diagnosis.data,
+            other_diagnosis = form.other_diagnosis.data,
+            type_of_disability = form.type_of_disability.data,
+            receives_family_allowance = form.receives_family_allowance.data,
+            family_allowance = form.family_allowance.data,
+            is_beneficiary_of_pension = form.is_beneficiary_of_pension.data,
+            pension = form.pension.data,
+            school_id = form.school.data,
+        )
+
+        flash("Jinete editado correctamente", "success")
+        return redirect(url_for('horsemen_and_amazons.list_jya_users', user_id=user_id))
+
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
+            
+    return render_template("horsemen_and_amazons/edit_horseman.html", form=form, user_id=user_id, horseman=horseman, address=address, healthcare_plan=healthcare_plan, emergency_contact=emergency_contact, school=school)
+
+@bp.route("/delete_horseman/<int:user_id>", methods=['POST', 'GET'])
+@inject_user_permissions
+def delete_horseman(user_id):
+
+    horseman = find_jya_by_id(user_id)
+    delete_jya_by_id(user_id)
+
+    flash('Jinete eliminado correctamente', 'success')
+
+    # Redirigir a la vista order_by pasando el user_id y la opción de orden como query parameters
+    return redirect(url_for('horsemen_and_amazons.list_jya_users'))
+
 @bp.route("/<int:user_id>/delete_file/<int:file_id>", methods=['POST', 'GET'])
 @inject_user_permissions
 def delete_file(user_id, file_id):
 
-    print("Este es el file id", file_id)
     file = find_file_by_id(file_id)
     minio_client = app.storage.client
     bucket_name = app.config['BUCKET_NAME']
@@ -201,10 +422,7 @@ def add_file(user_id):
             # Manejar el archivo
             file = request.files['file_url']
 
-            # Obtener el tamaño del archivo
-            file.seek(0, 2)  # Mover el cursor al final para obtener el tamaño
-            size = file.tell()
-            file.seek(0)  # Volver al inicio del archivo
+            size = fstat(file.fileno()).st_size
 
             minio_client.put_object(bucket_name,file.filename,file,size,content_type=file.content_type)
 
@@ -221,8 +439,6 @@ def add_file(user_id):
         elif form.file_type.data == 'Link':
             # Manejar el enlace
             link = form.link_url.data
-
-            print(link)
 
             link_filename = f"{form.title.data}_link.txt"
             link_content = link.encode('utf-8')  # Convertir el enlace a bytes
@@ -297,14 +513,14 @@ def edit_file(user_id, file_id):
     if (form.validate_on_submit()):
 
         if form.file_type.data == 'Documento':
+
             # Manejar el archivo
             new_file = request.files['file_url']
             
             if new_file:
+
                 # Obtener el tamaño del archivo
-                new_file.seek(0, 2)  # Mover el cursor al final para obtener el tamaño
-                size = new_file.tell()
-                new_file.seek(0)  # Volver al inicio del archivo
+                size = fstat(file.fileno()).st_size
 
                 minio_client.put_object(bucket_name,new_file.filename,new_file,size,content_type=new_file.content_type)
 
@@ -320,15 +536,14 @@ def edit_file(user_id, file_id):
                 flash("No se actualizo el contenido del documento, porque no se ingreso un nuevo archivo", "info")
                     
         elif form.file_type.data == 'Link':
+
             # Manejar el enlace
             link = form.link_url.data
-
-            print(link)
 
             link_filename = f"{form.title.data}_link.txt"
             link_content = link.encode('utf-8')  # Convertir el enlace a bytes
 
-                    # Subir a MinIO
+            # Subir a MinIO
             minio_client.put_object(
             bucket_name,
             link_filename,
@@ -337,6 +552,7 @@ def edit_file(user_id, file_id):
             content_type='text/plain',  
             )
 
+            #Actualizar el archivo 
             updated_file(
                 file,
                 file_url = link, 

@@ -1,0 +1,160 @@
+{% extends "layout.html" %}
+{% block title %}Pagos{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/payment_and_billing/list.css') }}">
+{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="header-container">
+        <h1 class="is-size-2-mobile is-size-2-tablet is-size-2-desktop">Lista de Pagos</h1>
+        <a href="{{ url_for('payment.new_payment') }}" class="button is-white is-size-6">Agregar pago</a>
+    </div>
+
+    <div class="search-container">
+            <form class="form-container" method="get" action="{{ url_for('payment.list_payments') }}">
+                <div class="columns is-desktop">
+                    <div class="column">
+                        <div class="select">
+                            <select name="order" id="order" >
+                                <option value="asc" {% if order == 'asc' %}selected{% endif %}>Fecha: Orden Ascendente</option>
+                                <option value="desc" {% if order == 'desc' %}selected{% endif %}>Fecha: Orden Descendente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="select">
+                            <select name="payment_method" id="payment_method">
+                                <option value="">Tipo de pago</option>
+                                <option value="Honorarios" {% if payment_method == 'Honorarios' %}selected{% endif %}>Honorarios</option>
+                                <option value="Proveedor" {% if payment_method == 'Proveedor' %}selected{% endif %}>Proveedor</option>
+                                <option value="Gastos Varios" {% if payment_method == 'Gastos Varios' %}selected{% endif %}>Gastos varios</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <input class="input" type="date" id="start_date" name="start_date" value="{{ request.args.get('start_date', '') }}">
+                    </div>
+                    <div class="column">
+                        <input class="input" type="date" id="end_date" name="end_date" value="{{ request.args.get('end_date', '') }}">
+                    </div>
+                    <div class="column">
+                        <button type="submit" class="button search-button">Buscar</button>
+                    </div>
+                    <div class="column">
+                        <a class="button restore-button" href="{{ url_for('payment.list_payments', page=page, order=order) }}">Restablecer</a>
+                    </div>
+                </div>
+            </form>
+    </div>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Beneficiario</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th>Tipo de pago</th>
+                    <th>Descripción</th> 
+                    <th>Acciones</th>  
+                </tr>
+            </thead>
+            <tbody>
+                {% if payments %}
+                    {% for payment in payments %}
+                    <tr>
+                        <td>{{ payment.employee_name }}</td>
+                        <td>{{ payment.amount }}</td>
+                        <td>{{ payment.payment_date.strftime('%d-%m-%Y') }}</td>
+                        <td>{{ payment.payment_type }}</td>
+                        <td>{{ payment.description }}</td>
+                        <td>
+                            <a href="{{ url_for('payment.show_payment', id=payment.id) }}" class="button is-small is-white"><i class="fas fa-eye" title="Ver"></i></a>
+                            <a href="{{ url_for('payment.edit_payment', id=payment.id) }}" class="button is-small is-white"><i class="fas fa-edit" title="Editar"></i></a> 
+                            <a class="button is-small is-white delete-button" data-payment-id="{{ payment.id }}" data-payment-pos="{{ payment.pos }}"><i class="fas fa-trash" title="Eliminar"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5">No hay pagos</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <nav class="pagination" role="navigation" aria-label="pagination">
+        <a class="pagination-previous" {% if not pagination.has_prev %}disabled{% else %}href="{{ url_for('payment.list_payments', page=pagination.prev_num,  order=order, q=q) }}"{% endif %}>Previous</a>
+        <a class="pagination-next" {% if not pagination.has_next %}disabled{% else %}href="{{ url_for('payment.list_payments', page=pagination.next_num,  order=order, q=q) }}"{% endif %}>Next page</a>
+    </nav> 
+</div>
+
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h3>¿Estás seguro de que deseas eliminar el pago de ID:<span id="paymentPosToDelete"></span>?</h3>
+        <div class="modal-actions">
+            <button id="cancelButton" class="button">Cancelar</button>
+            <button id="confirmButton" class="button is-danger">Eliminar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('.delete-button');
+        const deleteModal = document.getElementById('deleteModal');
+        const cancelButton = document.getElementById('cancelButton');
+        const confirmButton = document.getElementById('confirmButton');
+        const paymentPosToDeleteSpan = document.getElementById('paymentPosToDelete');
+        let paymentIdToDelete = null;
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                paymentIdToDelete = this.dataset.paymentId;
+                paymentPosToDelete = this.dataset.paymentPos;
+                console.log(paymentIdToDelete);
+                console.log(paymentPosToDelete);
+                paymentPosToDeleteSpan.textContent = paymentPosToDelete;
+                deleteModal.style.display = 'block';
+            });
+        });
+
+        cancelButton.addEventListener('click', function () {
+            deleteModal.style.display = 'none';
+            paymentIdToDelete = null;
+        });
+
+        confirmButton.addEventListener('click', function () {
+            if (paymentIdToDelete) {
+                fetch(`/pagos/delete/${paymentIdToDelete}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ form.csrf_token._value() }}'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error al eliminar el cobro');
+                    }
+                });
+            }
+        });
+
+        window.onclick = function (event) {
+            if (event.target == deleteModal) {
+                deleteModal.style.display = 'none';
+            }
+        }
+    });
+
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('start_date').setAttribute('max', today);
+    document.getElementById('end_date').setAttribute('max', today);
+</script>
+
+{% endblock %}

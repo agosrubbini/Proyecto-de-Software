@@ -86,7 +86,7 @@ class JyA(Person):
     __tablename__ = "horsemen_and_amazons"
 
     id = db.Column(db.Integer, db.ForeignKey('persons.id'), primary_key=True)
-    birthdate = db.Column(db.DateTime, nullable = False)
+    birthdate = db.Column(db.Date, nullable = False)
     birth_place = db.Column(db.String(255), nullable=False)
     current_phone = db.Column(db.String(255), nullable=False)
     emergency_contact_id_jya = db.Column(db.Integer, db.ForeignKey("emergency_contact.id"), nullable=True)
@@ -99,19 +99,20 @@ class JyA(Person):
     "Discapacidad intelectual", "Trastorno espectro autista", "Trastorno del aprendizaje", "Trastorno por déficit de atención", "Trastorno de la comunicación", "Trastorno de ansiedad",
     "Síndrome de down", "Retraso madurativo", "Psicosis", "Trastorno de conducta", "Trastornos del ánimo y afectivos", "Trastorno alimentario", "Otro", name="diagnosis"), nullable=True, default="No posee ningún diagnóstico")
     other_diagnosis = db.Column(db.String(255), nullable=True)
-    type_of_disability = db.Column(db.Enum("Mental", "Motora", "Sensorial", "Visceral", name="type_of_disability"), nullable=True)
+    type_of_disability = db.Column(db.Enum("No padece una discapacidad","Mental", "Motora", "Sensorial", "Visceral", name="type_of_disability"), nullable=True)
     receives_family_allowance = db.Column(db.Boolean, default=False)
-    family_allowance = db.Column(db.Enum("Asignación Universal por hijo","Asignación Universal por hijo con Discapacidad", "Asignación por ayuda escolar anual", name="family_allowance"), nullable=True)
+    family_allowance = db.Column(db.Enum("No recibe asignación","Asignación universal por hijo","Asignación universal por hijo con Discapacidad", "Asignación por ayuda escolar anual", name="family_allowance"), 
+                                         nullable=True)
     is_beneficiary_of_pension = db.Column(db.Boolean, default=False)
-    pension = db.Column(db.Enum("Nacional", "Provincial", name="pension"), nullable=True)
+    pension = db.Column(db.Enum("No recibe pensión", "Nacional", "Provincial", name="pension"), default="No recibe pensión", nullable=True)
     school_id = db.Column(db.Integer, db.ForeignKey("schools.id"), nullable=True)
 
     # emergency_contact = db.relationship("EmergencyContact", backref="emergency_contact") Creo que no seria necesario porque ya tengo el id
     # healthcare_plan = db.relationship("HealthcarePlan", backref="healthcare_plan") Creo que no seria necesario porque ya tengo el id
     # school = db.relationship("School", backref="school") Creo que no seria necesario porque ya tengo el id
 
-    billings = db.relationship("Billing", backref="billings_jya", foreign_keys="Billing.jya_id")
-    files = db.relationship("File", backref="files")
+    billings = db.relationship("Billing", backref="billings_jya", foreign_keys="Billing.jya_id", cascade='all, delete-orphan')
+    files = db.relationship("File", backref="files", cascade='all, delete-orphan')
 
     __mapper_args__ = {
         'polymorphic_identity': 'jya',

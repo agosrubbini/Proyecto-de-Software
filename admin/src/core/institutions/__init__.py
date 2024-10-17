@@ -15,3 +15,16 @@ def create_school(**kwargs):
     db.session.commit()
 
     return school
+
+def get_schools():
+
+    "Retorna todas las escuelas existentes en la base de datos"
+
+    return School.query.all()
+
+
+def get_school_by_id(school_id):
+
+    """Devuelve la escuela con el id pasado por parámetro"""
+
+    return School.query.filter_by(id=school_id).first()
