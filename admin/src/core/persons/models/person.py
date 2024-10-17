@@ -83,6 +83,7 @@ class Employee(Person):
     condition = db.Column(db.Enum("Voluntario", "Personal Rentado", name="condition"), nullable=False)
     active = db.Column(db.Boolean, default=True)
     healthcare_plan_id_employee = db.Column(db.Integer, db.ForeignKey("healthcare_plan.id"), nullable=True)
+    email = db.Column(db.String(255), nullable=False)
     # degree  = db.Column(db.String(255), nullable=True)--> Se debe poder subir un archivo, se guarda la ruta?
     # DNI_copy = db.Column(db.String(255), nullable=True)  --> Se debe poder subir un archivo, se guarda la ruta?
     # updated_CV = db.Columnt(db.String(255), nullable=True) --> Se debe poder subir un archivo, se guarda la ruta?
@@ -100,7 +101,7 @@ class Employee(Person):
 
     def __init__(self, name=None, last_name=None, DNI=None, age=None, phone_number=None, address_id=None, user_id=None, 
                  profession=None, job_position=None, start_date=None, end_date=None, emergency_contact_id_employee=None, 
-                 condition=None, active=None, healthcare_plan_id_employee=None):
+                 condition=None, active=None, healthcare_plan_id_employee=None, email=None):
 
         super().__init__(name=name, last_name=last_name, DNI=DNI, age=age, phone_number=phone_number, address_id=address_id, user_id=user_id)
         self.profession = profession
@@ -111,6 +112,7 @@ class Employee(Person):
         self.condition = condition
         self.active = active
         self.healthcare_plan_id_employee = healthcare_plan_id_employee
+        self.email = email
 
 class JyA(Person):
 

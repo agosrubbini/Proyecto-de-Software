@@ -7,6 +7,7 @@ from web.controllers.auth.users import bp as bp_users
 from web.controllers.auth.profile import bp as bp_profile
 from web.controllers.horsemen_and_amazons import bp as bp_jya
 from web.controllers.billing import bp as bp_billing
+from web.controllers.team import bp as bp_team
 from src.core import database
 from src.core.config import config
 from src.core.bcrypt import bcrypt
@@ -46,6 +47,7 @@ def create_app(env="development", static_folder="../../static"):
     app.register_blueprint(bp_profile)
     app.register_blueprint(bp_jya)
     app.register_blueprint(bp_billing)
+    app.register_blueprint(bp_team)
 
     # Register error handlers
     app.register_error_handler(404, error.error_not_found)

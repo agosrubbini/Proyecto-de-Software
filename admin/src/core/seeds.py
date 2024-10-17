@@ -107,7 +107,8 @@ def run():
         job_position="Jefe",
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",
-        healthcare_plan_id_employee=healthcare_plan1.id
+        healthcare_plan_id_employee=healthcare_plan1.id,
+        email="empleado@gmail.com"
     )
 
     horse1 = create_horse(
