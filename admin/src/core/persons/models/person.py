@@ -60,6 +60,8 @@ class Employee(Person):
     billings = db.relationship("Billing", backref="billings_employee", foreign_keys="Billing.employee_id")
     payments = db.relationship("Payment", backref="payments")
     institutional_works = db.relationship("InstitutionalWork", backref="institutional_works", foreign_keys="InstitutionalWork.professional")
+    files = db.relationship("EmployeeFile", backref="files", cascade='all, delete-orphan')
+    
 
     __mapper_args__ = {
         'polymorphic_identity': 'employee',
@@ -80,6 +82,17 @@ class Employee(Person):
         self.healthcare_plan_id_employee = healthcare_plan_id_employee
         self.email = email
         self.birth_date = birth_date
+
+    def to_dict(self, addres):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "last_name": self.last_name,
+            "DNI": self.DNI,
+            "birth_date": self.birth_date,
+            "phone_number": self.phone_number,
+            "address": addres,
+        }
 
 class JyA(Person):
 

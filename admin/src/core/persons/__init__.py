@@ -3,7 +3,7 @@ from src.core.persons.models.person import Person, Employee, JyA, FamilyMemberOr
 from src.core.persons.models.address import Address
 from src.core.persons.models.emergency_contact import EmergencyContact
 from src.core.persons.models.healthcare_plan import HealthcarePlan
-from src.core.persons.models.file import File
+from src.core.persons.models.file import EmployeeFile, File
 from datetime import datetime
 
 def create_person(**kwargs):
@@ -178,4 +178,14 @@ def get_healthcare_plan_by_id(healthcare_plan_id):
 
     return HealthcarePlan.query.filter_by(id=healthcare_plan_id).first()
 
-   
+def find_employee_by_id(id):
+
+    """Devuelve el empleado con el id pasado por parámetro"""
+
+    return Employee.query.filter_by(id=id).first()
+
+def get_files_by_employee_id(id):
+    
+    """Devuelve los archivos asociados al empleado con el id pasado por parámetro"""
+
+    return EmployeeFile.query.filter_by(employee_id = id).all()

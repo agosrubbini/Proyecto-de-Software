@@ -1,4 +1,7 @@
-from flask import Blueprint, render_template, redirect, request, url_for, flash
+from flask import Blueprint, current_app as app, render_template, redirect, request, url_for, flash
+from sqlalchemy import desc
+from src.core.persons import find_address_by_id, find_employee_by_id, get_files_by_employee_id, get_files_by_horseman_id
+from src.core.persons.models.file import File
 from src.core.auth.auth import inject_user_permissions, permission_required
 from src.core.persons.models.person import Employee
 from src.core.persons.models.address import Address
@@ -117,15 +120,37 @@ def new_employee():
 @permission_required('team_show')
 @inject_user_permissions
 def show_employee(id):
-    employee = Employee.query.get(id)
-    return render_template('team/team_show.html', employee=employee)
+    """
+    Esta función retorna la información del jinete o amazona asociado al id pasado por parámetro en la url.
+    """
+    
+    app.logger.info("Call to index function")
 
-@bp.route('/empleado/editar/<int:id>')
-@permission_required('team_update')
-@inject_user_permissions
-def edit_employee(id):
-    employee = Employee.query.get(id)
-    return render_template('team/team_edit.html', employee=employee)
+    employee = find_employee_by_id(id)
+    employee_address = find_address_by_id(employee.address_id).string()
+    files = get_files_by_employee_id(employee.id)
+    employee_json = employee.to_dict(employee_address)
+
+    files_json = []
+    if files:
+        for file in files:    
+            files_json.append(file.to_dict())
+
+    context = {
+        'files': files_json,
+        'user': employee_json,
+        'id': id,
+    }
+
+    app.logger.info("End of call to index function")
+
+    return render_template('team/team_show.html', context=context)
+
+# @bp.route('/empleado/editar/<int:id>')
+# @permission_required('team_update')
+# @inject_user_permissions
+# def edit_employee(id):
+
 
 @bp.route('/empleado/eliminar/<int:id>', methods=['POST'])
 @permission_required('team_destroy')
