@@ -2,7 +2,7 @@
 from datetime import datetime
 from src.core.auth import create_user, create_role, create_permission, initialice_admin_permissions, initialice_tecnica_permissions, initialice_ecuestre_permissions
 from src.core.horses import create_horse
-from src.core.institutions import create_institutional_work
+from src.core.institutions import create_institutional_work, create_school
 from src.core.payments import create_billing
 from src.core.persons import (
     create_person, create_employee, create_JyA, create_address, create_emergency_contact, 
@@ -142,7 +142,9 @@ def run():
         job_position="Jefe",
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",
-        healthcare_plan_id_employee=healthcare_plan1.id
+        healthcare_plan_id_employee=healthcare_plan1.id,
+        email="empleado@gmail.com",
+        birth_date = datetime.now(),
     )
 
     employee2 = create_employee(
@@ -157,7 +159,7 @@ def run():
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",
         healthcare_plan_id_employee=healthcare_plan1.id,
-        email="empleado@gmail.com",
+        email="empleado2@gmail.com",
         birth_date = datetime.now(),
     )
 
