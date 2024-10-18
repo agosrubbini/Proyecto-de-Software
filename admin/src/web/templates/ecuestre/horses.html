@@ -77,13 +77,18 @@
                 <th>Sede</th>
                 <th>Tipo Jinetes/Amazonas asignados</th>
                 <th>Empleados</th>
+                <th>Acción</th>
             </tr>
         </thead>
         <tbody>
             {% if horses.items %}
                 {% for horse in horses.items %}
-                    <tr onclick="window.location.href='{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}'">
-                        <td> {{horse.name}} </td>
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}">
+                            {{ horse.name }}
+                            </a>
+                        </td>
                         <td> {{ horse.date_of_birth.strftime('%d-%m-%Y') }} </td>
                         <td> {{horse.gender}} </td>
                         <td> {{horse.race}} </td>
@@ -100,6 +105,16 @@
                         {% for employee in horse.employees %}
                             {{ employee.name }}{% if not loop.last %}, {% endif %}
                         {% endfor %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}" class="button is-small is-white"><i class="fas fa-eye" title="Ver"></i></a>
+                            <a href="{{ url_for('horses.edit_horse', horse_id=horse.id) }}" class="button is-small is-white"><i class="fas fa-edit" title="Editar"></i></a>
+                            <form action="{{ url_for('horses.delete_horse', horse_id=horse.id) }}" 
+                            method="POST" style="display: inline;">
+                                <button type="submit" class="button is-small is-white">
+                                    <i class="fas fa-trash" title="Eliminar"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 

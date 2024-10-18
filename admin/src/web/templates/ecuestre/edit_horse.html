@@ -1,0 +1,155 @@
+{% extends "layout.html" %}
+{% block title %}Editar caballo{% endblock %}
+{% block head %}
+    {{ super() }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/payment_and_billing/edit.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+{% endblock %}
+{% block content %}
+<form method="POST" action="{{ url_for('horses.edit_horse', horse_id=horse.id) }}">
+    {{ form.csrf_token }}
+
+    <div class="div-titulo">
+        <h1 class="label">Editar caballo</h1>
+        <hr class="linea-titulo">
+    </div>
+
+    <label class="label" for="name">Nombre</label>
+    <input class="input" type="text" name="name" id="name" value="{{ horse.name }}">
+    {% if form.name.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.name.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+    <label class="label" for="date_of_birth">Fecha de nacimiento</label>
+    <input class="input" type="date" name="date_of_birth" id="date_of_birth" value="{{ horse.date_of_birth.strftime('%Y-%m-%d') }}">
+    {% if form.date_of_birth.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.date_of_birth.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+    <label class="label" for="gender">Genero</label>
+    <div class="control">
+        <select name="gender" id="gender">
+            <option value=""></option>
+            <option value="Macho" {% if horse.gender == 'Macho' %}selected{% endif %}>Macho</option>
+            <option value="Hembra" {% if horse.gender == 'Hembra' %}selected{% endif %}>Hembra</option>
+        </select>
+    </div>
+    {% if form.gender.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.gender.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="race">Raza</label>
+    <input class="input" type="text" name="race" id="race" value="{{ horse.race }}">
+    {% if form.race.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.race.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+    <label class="label" for="fur">Pelaje</label>
+    <input class="input" type="text" name="fur" id="fur" value="{{ horse.fur }}">
+    {% if form.fur.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.fur.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+    <label class="label" for="purchase_or_donation">Compra o Donacion</label>
+    <div class="control">
+        <select name="purchase_or_donation" id="purchase_or_donation">
+            <option value=""></option>
+            <option value="Compra" {% if horse.purchase_or_donation == 'Compra' %}selected{% endif %}>Compra</option>
+            <option value="Donacion" {% if horse.purchase_or_donation == 'Donacion' %}selected{% endif %}>Donacion</option>
+        </select>
+    </div>
+    {% if form.purchase_or_donation.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.purchase_or_donation.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="date_of_entry">Fecha de entrada</label>
+    <input class="input" type="date" name="date_of_entry" id="date_of_entry" value="{{ horse.date_of_entry.strftime('%Y-%m-%d') }}">
+    {% if form.date_of_entry.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.date_of_entry.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+    <label class="label" for="payment_date">Sede</label>
+    <input class="input" type="text" name="sede" id="sede" value="{{ horse.sede }}">
+    {% if form.sede.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.sede.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+    <label class="label">Tipos J&A asignados</label>
+    <div class="control">
+        <input type="checkbox" name="type_jya_hipoterapia" {% if horse.type_jya_hipoterapia %}checked{% endif %}> Hipoterapia<br>
+        <input type="checkbox" name="type_jya_monta_terapeutica" {% if horse.type_jya_monta_terapeutica %}checked{% endif %}> Monta Terapéutica<br>
+        <input type="checkbox" name="type_jya_dea" {% if horse.type_jya_dea %}checked{% endif %}> Deporte Ecuestre Adaptado<br>
+        <input type="checkbox" name="type_jya_ar" {% if horse.type_jya_ar %}checked{% endif %}> Actividades Recreativas<br>
+        <input type="checkbox" name="type_jya_equitacion" {% if horse.type_jya_equitacion %}checked{% endif %}> Equitación<br>
+    </div>
+    <hr>
+
+
+    <label class="label" for="employees">Empleados</label>
+    <select name="employees" multiple>
+        {% for employee in employee_list %}
+            <option value="{{ employee.id }}" {% if employee.id in horse.employees %}selected{% endif %}>{{ employee.name }}</option>
+        {% endfor %}
+    </select>
+    <hr>
+   
+
+
+    <div class="buttons">
+        <a class="a-button" href="{{ url_for('horses.list_info_by_id', horse_id = horse.id) }}" style="color: white;"><button type="button">Cancelar</button></a>
+        <button type="submit">Actualizar</button>
+    </div>
+        
+</form>
+
+<script>
+    $(document).ready(function () {
+        $('select').selectize({ sortField: 'text' });
+        var today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('input[type="date"]').forEach(el => el.setAttribute('max', today));
+    });
+</script>
+
+{% endblock %}

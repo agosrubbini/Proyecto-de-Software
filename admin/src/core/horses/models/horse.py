@@ -31,7 +31,7 @@ class Horse(db.Model):
         'polymorphic_identity': 'ecuestre',
     }
 
-    def __init__(self, id=None, name=None, date_of_birth=None, gender=None, race=None, fur=None, purchase_or_donation=None, date_of_entry=None, sede=None,type_jya_assigned=None):
+    def __init__(self, id=None, name=None, date_of_birth=None, gender=None, race=None, fur=None, purchase_or_donation=None, date_of_entry=None, sede=None,type_jya_assigned=None, employees=None):
 
         self.id = id 
         self.name = name
@@ -43,6 +43,8 @@ class Horse(db.Model):
         self.date_of_entry = date_of_entry
         self.sede = sede
         self.type_jya_assigned = type_jya_assigned
+        self.employees = employees
+
 
     def to_dict(self):
         return {
@@ -53,6 +55,15 @@ class Horse(db.Model):
             "gender": self.gender,
             "race": self.race,
             "fur": self.fur,
+            "purchase_or_donation": self.purchase_or_donation,
             "sede": self.sede,
             "type_jya_assigned": self.type_jya_assigned,
+            # Serializamos los empleados en una lista de diccionarios con su información relevante
+        "employees": [
+            {
+                "id": emp.id,
+                "name": emp.name,
+            }
+            for emp in self.employees
+        ],
         }

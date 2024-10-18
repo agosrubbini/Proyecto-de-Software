@@ -33,11 +33,6 @@ class create_horse_Form(FlaskForm):
     type_jya_dea = BooleanField (default=False) 
     type_jya_ar = BooleanField (default=False) 
     type_jya_equitacion = BooleanField (default=False) 
-    
-    
-
-    #employees = StringField("Asociar entrenadores y conductores", validators=[InputRequired(), Length(max=15)]) #terminar de hacer 
-
     employees = SelectMultipleField('Empleados', coerce=int)
 class registryFileForm(FlaskForm):
 
@@ -56,7 +51,3 @@ class registryFileForm(FlaskForm):
     )
     title = StringField("title", validators=[InputRequired(), Length(max=60)])
 
-#editar eliminar
-#busqueda nombre y tipo de jya asignados
-#documentacion y enlaces
-#filtros y ordenamientos para docs

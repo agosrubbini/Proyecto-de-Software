@@ -34,6 +34,8 @@
                 buttonDocs.classList.remove('clicked');
                 contenedor.classList.remove('docs');
 
+                let empleados = horseData.employees.map(emp => emp.name).join(', '); // Esto crea una lista de nombres
+
                 let table_horses = `<table class="table is-striped">
                                     <thead>
                                         <tr>
@@ -48,12 +50,21 @@
                                         <tr><td>Genero</td><td>${horseData.gender}</td></tr>
                                         <tr><td>Raza</td><td>${horseData.race}</td></tr>
                                         <tr><td>Pelaje</td><td>${horseData.fur}</td></tr>
+                                        <tr><td>Compra/Donacion</td><td>${horseData.purchase_or_donation}</td></tr>
                                         <tr><td>Sede</td><td>${horseData.sede}</td></tr>
                                         <tr><td>tipo de jinetes y amazonas asignados</td><td>${horseData.type_jya_assigned}</td></tr>
+                                        <tr><td>Empleados</td><td>${empleados}</td></tr>
                                     </tbody>
                                 </table>`;
 
-                contenedor.innerHTML = table_horses;
+                let links = `
+                    <div class="links">
+                        <a href="{{ url_for('horses.list_horses') }}" class="boton">Volver al listado</a>
+                        <a href="{{ url_for('horses.edit_horse', horse_id=context.id) }}" class="boton">Editar</a>
+                    </div>
+                `;               
+                
+                contenedor.innerHTML = table_horses + links;
             }
 
             // Función para cargar los documentos
@@ -156,9 +167,17 @@
                     contenedor.innerHTML += `<p style="text-align: center">No hay archivos asociados al caballo</p>`;
                 }
 
-                let boton = ` <a href="{{ url_for('horses.add_file', horse_id=context.id) }}"><button class="boton add-file">Añadir archivo</button></a>`;
+                let boton = `
+                    <div class="links">
+                        <a href="{{ url_for('horses.add_file', horse_id=context.id) }}">
+                            <button class="boton add-file">Añadir archivo</button>
+                        </a>
+                        <a href="{{ url_for('horses.list_horses') }}" class="boton">Volver al listado</a>
+                    </div>
+                `;
 
                 contenedor.innerHTML += boton;
+                
             }
 
             // Recuperar el estado del Local Storage

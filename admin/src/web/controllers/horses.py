@@ -70,6 +70,8 @@ def list_horses():
     return render_template ("ecuestre/horses.html", horses = horse, page=page, order_by=order_by, name=name, type_jya_assigned=type_jya_assigned)
 
 
+
+
 @bp.route('/create', methods=['GET', 'POST'])
 def create_horse_view():
     form = create_horse_Form()
@@ -136,39 +138,64 @@ def edit_horse(horse_id):
         Esta funcion se encarga de editar un cobro en especifico asociado a un id.
     """
 
+    employee_list = Employee.query.all()
     horse = Horse.query.get(horse_id)
     form = create_horse_Form(obj=horse)
-    jya_list = JyA.query.all()
-    employee_list = Employee.query.all()
+    form.gender.choices = [('Macho', 'Macho'), ('Hembra', 'Hembra')]
+    form.purchase_or_donation.choices = [('Compra', 'Compra'), ('Donacion', 'Donacion')]
+    form.employees.choices = [(e.id, e.name) for e in employee_list]
+
 
     if form.validate_on_submit():
-        billing.employee_id = form.employee_id.data
-        billing.jya_id = form.jya_id.data
-        billing.amount = form.amount.data
-        billing.payment_method = form.payment_method.data
-        billing.observation = form.observation.data
-        db.session.commit()
-        flash('Billing updated successfully!', 'success')
-        return redirect(url_for('billing.show_billing', billing_id=billing.id))
-    return render_template('billing/billing_edit.html', form=form, jya_list=jya_list, employee_list=employee_list, billing=billing)
+        horse.name = form.name.data
+        horse.date_of_birth = form.date_of_birth.data
+        horse.gender = form.gender.data
+        horse.race = form.race.data
+        horse.fur = form.fur.data
+        horse.purchase_or_donation = form.purchase_or_donation.data
+        horse.date_of_entry = form.date_of_entry.data
+        horse.sede = form.sede.data
+        
+        type_jya = []
+        if form.type_jya_hipoterapia.data:
+            type_jya.append('Hipoterapia')
+        if form.type_jya_monta_terapeutica.data:
+            type_jya.append('Monta Terapéutica')
+        if form.type_jya_dea.data:
+            type_jya.append('Deporte Ecuestre Adaptado')
+        if form.type_jya_ar.data:
+            type_jya.append('Actividades Recreativas')
+        if form.type_jya_equitacion.data:
+            type_jya.append('Equitación')
 
-@bp.route('/eliminar/<int:billing_id>', methods=['POST'])
-@permission_required('billing_delete')
-@inject_user_permissions
-def delete_billing(billing_id):
+        horse.type_jya_assigned = type_jya
+
+        selected_employee_ids = form.employees.data
+        selected_employees = Employee.query.filter(Employee.id.in_(selected_employee_ids)).all()
+        horse.employees = selected_employees
+
+        db.session.commit()
+        flash('Horse updated successfully!', 'success')
+        return redirect(url_for('horses.list_info_by_id', horse_id=horse.id))
+    return render_template('ecuestre/edit_horse.html', form=form, employee_list=employee_list, horse=horse)
+
+@bp.route('/eliminar/<int:horse_id>', methods=['POST'])
+#@permission_required('billing_delete')
+#@inject_user_permissions
+def delete_horse(horse_id):
 
     """
     Esta funcion se encarga de eliminar un cobro en especifico asociado a un id.
     """
 
-    billing = Billing.query.get(billing_id)
-    if billing:
-        db.session.delete(billing)
+    horse = Horse.query.get(horse_id)
+    if horse:
+        db.session.delete(horse)
         db.session.commit()
-        flash('Billing deleted successfully!', 'success')
+        flash('Horse deleted successfully!', 'success')
     else:
-        flash('Billing not found!', 'danger')
-    return redirect(url_for('billing.list_billings'))
+        flash('Horse not found!', 'danger')
+    return redirect(url_for('horses.list_horses'))
 
 def show_files(horse_id, request):
    
