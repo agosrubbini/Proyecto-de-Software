@@ -18,7 +18,7 @@
 
     <div class="search-container">
             <form class="form-container" method="get" action="{{ url_for('billing.list_billings') }}">
-                <div class="columns is-desktop">
+                <div class="columns is-multiline">
                     <div class="column is-narrow">
                         <input class="input" type="text" name="q" placeholder="Buscar por nombre" value="{{ request.args.get('q', '') }}">
                     </div>
