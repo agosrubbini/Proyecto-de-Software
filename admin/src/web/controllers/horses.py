@@ -48,7 +48,7 @@ def show_horses(request):
     query = Horse.query
     
     if name:
-        query = query.filter(Horse.name.like(f'%{name}%'))
+        query = query.filter(Horse.name.ilike(f'%{name}%'))
     if type_jya_assigned:
         query = query.filter(Horse.type_jya_assigned.contains([type_jya_assigned]))
     
@@ -129,15 +129,11 @@ def create_horse_view():
 
 
 
-def show_files(request):
+def show_files(horse_id, request):
    
     # Determine the order option
-    if request.method == 'POST':
-        order_by = request.args.get('order_option', 'title_asc', type=str)
-    else:
-        order_by = request.args.get('order_option', 'title_asc', type=str)
+    order_by = request.args.get('order_option', 'title_asc', type=str)
 
-    app.logger.info("Call to order_by function with order_option: %s", order_by)
     
     # Map order options to actual column sorting
     order_mapping = {
@@ -153,24 +149,23 @@ def show_files(request):
     page = request.args.get('page', 1, type=int)
     
     # Filtering options
-    search = request.args.get('search', '', type=str)
+    title = request.args.get('title', '', type=str)
     document_type = request.args.get('document_type', '', type=str)
 
-    app.logger.info("Search: %s, Document_Type: %s", search, document_type)
 
     # Build the query
-    query = Horse_file.query
+    query = Horse_file.query.filter(Horse_file.horses_id == horse_id)
     
-    if search:
-        query = query.filter(Horse_file.title.like(f'%{search}%'))
+    if title:
+        query = query.filter(Horse_file.title.ilike(f'%{title}%'))
     if document_type and document_type != 'Selecciona un tipo':
         query = query.filter(Horse_file.document_type == document_type)
     
     per_page = 2
     # Apply ordering and pagination
-    files = query.order_by(order_criteria).paginate(page=page, per_page=per_page, error_out=False)
+    pagination = query.order_by(order_criteria).paginate(page=page, per_page=per_page, error_out=False)
 
-    return files, page, order_by, search, document_type
+    return pagination, page, order_by, title, document_type
 
 
 @bp.get("/<int:horse_id>")
@@ -182,19 +177,18 @@ def list_info_by_id(horse_id):
     """
 
     horse = find_horse_by_id(horse_id)
-    files = get_files_by_horse_id(horse.id)
+    #files = get_files_by_horse_id(horse.id)
     horse_json = horse.to_dict()  
     files_json = []
 
 
+    pagination, page, order_by, title, document_type = show_files(horse_id, request)
 
-    pagination, page, order_by, search, document_type = show_files(request)
+    files_json = [file.to_dict() for file in pagination.items]
 
-    
-
-    if files:
-        for file in files:    
-            files_json.append(file.to_dict())
+    #if files:
+    #    for file in files:    
+    #        files_json.append(file.to_dict())
 
     context = {
         'pagination': pagination,
@@ -204,7 +198,7 @@ def list_info_by_id(horse_id):
     }
 
     
-    return render_template('ecuestre/horses_info.html', context=context, page=page, order_by=order_by, search=search, document_type=document_type)
+    return render_template('ecuestre/horses_info.html', context=context, page=page, order_by=order_by, title=title, document_type=document_type)
 
 
 @bp.route("/<int:horse_id>/delete_file/<int:file_id>", methods=['POST', 'GET'])

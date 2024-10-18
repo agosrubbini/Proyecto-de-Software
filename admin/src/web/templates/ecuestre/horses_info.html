@@ -12,6 +12,7 @@
 {% endblock %}
 {% block content %}
 
+    <h1 class="titulo">Ficha del Caballo</h1>
     <div class="encabezado">
         <button id="info">Información General</button>
         <button id="docs">Documentos</button>
@@ -70,7 +71,7 @@
                                     <span class="icon is-small is-left">
                                         <i class="fa-solid fa-magnifying-glass"></i>
                                     </span>
-                                    <input class="input" type="text" name="search" placeholder="Nombre del documento" value="{{ search }}" />
+                                    <input class="input" type="text" name="title" placeholder="Nombre del documento" value="{{ search }}" />
                                 </div>
                             </div>
                             <div class="field">
@@ -141,8 +142,8 @@
                             </tbody>
                         </table>
                         <nav class="pagination" role="navigation" aria-label="pagination">
-                            <a class="boton pagination-previous" {% if not context.pagination.has_prev %}disabled{% else %} href="{{url_for('horses.list_info_by_id', horse_id=context.id, page=page-1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Previous</a>
-                            <a class="boton pagination-next" {% if not context.pagination.has_next %}disabled{% else %} href="{{url_for('horses.list_info_by_id', horse_id=context.id, page=page+1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Next page</a>
+                            <a class="boton pagination-previous" {% if not context.pagination.has_prev %}disabled{% else %} href="{{url_for('horses.list_info_by_id', horse_id=context.id, page=page-1,  order_option=order_by, title=title, document_type=document_type)}}"{% endif %}>Anterior</a>
+                            <a class="boton pagination-next" {% if not context.pagination.has_next %}disabled{% else %} href="{{url_for('horses.list_info_by_id', horse_id=context.id, page=page+1,  order_option=order_by, title=title, document_type=document_type)}}"{% endif %}>Siguiente</a>
                         </nav>
 
                     `;
