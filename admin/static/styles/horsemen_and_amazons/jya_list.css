@@ -1,11 +1,3 @@
-table, table th, table td{
-    margin: auto;
-    background-color: white !important;
-}
-
-table, table th, table td {
-    color:black !important;
-}
 
 table.users tbody tr:hover {
     cursor: pointer; /* Cambia el puntero a mano */

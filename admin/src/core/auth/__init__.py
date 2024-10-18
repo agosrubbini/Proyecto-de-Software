@@ -124,6 +124,7 @@ def initialice_tecnica_permissions():
 
     db.session.commit()
 
+
 def initialice_ecuestre_permissions():
     ecuestre_role = Role.query.filter_by(name="Ecuestre").first()
 
@@ -160,3 +161,18 @@ def update_role(user, role):
 
 def get_all_roles():
     return Role.query.all()
+
+
+#TODO quitar este metodo
+def validate_role(role):
+    return not role == "Selecciona un rol"
+
+def validate_passwords(password, confirm_password):
+    return password == confirm_password
+
+def validate_all_form_fields(form):
+    form_errors = form.errors
+    for field in form:
+        if field.errors:
+            form_errors[field.name] = field.errors
+    return form_errors

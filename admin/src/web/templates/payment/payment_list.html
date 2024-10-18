@@ -16,7 +16,7 @@
     <div class="search-container">
             <form class="form-container" method="get" action="{{ url_for('payment.list_payments') }}">
                 <div class="columns is-desktop">
-                    <div class="column">
+                    <div class="column is-narrow">
                         <div class="select">
                             <select name="order" id="order" >
                                 <option value="asc" {% if order == 'asc' %}selected{% endif %}>Fecha: Orden Ascendente</option>
@@ -24,7 +24,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="column">
+                    <div class="column is-narrow">
                         <div class="select">
                             <select name="payment_method" id="payment_method">
                                 <option value="">Tipo de pago</option>
@@ -34,16 +34,16 @@
                             </select>
                         </div>
                     </div>
-                    <div class="column">
+                    <div class="column is-narrow">
                         <input class="input" type="date" id="start_date" name="start_date" value="{{ request.args.get('start_date', '') }}">
                     </div>
-                    <div class="column">
+                    <div class="column is-narrow">
                         <input class="input" type="date" id="end_date" name="end_date" value="{{ request.args.get('end_date', '') }}">
                     </div>
-                    <div class="column">
+                    <div class="column is-narrow">
                         <button type="submit" class="button search-button">Buscar</button>
                     </div>
-                    <div class="column">
+                    <div class="column is-narrow">
                         <a class="button restore-button" href="{{ url_for('payment.list_payments', page=page, order=order) }}">Restablecer</a>
                     </div>
                 </div>

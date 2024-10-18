@@ -24,15 +24,6 @@
     margin-bottom: 10px;
 }
 
-table, table th, table td{
-    margin: auto;
-    background-color: white !important;
-}
-
-table, table th, table td {
-    color:black !important;
-}
-
 select{
     border-radius: 10px !important;
     border: 1px solid hsl(221, 14%, 80%) !important;

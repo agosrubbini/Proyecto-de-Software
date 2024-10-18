@@ -19,7 +19,8 @@ bp = Blueprint('payment', __name__, url_prefix='/pagos')
 def list_payments():
 
     """
-        Esta funcion se encarga de listar los pagos realizados y aplicar filtros de busqueda.
+        Esta funcion se encarga de listar los pagos realizados
+        aplicando filtros de busqueda y paginando los resultados.
 
     """
 
