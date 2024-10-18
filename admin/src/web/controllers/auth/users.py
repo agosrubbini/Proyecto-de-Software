@@ -1,7 +1,6 @@
 from flask import Blueprint, flash, redirect, request,url_for
 from flask import render_template
-from core import bcrypt
-from core.auth import create_user, edit_user, find_role_id_by_name, find_user_by_email, find_user_by_id, get_all_roles, update_role
+from core.auth import create_user, edit_user, find_role_id_by_name, find_user_by_email, find_user_by_id, get_all_roles, validate_all_form_fields, validate_passwords, validate_role
 from core.auth.forms import registryForm
 from src.core.auth.models.user import User
 from flask import current_app as app
@@ -13,15 +12,16 @@ bp = Blueprint('users', __name__, url_prefix='/users')
 
 def showUsers(request):
     '''
-        La siguiente funcion se encarga de mostrar la lista de usuarios, aplicando filtros y ordenamientos
-        y realizando una paginacion de los mismos.
+        La siguiente funcion se encarga de mostrar la lista de usuarios,
+        aplicando filtros y ordenamientos y realizando una paginacion de 
+        los mismos.
+        
     '''
     app.logger.info("Call to showUsers function")
     
     order_option = request.args.get('order_option', 'email_asc', type=str)
     app.logger.info("order_option: %s", order_option)
     
-    # Map order options to actual column sorting
     order_mapping = {
         'email_asc': User.email,
         'email_desc': desc(User.email),
@@ -30,17 +30,17 @@ def showUsers(request):
     }
     order_criteria = order_mapping.get(order_option, User.email)
     
-    # Pagination
+    # Estructura del paginado
     page = request.args.get('page', 1, type=int)
     per_page=25
     
-    # Filtering options
+    # Opciones de filtrado
     search = request.args.get('search', '', type=str)
     role = request.args.get('role', '', type=int)
     activity = request.args.get('activity', '', type=str)
     app.logger.info("Search: %s, Role: %s, Activity: %s", search, role, activity)
 
-    # Build the query
+    # Construcción de la consulta
     query = User.query
     
     if search:
@@ -52,7 +52,7 @@ def showUsers(request):
         app.logger.info("Activity: %s", is_active)
         query = query.filter(User.active == is_active)
     
-    # Apply ordering and pagination
+    # Aplicar orden y paginado
     users = query.order_by(order_criteria).paginate(page=page, per_page=per_page)
     
     context = {
@@ -69,7 +69,8 @@ def showUsers(request):
 @inject_user_permissions
 def index():
     '''
-        Esta funcion retorna el listado de usuarios registrados en el sistema.
+        Esta funcion retorna el listado de usuarios registrados en 
+        el sistema.
     '''
     app.logger.info("Call to index function")
     context, page, order_option, search, role, activity = showUsers(request)
@@ -84,20 +85,29 @@ def index():
 def new_user():
 
     """
-        Esta función muestra la vista del registro, además valida los parametros, y guarda al usuario en la base de datos si
+        Esta función muestra la vista del registro, además valida los 
+        parametros, y guarda al usuario en la base de datos si
         se recibió el formulario y el mismo es válido.
     """
 
-    app.logger.info("Call to registry_function")
+    app.logger.info("Call to new_user function")
     form = registryForm()
+
     app.logger.info("El formulario es valido: %s", form.validate_on_submit())
 
+#TODO esto podría ser un case de strings que vaya concatenando los errores y luego los imprima todos juntos
+    if(validate_passwords(form.password.data, form.confirm.data) == False):
+        app.logger.error("The passwords do not match")
+    
+    if(validate_role(form.role.data) == False):
+        app.logger.error("The role was not selected")
+    
     if (form.validate_on_submit()):
         
         if (find_user_by_email(form.email.data)):
-            app.logger.error("The following email is already registered: %s ", form.email.data)
-            flash("Ya existe un usuario con el mail ingresado", "error")
-            return redirect(url_for("users.new_user"))
+                app.logger.error("The following email is already registered: %s ", form.email.data)
+                flash("Ya existe un usuario con el mail ingresado", "error")
+                return redirect(url_for("users.new_user"))  
 
         create_user(
             email = form.email.data,
@@ -105,7 +115,7 @@ def new_user():
             password = form.password.data,
             role_id = find_role_id_by_name(form.role.data),
         )
-        app.logger.info("End of call to registry_function")
+        app.logger.info("End of call to new_user function")
         flash("Usuario creado correctamente", "success")
         return render_template("home.html")
     
@@ -117,7 +127,8 @@ def new_user():
 @inject_user_permissions
 def show_user(id):
     '''
-        Esta funcion muestra la informacion de un usuario en particular pasado por parametro.
+        Esta funcion muestra la informacion de un usuario en particular 
+        pasado por parametro.
     '''
     user = find_user_by_id(id)
     roles = get_all_roles()
@@ -127,13 +138,14 @@ def show_user(id):
     }
     return render_template('users/user_show.html', context=context)
 
-#TODO fix showUsers
+
 @bp.route('/block/<int:id>', methods=['POST'])
 @permission_required('user_update')
 @inject_user_permissions
 def block_user(id):
     '''
-        Esta funcion se encarga de bloquear o desbloquear a un usuario pasado por id del sistema..
+        Esta funcion se encarga de bloquear o desbloquear a un usuario 
+        pasado por id del sistema..
     '''
 
     app.logger.info("Call to block_user function")
@@ -153,13 +165,19 @@ def block_user(id):
 @inject_user_permissions
 def update_user(id):
     '''
-        Esta funcion se encarga de actualizar la informacion de un usuario pasado por id del sistema..
+        Esta funcion se encarga de actualizar la informacion de un usuario
+        pasado por id del sistema..
     '''
 
     app.logger.info("Call to update_user function")
     user = User.query.get(id)
     form = registryForm()
+
+
     app.logger.info("El formulario es valido: %s", form.validate_on_submit())
+    form_errors = validate_all_form_fields(form)
+    app.logger.info("Errores en el formulario: %s", form_errors)
+
     if form.validate_on_submit():
         if (find_user_by_email(form.email.data) and find_user_by_email(form.email.data).id != id):
             app.logger.error("The following email is already registered: %s ", form.email.data)
@@ -190,7 +208,8 @@ def update_user(id):
 @inject_user_permissions
 def delete_user(id):
     '''
-        Esta funcion se encarga de eliminar a un usuario pasado por id del sistema.
+        Esta funcion se encarga de eliminar a un usuario pasado por id
+        del sistema.
     '''
 
     app.logger.info("Call to delete_user function")

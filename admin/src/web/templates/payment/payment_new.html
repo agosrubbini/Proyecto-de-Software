@@ -28,7 +28,7 @@
     {% if form.payment_type.errors %}
         <div class="alert alert-danger">
             {% for error in form.payment_type.errors %}
-                <span>{{ error }}</span>
+                <span style="color: red">{{ error }}</span>
             {% endfor %}
         </div>
     {% endif %}
@@ -45,7 +45,7 @@
         {% if form.beneficiary.errors %}
             <div class="alert alert-danger">
                 {% for error in form.beneficiary.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
@@ -58,7 +58,7 @@
     {% if form.amount.errors %}
             <div class="alert alert-danger">
                 {% for error in form.amount.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
@@ -69,22 +69,22 @@
     {% if form.payment_date.errors %}
             <div class="alert alert-danger">
                 {% for error in form.payment_date.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
-    <hr>
+        <hr style="margin-top: 0;">
 
     <label class="label" for="description">Descripcion:</label>
     <textarea class="textarea" type="text" name="description" id="description" placeholder="Detalle de pago"></textarea>
     {% if form.description.errors %}
             <div class="alert alert-danger">
                 {% for error in form.description.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
-    <hr>
+        <hr style="margin-top: 0;">
 
     <button type="submit">Crear</button>
 </form>

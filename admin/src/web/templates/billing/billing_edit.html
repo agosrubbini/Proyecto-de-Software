@@ -27,7 +27,7 @@
         {% if form.jya_id.errors %}
             <div class="alert alert-danger">
                 {% for error in form.jya_id.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
@@ -39,7 +39,7 @@
     {% if form.payment_date.errors %}
             <div class="alert alert-danger">
                 {% for error in form.payment_date.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
@@ -58,7 +58,7 @@
     {% if form.payment_method.errors %}
             <div class="alert alert-danger">
                 {% for error in form.payment_method.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
@@ -69,7 +69,7 @@
     {% if form.amount.errors %}
             <div class="alert alert-danger">
                 {% for error in form.amount.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
@@ -86,7 +86,7 @@
         {% if form.employee_id.errors %}
             <div class="alert alert-danger">
                 {% for error in form.employee_id.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
@@ -98,7 +98,7 @@
     {% if form.observation.errors %}
             <div class="alert alert-danger">
                 {% for error in form.observation.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red" >{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
