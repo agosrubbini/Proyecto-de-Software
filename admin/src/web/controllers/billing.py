@@ -22,7 +22,8 @@ def get_person_name_and_last_name(person_id):
 def list_billings():
 
     """
-    Esta funcion se encarga de listar los cobros realizados y aplicar filtros de busqueda.
+        Esta funcion se encarga de listar los cobros realizados
+        aplicando filtros de busqueda y realizando la paginacion.
 
     """
 
