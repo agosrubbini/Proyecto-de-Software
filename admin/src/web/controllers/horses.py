@@ -127,7 +127,48 @@ def create_horse_view():
 
     return render_template('ecuestre/create_horse.html', context=context)  # Renderizar el formulario
 
+@bp.route('/editar/<int:horse_id>', methods=['GET', 'POST'])
+#@permission_required('horse_edit')
+#@inject_user_permissions
+def edit_horse(horse_id):
 
+    """
+        Esta funcion se encarga de editar un cobro en especifico asociado a un id.
+    """
+
+    horse = Horse.query.get(horse_id)
+    form = create_horse_Form(obj=horse)
+    jya_list = JyA.query.all()
+    employee_list = Employee.query.all()
+
+    if form.validate_on_submit():
+        billing.employee_id = form.employee_id.data
+        billing.jya_id = form.jya_id.data
+        billing.amount = form.amount.data
+        billing.payment_method = form.payment_method.data
+        billing.observation = form.observation.data
+        db.session.commit()
+        flash('Billing updated successfully!', 'success')
+        return redirect(url_for('billing.show_billing', billing_id=billing.id))
+    return render_template('billing/billing_edit.html', form=form, jya_list=jya_list, employee_list=employee_list, billing=billing)
+
+@bp.route('/eliminar/<int:billing_id>', methods=['POST'])
+@permission_required('billing_delete')
+@inject_user_permissions
+def delete_billing(billing_id):
+
+    """
+    Esta funcion se encarga de eliminar un cobro en especifico asociado a un id.
+    """
+
+    billing = Billing.query.get(billing_id)
+    if billing:
+        db.session.delete(billing)
+        db.session.commit()
+        flash('Billing deleted successfully!', 'success')
+    else:
+        flash('Billing not found!', 'danger')
+    return redirect(url_for('billing.list_billings'))
 
 def show_files(horse_id, request):
    
@@ -396,7 +437,3 @@ def edit_file(horse_id, file_id):
             
     return render_template("ecuestre/edit_file.html", form=form, horse_id=horse_id, file=file)
 
-#actualizar
-#eliminar
-#asociar entrenadores y conductores
-#busqueda
