@@ -83,15 +83,24 @@ class Employee(Person):
         self.email = email
         self.birth_date = birth_date
 
-    def to_dict(self, addres):
+    def to_dict(self, addres, healthcare_plan, emergency_contact):
         return {
             "id": self.id,
             "name": self.name,
             "last_name": self.last_name,
             "DNI": self.DNI,
-            "birth_date": self.birth_date,
+            "birth_date": self.birth_date.strftime('%Y/%m/%d'),
             "phone_number": self.phone_number,
             "address": addres,
+            "profession": self.profession,
+            "job_position": self.job_position,
+            "start_date": self.start_date.strftime('%Y/%m/%d'),
+            "end_date": self.end_date.strftime('%Y/%m/%d') if self.end_date else "Incierta",
+            "emergency_contact": emergency_contact.string(),
+            "condition": self.condition,
+            "active": self.active,
+            "healthcare_plan": healthcare_plan.string(),
+            "email": self.email,
         }
 
 class JyA(Person):

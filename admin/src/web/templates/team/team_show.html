@@ -19,6 +19,19 @@
     <hr class="separador">
     <div id="contenedor"></div>
 
+            <!-- Modal de confirmación -->
+            <div id="deleteModal" class="modal">
+                <div class="modal-background"></div>
+                <div class="modal-content">
+                    <div class="box">
+                        <p>¿Estás seguro que quieres eliminar este empleado?</p>
+                        <button id="confirmDelete" class="button is-danger">Eliminar</button>
+                        <button id="cancelDelete" class="button">Cancelar</button>
+                    </div>
+                </div>
+                <button class="modal-close is-large" aria-label="close"></button>
+            </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const user = {{ context.user | tojson | safe }};
@@ -26,6 +39,11 @@
             const buttonInfo = document.getElementById('info');
             const buttonDocs = document.getElementById('docs');
             const contenedor = document.getElementById('contenedor');
+
+            const modal = document.getElementById('deleteModal');
+            const confirmButton = document.getElementById('confirmDelete');
+            const cancelButton = document.getElementById('cancelDelete');
+            let fileIdToDelete = null;
 
             // Función para cargar la información del usuario
             function cargarInformacion() {
@@ -51,8 +69,8 @@
                                         <tr><td>Profesion</td><td>${user.profession}</td></tr>
                                         <tr><td>Puesto laboral</td><td>${user.job_position}</td></tr>
                                         <tr><td>Fecha de inicio</td><td>${user.start_date}</td></tr>
-                                        <tr><td>Fecha de cese</td><td>${user.address}</td></tr>
-                                        <tr><td>Contacto de emergencia</td><td>${user.address}</td></tr>
+                                        <tr><td>Fecha de cese</td><td>${user.end_date}</td></tr>
+                                        <tr><td>Contacto de emergencia</td><td>${user.emergency_contact}</td></tr>
                                         <tr><td>Condicion</td><td>${user.condition}</td></tr>
                                         <tr><td>Actividad</td><td>${user.active}</td></tr>
                                         <tr><td>Obra social</td><td>${user.healthcare_plan}</td></tr>
@@ -67,6 +85,9 @@
                 buttonDocs.classList.add('clicked');
                 buttonInfo.classList.remove('clicked');
                 contenedor.classList.add('docs');
+
+                let boton = ` <a href="{{ url_for('team.add_file', id=context.id) }}"><button class="boton add-file">Añadir archivo</button></a>`;
+                contenedor.innerHTML += boton;
 
                 if (files.length > 0) {
                     let table_docs = `
@@ -105,10 +126,6 @@
                 else{
                     contenedor.innerHTML += `<p style="text-align: center">No hay archivos asociados al jinete</p>`;
                 }
-
-                let boton = ` <a href="{{ url_for('team.add_file', user_id=context.id) }}"><button class="boton add-file">Añadir archivo</button></a>`;
-
-                contenedor.innerHTML += boton;
             }
 
             // Recuperar el estado del Local Storage
@@ -122,12 +139,14 @@
 
             // Evento del botón de Información General
             buttonInfo.addEventListener('click', () => {
+                contenedor.innerHTML = '';
                 cargarInformacion();
                 localStorage.setItem('selectedTab', 'info'); // Guardar el estado
             });
 
             // Evento del botón de Documentos
             buttonDocs.addEventListener('click', () => {
+                contenedor.innerHTML = '';
                 cargarDocumentos();
                 localStorage.setItem('selectedTab', 'docs'); // Guardar el estado
             });
@@ -143,7 +162,7 @@
                     console.log(fileId);
                     
                     if (selectedValue === 'delete'){
-                        const deleteUrl = "{{ url_for('team.delete_file', user_id=context.id, file_id=0) }}".replace('/0', `/${fileId}`);
+                        const deleteUrl = "{{ url_for('team.delete_file', id=context.id, file_id=0) }}".replace('/0', `/${fileId}`);
                         window.location.href = deleteUrl;
                     }
 

@@ -40,19 +40,21 @@ class EmployeeFile(db.Model):
     __tablename__ = "employee_files"
 
     id = db.Column(db.Integer, primary_key=True)
+    file_url = db.Column(db.String(1000), nullable=False)
     title = db.Column(db.String(70), nullable=True)
-    document_type = db.Column(db.Enum("Titulo", "Copia DNI", "CV Actualiazdo", name='document_type'), nullable=False)
+    document_type = db.Column(db.String(32), nullable=False)
     upload_date = db.Column(db.DateTime, default=datetime.now())
     employee_id = db.Column(db.Integer, db.ForeignKey('employees.id', ondelete='CASCADE'), nullable=False)
     
     # Additional metadata fields (upload date, size, etc.)
 
-    def __init__(self, id=None, document_type=None, employee_id=None, title=None):
+    def __init__(self, id=None, document_type=None, employee_id=None, title=None, file_url=None):
 
         self.id = id 
         self.document_type = document_type
-        self.employee_id_id = employee_id
+        self.employee_id = employee_id
         self.title = title
+        self.file_url = file_url
 
     
     def to_dict(self):
@@ -61,4 +63,5 @@ class EmployeeFile(db.Model):
             "title": self.title,
             "upload_date": self.upload_date.strftime('%Y-%m-%d'),
             "document_type": self.document_type,
+            "file_url": self.file_url,
         }

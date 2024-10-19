@@ -3,9 +3,9 @@ from datetime import datetime
 from src.core.auth import create_user, create_role, create_permission, initialice_admin_permissions, initialice_tecnica_permissions, initialice_ecuestre_permissions
 from src.core.horses import create_horse
 from src.core.institutions import create_institutional_work, create_school
-from src.core.payments import create_billing
+from src.core.payments import create_billing, create_payment
 from src.core.persons import (
-    create_person, create_employee, create_JyA, create_address, create_emergency_contact, 
+    create_employee_file, create_person, create_employee, create_JyA, create_address, create_emergency_contact, 
     create_healthcare_plan, create_file)
 
 
@@ -208,6 +208,12 @@ def run():
         title = "ARCHIVO DE PRUEBA",
     )
 
+    employee_file1 = create_employee_file(
+        file_url = "titulo1",
+        title = "Titulo-58843",
+        document_type = "Título",
+        employee_id = employee1.id,
+    )
 
     institutional_work1 = create_institutional_work(
         condicion="Regular",

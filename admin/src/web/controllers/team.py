@@ -1,13 +1,15 @@
+from datetime import timedelta
+from os import fstat
 from flask import Blueprint, current_app as app, render_template, redirect, request, url_for, flash
 from sqlalchemy import desc
-from src.core.persons import find_address_by_id, find_employee_by_id, get_files_by_employee_id, get_files_by_horseman_id
+from src.core.persons import create_employee_file, delete_employee_file_by_id, find_address_by_id, find_employee_by_id, find_employee_file_by_id, find_employee_file_by_title, get_emergency_contact_by_id, get_files_by_employee_id, get_files_by_horseman_id, get_healthcare_plan_by_id, updated_employee_file
 from src.core.persons.models.file import File
 from src.core.auth.auth import inject_user_permissions, permission_required
 from src.core.persons.models.person import Employee
 from src.core.persons.models.address import Address
 from src.core.persons.models.healthcare_plan import HealthcarePlan
 from src.core.persons.models.emergency_contact import EmergencyContact
-from src.core.persons.forms import EmployeeForm, HealthcarePlanForm
+from src.core.persons.forms import EmployeeFileForm, EmployeeForm, HealthcarePlanForm
 from src.core.database import db
 
 bp = Blueprint('team', __name__, url_prefix='/empleados')
@@ -128,8 +130,11 @@ def show_employee(id):
 
     employee = find_employee_by_id(id)
     employee_address = find_address_by_id(employee.address_id).string()
+    employee_healthcare_plan = get_healthcare_plan_by_id(employee.healthcare_plan_id_employee)
+    employee_emergency_contact = get_emergency_contact_by_id(employee.emergency_contact_id_employee)
     files = get_files_by_employee_id(employee.id)
-    employee_json = employee.to_dict(employee_address)
+    employee_json = employee.to_dict(employee_address, employee_healthcare_plan, employee_emergency_contact)
+    employee_json['active'] = 'Activo' if employee.active else 'Inactivo'
 
     files_json = []
     if files:
@@ -146,11 +151,11 @@ def show_employee(id):
 
     return render_template('team/team_show.html', context=context)
 
-# @bp.route('/empleado/editar/<int:id>')
-# @permission_required('team_update')
-# @inject_user_permissions
-# def edit_employee(id):
-
+@bp.route('/empleado/editar/<int:id>')
+@permission_required('team_update')
+@inject_user_permissions
+def edit_employee(id):
+    pass
 
 @bp.route('/empleado/eliminar/<int:id>', methods=['POST'])
 @permission_required('team_destroy')
@@ -161,3 +166,139 @@ def delete_employee(id):
     db.session.commit()
     flash('Employee deleted successfully!', 'success')
     return redirect(url_for('team.list_team'))
+
+@bp.route('/empleado/<int:id>/add_file', methods=['POST', 'GET'])
+@permission_required('team_update')
+@inject_user_permissions    
+def add_file(id):
+    
+    """
+    Muestra la vista del registro, además valida los parametros, y guarda al archivo en la base de datos si
+    se recibió el formulario y el mismo es válido.
+    """
+
+    app.logger.info("Call to add_file")
+    form = EmployeeFileForm()
+
+    minio_client = app.storage.client
+    bucket_name = app.config['BUCKET_NAME']
+    
+    app.logger.info("El formulario del archivo es valido: %s", form.validate_on_submit())
+    if (form.validate_on_submit()):
+            #Tengo que hacer esto pero para empleado        
+        if (find_employee_file_by_title(form.title.data)):
+            app.logger.error("The following title is already registered: %s ", form.title.data)
+            flash("Ya existe un archivo con el titutlo ingresado", "error")
+            return redirect(url_for("team.add_file", id=id))
+
+        # Manejar el archivo
+        file = request.files['file_url']
+
+        size = fstat(file.fileno()).st_size
+
+        minio_client.put_object(bucket_name,file.filename,file,size,content_type=file.content_type)
+
+        create_employee_file(
+            file_url = file.filename,
+            title = form.title.data,
+            document_type = form.document_type.data,
+            employee_id = id,
+        )
+
+        flash("El archivo se ha creado correctamente", "success")
+        return redirect(url_for('team.show_employee', id=id))
+    
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
+
+    return render_template("team/file_new.html", form=form, id=id)
+
+@bp.route('/empleado/<int:id>/archivo/<int:file_id>/eliminar', methods=['POST', 'GET'])
+@permission_required('team_delete_file')
+@inject_user_permissions
+def delete_file(id, file_id):
+    file = find_employee_file_by_id(file_id)
+    minio_client = app.storage.client
+    bucket_name = app.config['BUCKET_NAME']
+
+    minio_client.remove_object(bucket_name, file.file_url)
+    delete_employee_file_by_id(file_id)
+    flash('Archivo eliminado correctamente', 'success')
+
+    # Redirigir a la vista order_by pasando el user_id y la opción de orden como query parameters
+    return redirect(url_for('team.show_employee', id=id))
+
+@bp.route('/empleado/<int:user_id>/archivo/<int:file_id>/descargar', methods=['GET'])
+@permission_required('team_download_file')
+@inject_user_permissions
+def download_file(user_id, file_id):
+    # Obtener el archivo de la base de datos usando el ID
+    file = find_employee_file_by_id(file_id)  # Función que obtenga el archivo desde la base de datos
+    
+
+    # Configurar MinIO
+    minio_client = app.storage.client
+    bucket_name = app.config['BUCKET_NAME']
+
+    # Parámetros adicionales para forzar la descarga
+    download_headers = {
+        'response-content-disposition': f'attachment; filename="{file.file_url}"'
+    }
+
+    presigned_url = minio_client.presigned_get_object(bucket_name, file.file_url, expires=timedelta(hours=1), response_headers=download_headers)
+
+        # Redirigir al usuario al enlace de descarga
+    return redirect(presigned_url)
+
+@bp.route('/empleado/<int:user_id>/archivo/<int:file_id>/editar', methods=['GET', 'POST'])
+@permission_required('team_view_file')
+@inject_user_permissions
+def edit_file(user_id, file_id):
+    """
+    Muestra la vista del registro, además valida los parametros, y guarda al archivo en la base de datos si
+    se recibió el formulario y el mismo es válido.
+    """
+
+    app.logger.info("Call to add_file")
+    file = find_employee_file_by_id(file_id)
+    
+    form = EmployeeFileForm()
+
+    minio_client = app.storage.client
+    bucket_name = app.config['BUCKET_NAME']
+    
+    app.logger.info("El formulario del archivo es valido: %s", form.validate_on_submit())
+    if (form.validate_on_submit()):
+
+        # Manejar el archivo
+        new_file = request.files['file_url']
+        
+        if new_file:
+
+            # Obtener el tamaño del archivo
+            size = fstat(file.fileno()).st_size
+
+            minio_client.put_object(bucket_name,new_file.filename,new_file,size,content_type=new_file.content_type)
+
+            updated_employee_file(
+                file, 
+                file_url = new_file.filename, 
+                file_type = form.file_type.data,  
+                document_type = form.document_type.data,
+                title = form.title.data,
+            )
+            
+        else:
+            flash("No se actualizo el contenido del documento, porque no se ingreso un nuevo archivo", "info")
+
+        flash("Archivo editado correctamente", "success")
+        return redirect(url_for('team.show_employee', id=user_id))
+
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
+            
+    return render_template("team/file_edit.html", form=form, user_id=user_id, file=file)

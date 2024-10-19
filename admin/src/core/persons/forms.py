@@ -131,6 +131,10 @@ class registryHorsemanForm(FlaskForm):
 
         return True
    
+class EmployeeFileForm(FlaskForm):
+    title = StringField("Title", validators=[InputRequired(), Length(max=255)])
+    document_type = SelectField("Document Type", validators=[InputRequired()], choices=["Título", "Copia DNI", "CV Actualizado"])
+    file_url = FileField("File", validators=[InputRequired()])
 
 class AddressForm(FlaskForm):
     street = StringField("Street", validators=[Optional(), Length(max=255)])
