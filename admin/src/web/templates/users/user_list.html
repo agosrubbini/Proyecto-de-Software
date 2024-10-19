@@ -1,0 +1,156 @@
+{% extends "layout.html" %}
+{% block title %}Usuarios{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/users/list.css') }}">
+{% endblock %}
+
+{% block content%}
+<div class="container">
+    <div class="header-container" style="margin-bottom: 2px;">
+        <h1 class="title is-size-2 has-text-centered  has-text-black-bis mt-5 is-size-2-mobile is-size-2-tablet is-size-2-desktop">Usuarios</h1>
+        <a class="button is-white is-size-6" href="{{ url_for('users.new_user') }}">Crear usuario</a>
+    </div>
+        <div class="search-container">
+            <form class="form-container" method="GET" action="{{url_for('users.index', page=page, order_option=order_option)}}">
+                <div class="columns is-multiline">
+                    <div class="column is-narrow">
+                        <input name="search" class="input" type="text" placeholder="Buscar email" value="{{ search }}" />
+                    </div> 
+                    <div class="column is-narrow">
+                        <div class="select">
+                            <select class="select" name="activity">
+                                <option value="">Filtrar por:</option>
+                                <option value="noactive"{% if activity == 'noactive' %}selected{% endif %}>No activo</option>
+                                <option value="active" {% if activity == 'active' %}selected{% endif %}>Activo </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column is-narrow">
+                        <div class="select">
+                            <select class="select" name="role">
+                                <option value="">Filtrar por:</option>
+                                <option value="1" {% if role == 1 %}selected{% endif %}>Administracion </option>
+                                <option value="2" {% if role == 2 %}selected{% endif %}>Tecnica </option>
+                                <option value="3" {% if role == 3 %}selected{% endif %}>Ecuestre </option>
+                                <option value="4" {% if role == 4 %}selected{% endif %}>Voluntariado </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column is-narrow">
+                        <div class="select">
+                            <select name="order_option">
+                                <option value="">Ordenar por:</option>
+                                <option value="email_asc" {% if order_option == 'email_asc' %}selected{% endif %}>Email: Orden ascendente</option>
+                                <option value="email_desc"  {% if order_option == 'email_desc' %}selected{% endif %}>Email: Orden descendente</option>
+                                <option value="creation_date_asc" {% if order_option == 'creation_date_asc' %}selected{% endif %}>Fecha creación: Orden ascendente</option>
+                                <option value="creation_date_desc" {% if order_option == 'creation_date_desc' %}selected{% endif %}>Fecha creación: Orden descendente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column is-narrow">
+                        <button class="button search-button" type="submit">Buscar</button>
+                    </div>
+                    <div class="column is-narrow">
+                        <a class="button restore-button" href="{{ url_for('users.index', page=page, order_option=order_option) }}">Quitar Filtros</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    <div class="table-container">
+        <table class="table ">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Alias</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Estado Bloqueo</th>
+                    <th>Fecha de creación</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if context.users %}
+                {% for user in context.users %}
+                <tr>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.alias }}</td>
+                    <td>{{ user.role.name }}</td>
+                    <td>{{'Activo' if user.active else 'No activo'}}</td>
+                    <td>{{'Bloqueado' if user.is_blocked else 'No bloqueado' }}</td>
+                    <td>{{ user.created_at.strftime('%d-%m-%Y') }}</td>
+                    <td>
+                        <a href="{{ url_for('users.show_user', id=user.id) }}" class="button action-button is-small is-white"><i class="fas fa-eye" title="Ver"></i></a>
+                        {% if not user.system_admin %}
+                        <a href="{{ url_for('users.update_user', id=user.id) }}" class="button action-button is-small is-white"><i class="fas fa-edit" title="Editar"></i></a>
+                        <form method="POST" action="{{url_for('users.block_user', id=user.id, page=page, order_option=order_option, search=search, role=role, activity=activity)}}" onsubmit="event.preventDefault(); this.submit();" class="action-button is-small is-white">
+                            <button type="submit" class="{% if user.is_blocked %}is-success{% else %}is-danger{% endif %}">
+                                {% if user.is_blocked %}
+                                <i class="fa fa-check-circle" title="Desbloquear"></i>
+                                {% else %}
+                                <i class="fas fa-ban" title="Bloquear"></i>
+                                {% endif %}
+                            </button>
+                        </form>
+                        <a href="javascript:void(0);" 
+                        class="button action-button is-small is-white" 
+                        onclick="openModal('{{ url_for('users.delete_user', id=user.id, page=page, order_option=order_option, search=search, role=role, activity=activity) }}')">
+                        <i class="fas fa-trash" title="Eliminar"></i>
+                     </a>
+                        {%endif%}
+                    </td>
+                </tr>
+            </tbody>
+            {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5">No hay usuarios</td>
+                </tr>
+            {% endif %}
+        </table>
+        <nav class="pagination" role="navigation" aria-label="pagination">
+            <a class="pagination-previous" {% if not context.users.has_prev %}disabled{% else %}href="{{url_for('users.index', page=page-1,  order_option=order_option, search=search, role=role, activity=activity)}}"{% endif %}>Previous</a>
+            <a class="pagination-next" {% if not context.users.has_next %}disabled{% else %}href="{{url_for('users.index', page=page+1,  order_option=order_option, search=search, role=role, activity=activity)}}"{% endif %}>Next page</a>
+        </nav>
+    </div>
+</div>
+</div>
+
+<div id="deleteModal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Confirmar Eliminación</p>
+        <button class="delete" aria-label="close" onclick="closeModal()"></button>
+      </header>
+      <section class="modal-card-body">
+        <p>¿Está seguro que desea eliminar al usuario? Esta opción no se puede deshacer.</p>
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button is-danger" id="confirmDelete">Eliminar</button>
+        <button class="button is-info" onclick="closeModal()">Cancelar</button>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    let deleteUrl = ''; // Guardará la URL de eliminación temporalmente
+  
+    function openModal(url) {
+      deleteUrl = url; // Guarda la URL del usuario a eliminar
+      document.getElementById('deleteModal').classList.add('is-active');
+    }
+  
+    function closeModal() {
+      document.getElementById('deleteModal').classList.remove('is-active');
+    }
+  
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+      window.location.href = deleteUrl; // Redirige a la URL de eliminación
+    });
+  </script>
+
+
+{% endblock %}

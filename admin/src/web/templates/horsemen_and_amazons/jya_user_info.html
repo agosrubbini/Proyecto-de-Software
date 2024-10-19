@@ -1,0 +1,292 @@
+{% extends "layout.html" %}
+
+{% block title %}Información y documentos del jinete{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link
+          rel="stylesheet"
+          href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_info.css') }}"/>
+    <link
+          rel="stylesheet"
+          href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_list.css') }}"/>
+{% endblock %}
+{% block content %}
+
+    <div class="encabezado">
+        <button id="info">Información General</button>
+        <button id="docs">Documentos</button>
+    </div>
+    <hr class="separador">
+    <div id="contenedor"></div>
+
+        <!-- Modal de confirmación -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <p>¿Estás seguro que quieres eliminar este jinete?</p>
+                <button id="confirmDelete" class="button is-danger">Eliminar</button>
+                <button id="cancelDelete" class="button">Cancelar</button>
+            </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = {{ context.user | tojson | safe }};
+            const files = {{ context.files | tojson | safe }};
+            const buttonInfo = document.getElementById('info');
+            const buttonDocs = document.getElementById('docs');
+            const contenedor = document.getElementById('contenedor');
+            
+            const modal = document.getElementById('deleteModal');
+            const confirmButton = document.getElementById('confirmDelete');
+            const cancelButton = document.getElementById('cancelDelete');
+            let fileIdToDelete = null;
+            
+            // Función para cargar la información del usuario
+            function cargarInformacion() {
+                buttonInfo.classList.add('clicked');
+                buttonDocs.classList.remove('clicked');
+                contenedor.classList.remove('docs');
+
+                let table_users = `<table class="table is-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Campo</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>Nombre</td><td>${user.name}</td></tr>
+                                        <tr><td>Apellido</td><td>${user.last_name}</td></tr>
+                                        <tr><td>DNI</td><td>${user.DNI}</td></tr>
+                                        <tr><td>Edad</td><td>${user.age}</td></tr>
+                                        <tr><td>Número de Teléfono</td><td>${user.phone_number}</td></tr>
+                                        <tr><td>Dirección</td><td>${user.address}</td></tr>
+                                    </tbody>
+                                </table>`;
+
+                contenedor.innerHTML = table_users;
+            }
+
+            // Función para cargar los documentos
+            function cargarDocumentos() {
+                buttonDocs.classList.add('clicked');
+                buttonInfo.classList.remove('clicked');
+                contenedor.classList.add('docs');
+
+                if (files.length > 0) {
+
+                    let inputs = `  
+                        <form id="form-search" method="GET" action="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id)}}">
+                            <div class="field is-grouped">
+                                <div class="field">
+                                    <label class="label">Nombre</label>
+                                    <div class="control has-icons-left">
+                                        <span class="icon is-small is-left">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                        </span>
+                                        <input class="input" type="text" name="search" placeholder="Nombre del documento" value="{{ search }}" />
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Tipo</label>
+                                    <div class="control">
+                                        <select name="document_type">
+                                            <option>Selecciona un tipo</option>
+                                            <option>Entrevista</option>
+                                            <option>Evaluación</option>
+                                            <option>Planificación</option>
+                                            <option>Evolución</option>
+                                            <option>Crónicas</option>
+                                            <option>Documental</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="field ">
+                                    <button class="boton boton-filtrado" type="submit">Filtrar</button>
+                                </div>
+                            </div>
+                        </form>
+                        <form method="GET" action="{{ url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id) }}">
+                            <div class="control order_options_docs">
+                                <select id="order-option" name="order_option" onchange="this.form.submit()">
+                                    <option value="default">Selecciona un orden</option>
+                                    <option value="title_asc">Nombre: A-Z</option>
+                                    <option value="title_desc">Nombre: Z-A</option>
+                                    <option value="date_asc">Fecha: Menor-Mayor</option>
+                                    <option value="date_desc">Fecha: Mayor-Menor</option>
+                                </select>
+                            </div>
+                        </form>
+                    `;
+                    contenedor.innerHTML = inputs;
+
+                    let table_docs = `
+                        <table class="table table-docs is-striped">
+                            <thead>
+                                <tr>
+                                    <th>Titulo</th>
+                                    <th>Fecha de subida</th>
+                                    <th>Tipo</th>
+                                    <th>Operaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    files.forEach(file => {
+                        table_docs += `
+                            <tr>
+                                <td>${file.title}</td>
+                                <td>${file.upload_date}</td>
+                                <td>${file.document_type}</td>
+                                <td>
+                                    <select class="operations" data-file-id="${file.id}" data-file-type="${file.file_type}">
+                                        <option value="default">Selecciona la operación</option>
+                                        <option value="edit">Editar</option>
+                                        <option value="delete">Eliminar</option>
+                                        <option value="${file.file_type === 'Link' ? 'open' : 'download'}">
+                                            ${file.file_type === 'Link' ? 'Ir al documento' : 'Descargar'}
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    table_docs += `
+                            </tbody>
+                        </table>
+                        <nav class="pagination" role="navigation" aria-label="pagination">
+                            <a class="boton pagination-previous" {% if not context.pagination.has_prev %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id, page=page-1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Anterior</a>
+                            <a class="boton pagination-next" {% if not context.pagination.has_next %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id, page=page+1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Siguiente</a>
+                        </nav>
+
+                    `;
+
+
+                    contenedor.innerHTML += table_docs;
+        
+                }
+                else{
+                    contenedor.innerHTML += `<p style="text-align: center">No hay archivos asociados al jinete</p>`;
+                }
+
+                let boton = ` <a href="{{ url_for('horsemen_and_amazons.add_file', user_id=context.id) }}"><button class="boton add-file">Añadir archivo</button></a>`;
+
+                contenedor.innerHTML += boton;
+            }
+
+            // Recuperar el estado del Local Storage
+            const selectedTab = localStorage.getItem('selectedTab');
+
+            if (selectedTab === 'docs') {
+                cargarDocumentos(); // Cargar la pestaña de documentos
+            } else {
+                cargarInformacion(); // Cargar la pestaña de información por defecto
+            }
+
+            // Evento del botón de Información General
+            buttonInfo.addEventListener('click', () => {
+                cargarInformacion();
+                localStorage.setItem('selectedTab', 'info'); // Guardar el estado
+            });
+
+            // Evento del botón de Documentos
+            buttonDocs.addEventListener('click', () => {
+                cargarDocumentos();
+                localStorage.setItem('selectedTab', 'docs'); // Guardar el estado
+            });
+            
+
+            // Función para abrir el modal
+            function openModal() {
+                modal.classList.add('is-active');
+            }
+
+            // Función para cerrar el modal
+            function closeModal() {
+                modal.classList.remove('is-active');
+                fileIdToDelete = null;
+            }
+
+            function resetSelect(selectElement) {
+                selectElement.selectedIndex = 0; // Vuelve a seleccionar la primera opción ("Selecciona la operación")
+            }
+            
+            // Manejar la confirmación de eliminación
+            confirmButton.addEventListener('click', function () {
+                if (fileIdToDelete) {
+                    const deleteUrl = "{{ url_for('horsemen_and_amazons.delete_horseman', user_id=context.id, file_id=0) }}".replace('/0', `/${fileIdToDelete}`);
+                    window.location.href = deleteUrl;
+                }
+            });
+
+            // Cancelar y cerrar el modal
+            cancelButton.addEventListener('click', closeModal);
+            document.querySelector('.modal-close').addEventListener('click', closeModal);
+            
+            // Manejo de cambios en las operaciones
+            document.addEventListener('change', (e) => {
+                if (e.target.classList.contains('operations')) {
+                    const selectedValue = e.target.value;
+                    
+                    const fileType = e.target.dataset.fileType;
+                    const fileId = e.target.dataset.fileId;
+
+                    const selectElement = e.target;
+                    
+                    if (selectedValue === 'delete'){
+                        fileIdToDelete = fileId; // Almacenar el ID del jinete a eliminar
+                        openModal(); // Mostrar el modal
+                    }
+
+                    // Si la opción seleccionada es "Ir al documento"
+                    if (selectedValue === 'open' && fileType === 'Link') {
+                        const selectedFile = files.find(file => file.id === parseInt(fileId));
+                        window.open(selectedFile.file_url, '_blank'); // Abre el enlace en una nueva pestaña
+                    }
+
+                    if (selectedValue === 'download' && fileType !== 'Link') {
+                        const downloadUrl = "{{ url_for('horsemen_and_amazons.download_file', user_id=context.id, file_id=0) }}".replace('/0', `/${fileId}`);
+                        window.location.href = downloadUrl;
+                    }
+
+                    if (selectedValue === 'edit'){
+                        const editUrl = "{{ url_for('horsemen_and_amazons.edit_file', user_id=context.id, file_id=0) }}".replace('/0', `/${fileId}`);
+                        window.location.href = editUrl;
+                    }
+
+                    resetSelect(selectElement);
+                }
+            });
+
+            function ajustarLayout() {
+                const tabla = document.querySelector('.table-docs');
+                const boton = document.querySelector('.add-file');
+                const options = document.querySelector('.order_options_docs');
+                const boton_next = document.querySelector('.pagination-next');
+                const boton_previous = document.querySelector('.pagination-previous');
+
+                const anchoTabla = tabla.offsetWidth;
+                boton.style.width = anchoTabla + 'px';
+
+                // Ajustar el margen del select
+                const estilos = window.getComputedStyle(tabla);
+                const marginLeft = estilos.marginLeft;
+                const marginRight = estilos.marginRight;
+
+                options.style.marginLeft = marginLeft;
+                boton_previous.style.marginLeft = marginLeft;
+                boton_next.style.marginRight = marginRight;
+            }
+
+            ajustarLayout();
+            
+            // Escuchar el evento 'resize' para ajustar el select al redimensionar la ventana
+            window.addEventListener('resize', ajustarLayout);
+
+        });
+    </script>
+{% endblock %}

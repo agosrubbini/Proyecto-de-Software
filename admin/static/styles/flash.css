@@ -1,0 +1,39 @@
+.icon-notification{
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Sombra oscura */
+    padding: 2px; /* Opcional, para un mejor ajuste */
+}
+
+.icon {
+    margin-right: 10px;
+}
+
+.is-error {
+    background-color: red !important;
+}
+
+span.message {
+    margin: 0 !important;
+    padding:0 !important;
+    padding-left: 6px !important;
+    padding-bottom: 6px !important;
+    color: black;
+}
+
+.notification.button{
+    margin-top: 25rem !important;
+}
+
+
+.notification {
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+@keyframes fadeIn{
+    from { 
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

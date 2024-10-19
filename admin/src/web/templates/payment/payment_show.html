@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block title %}Pagos{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/payment_and_billing/show.css') }}">
+{% endblock %}
+{% block content %}
+
+<form action="">
+    <div class="div-titulo">
+        <h1 class="label">Pago</h1>
+        <hr class="linea-titulo">
+    </div>
+
+    <label class="label" for="type">Tipo de pago</label>
+    <div class="control">
+        <input disabled type="text" value="{{ payment.payment_type }}">
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="employee_id">Beneficiario</label>
+    <div class="control">
+        <input disabled type="text" value="{{ payment.employee_name }}">
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="amount">Monto</label>
+    <input disabled name="amount" type="number" step="0.01" value="{{ payment.amount }}">
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="payment_date">Fecha de pago</label>
+    <input disabled type="date" name="payment_date" id="payment_date" value="{{ payment.payment_date.strftime('%Y-%m-%d') }}">
+    <hr>
+
+    <label class="label" for="description">Descripcion:</label>
+    <input disabled type="text" name="description" id="description" value="{{ payment.description }}">
+    <hr>
+
+    <div class="buttons">
+        <a class="a-button" href="{{ url_for('payment.list_payments') }}"><button type="button">Listado de cobros</button></a>
+        <a class="a-button" href="{{ url_for('payment.edit_payment', id = payment.id) }} "><button type="button">Editar</button></a>
+    </div>
+</form>
+{% endblock%}

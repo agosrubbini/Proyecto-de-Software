@@ -1,0 +1,125 @@
+{% extends "layout.html" %}
+{% block title %}Nuevo cobro{% endblock %}
+{% block head %}
+    {{ super() }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/payment_and_billing/new.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+{% endblock %}
+{% block content%}
+<form method="POST" action="{{ url_for('billing.new_billing') }}">
+    {{ form.csrf_token }}
+
+    <div class="div-titulo">
+        <h1 class="label">Agregar cobro</h1>
+        <hr class="linea-titulo">
+    </div>
+
+    <label class="label" for="jya_id">J&A</label>
+    <div class="control">
+        <select name="jya_id" id="jya_id">
+            <option value=""></option>
+            {% for jya in jya_list %}
+            <option value="{{ jya.id }}">{{ jya.name }} {{ jya.last_name }}</option>
+            {% endfor %}
+        </select>
+        {% if form.jya_id.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.jya_id.errors %}
+                    <span style="color: red">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="payment_date">Fecha de pago</label>
+    <input class="input" type="date" name="payment_date" id="payment_date">
+    {% if form.payment_date.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.payment_date.errors %}
+                    <span style="color: red">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+    <label class="label" for="payment_method">Metodo de pago</label>
+    <div class="control">
+        <select name="payment_method" id="payment_method" enabled>
+            <option value=""></option>
+            <option value="Efectivo">Efectivo</option>
+            <option value="Tarjeta de Credito">Tarjeta de crédito</option>
+            <option value="Tarjeta de Debito">Tarjeta de débito</option>
+            <option value="Otro">Otro</option>
+        </select>
+    </div>
+    {% if form.payment_method.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.payment_method.errors %}
+                    <span style="color: red">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="amount">Monto</label>
+    <input class="input" name="amount" type="number" step="0.01">
+    {% if form.amount.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.amount.errors %}
+                    <span style="color: red">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="employee_id">Empleado</label>
+    <div class="control">
+        <select name="employee_id" id="employee_id">
+            <option value="{{ employee_actual.id }}">{{employee_actual.name}} {{employee_actual.last_name}}</option>
+            {% for employee in employee_list %}
+            <option value="{{ employee.id }}">{{ employee.name }} {{ employee.last_name }}</option>
+            {% endfor %}
+        </select>
+        {% if form.employee_id.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.employee_id.errors %}
+                    <span style="color: red">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="observation">Observaciones:</label>
+    <textarea class="textarea" type="text" name="observation" id="observation" placeholder="Detalle de cobro"></textarea>
+    {% if form.observation.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.observation.errors %}
+                    <span style="color: red">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    <hr>
+
+    <button type="submit">Crear</button>
+</form>
+
+<script>
+    $(document).ready(function () {
+        //Script para el select de J&A
+        $('select').selectize({
+            sortField: 'text'
+        });
+
+        //Script para mostrar la fecha actual en el input de fecha
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById('payment_date').value = today;
+
+    });
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('payment_date').setAttribute('max', today);
+</script>
+{% endblock %}

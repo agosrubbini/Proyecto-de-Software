@@ -1,0 +1,232 @@
+{% extends "layout.html" %}
+
+{% block title %}Registrar Jinete{% endblock %}
+
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/horsemen_and_amazons/forms.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<form method="POST" action="{{ url_for('horsemen_and_amazons.add_horseman') }}">
+    
+    {{ form.csrf_token }}
+    <div class="div-titulo">
+        <h1 class="label">Registrar Jinete</h1>
+        <hr class="linea-titulo">
+    </div>
+
+    <label class="label">Nombre</label>
+    <div class="control has-icons-left">
+        <span class="icon is-small is-left">
+            <i class="fas fa-user"></i>
+        </span>
+        {{ form.name(class="input", placeholder="Ingrese el nombre del jinete", required=True) }}
+    </div>
+    <hr>
+
+    <label class="label">Apellido</label>
+    <div class="control has-icons-left">
+        <span class="icon is-small is-left">
+            <i class="fas fa-user-tag"></i>
+        </span>
+        {{ form.last_name(class="input", placeholder="Ingrese el apellido del jinete", required=True) }}
+    </div>
+    <hr>
+
+    <label class="label">DNI</label>
+    <div class="control has-icons-left">
+        <span class="icon is-small is-left">
+            <i class="fas fa-id-card"></i>
+        </span>
+        {{ form.DNI(class="input", placeholder="Ingrese el dni del jinete", required=True) }}
+    </div>
+    <hr>
+
+    <label class="label">Edad</label>
+    <div class="control has-icons-left">
+        <span class="icon is-small is-left">
+            <i class="fas fa-calendar"></i>
+        </span>
+        {{ form.age(class="input", placeholder="Ingrese la edad del jinete", required=True) }}
+    </div>
+    <hr>
+
+    <label class="label">Número de teléfono</label>
+    <div class="control has-icons-left">
+        <span class="icon is-small is-left">
+            <i class="fa-solid fa-phone"></i>
+        </span>
+        {{ form.phone_number(class="input", placeholder="Ingrese el teléfono del jinete", required=True) }}
+    </div>
+    <hr>
+
+    <label class="label">Ingrese la dirección del jinete</label>
+    <div class="control">
+        {{ form.address(required=True) }}
+    </div>
+    <hr>
+
+    <label class="label">Fecha de nacimiento</label>
+    <div class="control has-icons-left">
+        {{ form.birthdate(class="input_fecha", required=True) }}
+    </div>
+    <hr>
+
+    <label class="label">Lugar de nacimiento</label>
+    <div class="control has-icons-left">
+        <span class="icon is-small is-left">
+            <i class="fas fa-map-marker-alt"></i>
+        </span>
+        {{ form.birth_place(class="input", required=True, placeholder="Ingrese el lugar de nacimiento del jinete") }}
+    </div>
+    <hr>
+
+    <label class="label">Teléfono actual</label>
+    <div class="control has-icons-left">
+        <span class="icon is-small is-left">
+            <i class="fa-solid fa-phone"></i>
+        </span>
+        {{ form.current_phone(class="input", required=True, placeholder="Ingrese el teléfono actual del jinete") }}
+    </div>
+    <hr>
+
+    <label class="label">Contacto de Emergencia</label>
+    <div class="control">
+        {{ form.emergency_contact_id_jya(class="emergency_contact_id_jya", required=True) }}
+    </div>
+    <hr>
+
+    <div class="custom-checkbox">
+        {{ form.is_scholarshipped(id="checkbox-beca") }}
+        <label class="label" for="checkbox-beca">¿Está becado?</label>
+    </div>
+    <hr>
+
+    <div id="contenedor-beca" class="hidden">
+        <label class="label">Porcentaje de la beca</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-percent"></i>
+            </span>
+            {{ form.scholarship_percentage(class="input", placeholder="Ingrese el porcentaje de la beca") }}
+        </div>
+    </div>
+
+    <label class="label">Profesionales que lo atienden</label>
+    <div class="control has-icons-left">
+        <span class="icon is-small is-left">
+            <i class="fas fa-user-md"></i>
+        </span>
+        {{ form.attending_professionals(class="input", required=True, placeholder="Ingreso los profesionales que lo atienden") }}
+    </div>
+
+    <label class="label">Obra Social</label>
+    <div class="control has-icons-left">
+        {{ form.healthcare_plan_id_jya(class="healthcare_plan_id_jya", required=True) }}
+    </div>
+
+    <div class="custom-checkbox">
+        {{ form.has_disability_certificate(id="checkbox-discapacidad") }}
+        <label class="label" for="checkbox-discapacidad">¿Posee certificado de discapacidad?</label>
+    </div>
+    <hr>
+    
+
+    <div id="contenedor-cerficado-discapacidad" class="hidden">
+        <label class="label">¿Con qué diagnóstico?</label>
+            {{ form.diagnosis(class="diagnosis") }}
+        <hr>
+
+        <label class="label">Si es otro, indicar cuál:</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-notes-medical"></i>
+            </span>
+            {{ form.other_diagnosis(class="input") }}
+        </div>
+        <hr>
+
+        <label class="label">Tipo de discapacidad</label>
+        {{ form.type_of_disability(class="type_of_disability", required=True) }}
+        <hr>
+    </div>
+
+    <div class="custom-checkbox">
+        {{ form.receives_family_allowance(id="checkbox-asignacion") }}
+        <label class="label" for="checkbox-asignacion">¿Percibe alguna Asignación Familiar?</label>
+    </div>
+    <hr>
+    
+
+    <div id="contenedor-asignacion" class="hidden">
+        <label class="label">¿Cuál?</label>
+        {{ form.family_allowance(class="family_allowance") }}
+        <hr>
+    </div>
+
+    
+    <div class="custom-checkbox">
+        {{ form.is_beneficiary_of_pension(class="is_beneficiary_of_pension", id="checkbox-pension") }}
+        <label class="label" for="checkbox-pension">¿Es beneficiario de alguna pensión?</label>
+    </div>
+    <hr>
+    
+
+    <div id="contenedor-pension" class="hidden">
+        <label class="label">Pensión</label>
+        {{ form.pension(class="pension") }}
+        <hr>
+    </div>
+
+    <label class="label">Institución escolar a la que concurre actualmente</label>
+    <div class="control has-icons-left">
+        {{ form.school(class="school", required=True) }}
+    </div>
+    <hr>
+
+    <div class="buttons">
+        <button type="submit">Registrar Jinete</button>
+        <a href="{{ url_for('horsemen_and_amazons.list_jya_users') }}"><button type="button" class="boton-cancelar">Cancelar</button></a>
+    </div>
+
+</form>
+
+
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Mapeo de IDs de checkboxes a los contenedores que mostrarán los campos adicionales
+            const checkboxMap = {
+                'checkbox-beca': 'contenedor-beca',
+                'checkbox-discapacidad': 'contenedor-cerficado-discapacidad',
+                'checkbox-asignacion': 'contenedor-asignacion',
+                'checkbox-pension': 'contenedor-pension',
+            };
+
+            // Función para manejar el cambio en los checkboxes
+            const handleCheckboxChange = (checkboxId, containerId) => {
+                const checkbox = document.getElementById(checkboxId);
+                const contenedor = document.getElementById(containerId);
+
+                console.log("ESTE ES EL CHECKBOX", checkbox);
+                console.log("ESTE ES EL CONTENEDOR", contenedor);
+
+                checkbox.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        contenedor.classList.remove('hidden');
+                    } else {
+                        contenedor.classList.add('hidden');
+                    }
+                });
+            };
+
+            // Recorremos el mapeo para agregar el listener a cada checkbox
+            Object.keys(checkboxMap).forEach(checkboxId => {
+                    handleCheckboxChange(checkboxId, checkboxMap[checkboxId]);
+            });
+    });
+</script>
+{% endblock %}
