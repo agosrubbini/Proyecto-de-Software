@@ -105,7 +105,7 @@
                     </div>
                   </div>
                       <div class="is-hidden-desktop">
-                        <a class="navbar-item" href="/perfil">
+                        <a class="navbar-item" href="{{ url_for('users.show_user', id=session["user_id"]) }}">
                           Perfil
                         </a>
                         <a class="navbar-item" href="/configuracion">
