@@ -82,6 +82,7 @@
     </div>
     <hr style="margin-top: 0;">
     
+    
     <label class="label">Rol</label>
     <div class="control">
         <select id="role" name="{{ form.role.name }}" value="{{ form.role.value }}">
@@ -90,7 +91,6 @@
             <option>Ecuestre</option>
             <option>Voluntariado</option>
             <option>Técnica</option>
-            <option>Sin Rol</option>
         </select>
         {% if form.role.errors %}
         <div class="alert alert-danger">

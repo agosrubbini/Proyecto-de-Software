@@ -173,7 +173,6 @@ def update_user(id):
     user = User.query.get(id)
     form = registryForm()
 
-
     app.logger.info("El formulario es valido: %s", form.validate_on_submit())
     form_errors = validate_all_form_fields(form)
     app.logger.info("Errores en el formulario: %s", form_errors)
@@ -182,12 +181,13 @@ def update_user(id):
         if (find_user_by_email(form.email.data) and find_user_by_email(form.email.data).id != id):
             app.logger.error("The following email is already registered: %s ", form.email.data)
             flash("Ya existe un usuario con el mail ingresado", "error")
-            return redirect(url_for('users.update_user', id=id))
+            return redirect(url_for('users.update_user', id=id))      
         edit_user(
             user = user,
             id = id,
             email = form.email.data,
             alias = form.alias.data,
+            active = True if form.active.data == "True" else False,
             password = form.password.data,
             role_id = find_role_id_by_name(form.role.data))
         flash('User updated successfully!', 'success')

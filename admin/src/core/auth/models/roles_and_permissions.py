@@ -12,7 +12,7 @@ class Role(db.Model):
     __tablename__ = "roles"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Enum("Técnica", "Ecuestre", "Voluntariado", "Administración", "Sin rol", name="name_rol"), nullable=False)
+    name = db.Column(db.Enum("Técnica", "Ecuestre", "Voluntariado", "Administración", name="name_rol"), nullable=False)
 
     permissions = db.relationship("Permision", secondary=role_permission, backref="role")
 

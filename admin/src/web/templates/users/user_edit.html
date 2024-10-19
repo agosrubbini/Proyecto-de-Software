@@ -59,6 +59,22 @@
         {% endif %}
         <hr style="margin-top: 0;">
 
+    <label class="label" for="active">Actividad</label>
+    <select name="active" id="active"{% if context.user.system_admin %}disabled{% endif %}>
+        <option value="">Selecciona la actividad:</option>
+        <option value="True" {% if context.user.active == True %}selected{% endif %}>Activo</option>
+        <option value="False" {% if context.user.active == False %}selected{% endif %}>No Activo</option>
+    </select>
+    {% if context.form.active.errors %}
+            <div class="alert alert-danger">
+                {% for error in context.form.active.errors %}
+                    <span style="color: red">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <hr style="margin-top: 0;">        
+
+
 
     <label class="label" for="role">Rol</label>
     <select name="role" id="role"{% if context.user.system_admin %}disabled{% endif %}>
@@ -67,11 +83,10 @@
         <option value="Técnica" {% if context.user.role.name == 'Técnica' %}selected{% endif %}>Técnica</option>
         <option value="Voluntariado" {% if context.user.role.name == 'Voluntariado' %}selected{% endif %}>Voluntariado</option>
         <option value="Ecuestre" {% if context.user.role.name == 'Ecuestre' %}selected{% endif %}>Ecuestre</option>
-        <option value="Sin Rol" {% if context.user.role.name == 'Sin Rol' %}selected{% endif %}>Sin Rol</option>
     </select>
-    {% if context.form.email.errors %}
+    {% if context.form.role.errors %}
             <div class="alert alert-danger">
-                {% for error in context.form.email.errors %}
+                {% for error in context.form.role.errors %}
                     <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>

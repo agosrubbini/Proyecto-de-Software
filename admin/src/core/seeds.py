@@ -31,10 +31,6 @@ def run():
         name="Voluntariado",
     )
 
-    sin_rol = create_role(
-        name="Sin rol",
-    )
-
     system_admin = create_user(
         email="system_admin@gmail.com",
         alias="system_admin",

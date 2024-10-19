@@ -35,7 +35,6 @@
                                 <option value="2" {% if role == 2 %}selected{% endif %}>Tecnica </option>
                                 <option value="3" {% if role == 3 %}selected{% endif %}>Ecuestre </option>
                                 <option value="4" {% if role == 4 %}selected{% endif %}>Voluntariado </option>
-                                <option value="5" {% if role == 5 %}selected{% endif %}>Sin Rol </option>
                             </select>
                         </div>
                     </div>
@@ -72,9 +71,9 @@
                     <th>Acción</th>
                 </tr>
             </thead>
-            {% if context.users %}
-            {% for user in context.users %}
             <tbody>
+                {% if context.users %}
+                {% for user in context.users %}
                 <tr>
                     <td>{{ user.email }}</td>
                     <td>{{ user.alias }}</td>
