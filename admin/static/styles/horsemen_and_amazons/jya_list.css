@@ -35,6 +35,21 @@ div.field.is-grouped {
     width: 80%;
 }
 
+@media (max-width: 675px){
+    div.field.is-grouped {
+        flex-wrap: wrap;
+    }
+
+    div.field {
+        width: 100%;
+        
+    }
+
+    div.control {
+        width: 100%;
+    }
+}
+
 h1 {
     font-size: 2rem;
 }
