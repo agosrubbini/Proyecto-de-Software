@@ -125,7 +125,7 @@
                     contenedor.innerHTML = inputs;
 
                     let table_docs = `
-                        <table class="table is-striped">
+                        <table class="table table-docs is-striped">
                             <thead>
                                 <tr>
                                     <th>Titulo</th>
@@ -262,35 +262,31 @@
                 }
             });
 
-            const tabla = document.querySelector('.table');
-            const boton = document.querySelector('.add-file');
-            const options = document.querySelector('.order_options_docs');
-            const boton_next = document.querySelector('.pagination-next');
-            const boton_previous = document.querySelector('.pagination-previous');
+            function ajustarLayout() {
+                const tabla = document.querySelector('.table-docs');
+                const boton = document.querySelector('.add-file');
+                const options = document.querySelector('.order_options_docs');
+                const boton_next = document.querySelector('.pagination-next');
+                const boton_previous = document.querySelector('.pagination-previous');
 
-            const anchoTabla = tabla.offsetWidth;
-            
-            boton.style.width = anchoTabla + 'px';
+                const anchoTabla = tabla.offsetWidth;
+                boton.style.width = anchoTabla + 'px';
 
-            // Función para ajustar el margen del select
-            const ajustarPosicionOptions = () => {
+                // Ajustar el margen del select
                 const estilos = window.getComputedStyle(tabla);
                 const marginLeft = estilos.marginLeft;
                 const marginRight = estilos.marginRight;
 
-                console.log(marginLeft);
-
-                // Ajustar el margin-left del select
                 options.style.marginLeft = marginLeft;
                 boton_previous.style.marginLeft = marginLeft;
                 boton_next.style.marginRight = marginRight;
-            };
+            }
 
-            // Llama a la función inicialmente para ajustar la posición
-            ajustarPosicionOptions();
-
+            ajustarLayout();
+            
             // Escuchar el evento 'resize' para ajustar el select al redimensionar la ventana
-            window.addEventListener('resize', ajustarPosicionOptions);
+            window.addEventListener('resize', ajustarLayout);
+
         });
     </script>
 {% endblock %}

@@ -9,34 +9,53 @@
 {% block content%}
 <div class="container">
     <div class="header-container" style="margin-bottom: 2px;">
-        <h1 class="title is-size-2 has-text-centered  has-text-black-bis mt-5">Usuarios</h1>
+        <h1 class="title is-size-2 has-text-centered  has-text-black-bis mt-5 is-size-2-mobile is-size-2-tablet is-size-2-desktop">Usuarios</h1>
         <a class="button is-white is-size-6" href="{{ url_for('users.new_user') }}">Crear usuario</a>
     </div>
         <div class="search-container">
             <form class="form-container" method="GET" action="{{url_for('users.index', page=page, order_option=order_option)}}">
-                <input name="search" class="input" type="text" placeholder="Buscar email" value="{{ search }}" />
-                <select name="activity">
-                    <option value="">Filtrar por:</option>
-                    <option value="noactive"{% if activity == 'noactive' %}selected{% endif %}>No activo</option>
-                    <option value="active" {% if activity == 'active' %}selected{% endif %}>Activo </option>
-                </select>
-                <select name="role">
-                    <option value="">Filtrar por:</option>
-                    <option value="1" {% if role == 1 %}selected{% endif %}>Administracion </option>
-                    <option value="2" {% if role == 2 %}selected{% endif %}>Tecnica </option>
-                    <option value="3" {% if role == 3 %}selected{% endif %}>Ecuestre </option>
-                    <option value="4" {% if role == 4 %}selected{% endif %}>Voluntariado </option>
-                    <option value="5" {% if role == 5 %}selected{% endif %}>Sin Rol </option>
-                </select>
-                <select name="order_option">
-                    <option value="">Ordenar por:</option>
-                    <option value="email_asc" {% if order_option == 'email_asc' %}selected{% endif %}>Email: Orden ascendente</option>
-                    <option value="email_desc"  {% if order_option == 'email_desc' %}selected{% endif %}>Email: Orden descendente</option>
-                    <option value="creation_date_asc" {% if order_option == 'creation_date_asc' %}selected{% endif %}>Fecha creación: Orden ascendente</option>
-                    <option value="creation_date_desc" {% if order_option == 'creation_date_desc' %}selected{% endif %}>Fecha creación: Orden descendente</option>
-                </select>
-                <button class="button search-button" type="submit">Buscar</button>
-                <a class="button restore-button" href="{{ url_for('users.index', page=page, order_option=order_option) }}">Quitar Filtros</a>
+                <div class="columns is-multiline">
+                    <div class="column is-narrow">
+                        <input name="search" class="input" type="text" placeholder="Buscar email" value="{{ search }}" />
+                    </div> 
+                    <div class="column is-narrow">
+                        <div class="select">
+                            <select class="select" name="activity">
+                                <option value="">Filtrar por:</option>
+                                <option value="noactive"{% if activity == 'noactive' %}selected{% endif %}>No activo</option>
+                                <option value="active" {% if activity == 'active' %}selected{% endif %}>Activo </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column is-narrow">
+                        <div class="select">
+                            <select class="select" name="role">
+                                <option value="">Filtrar por:</option>
+                                <option value="1" {% if role == 1 %}selected{% endif %}>Administracion </option>
+                                <option value="2" {% if role == 2 %}selected{% endif %}>Tecnica </option>
+                                <option value="3" {% if role == 3 %}selected{% endif %}>Ecuestre </option>
+                                <option value="4" {% if role == 4 %}selected{% endif %}>Voluntariado </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column is-narrow">
+                        <div class="select">
+                            <select name="order_option">
+                                <option value="">Ordenar por:</option>
+                                <option value="email_asc" {% if order_option == 'email_asc' %}selected{% endif %}>Email: Orden ascendente</option>
+                                <option value="email_desc"  {% if order_option == 'email_desc' %}selected{% endif %}>Email: Orden descendente</option>
+                                <option value="creation_date_asc" {% if order_option == 'creation_date_asc' %}selected{% endif %}>Fecha creación: Orden ascendente</option>
+                                <option value="creation_date_desc" {% if order_option == 'creation_date_desc' %}selected{% endif %}>Fecha creación: Orden descendente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column is-narrow">
+                        <button class="button search-button" type="submit">Buscar</button>
+                    </div>
+                    <div class="column is-narrow">
+                        <a class="button restore-button" href="{{ url_for('users.index', page=page, order_option=order_option) }}">Quitar Filtros</a>
+                    </div>
+                </div>
             </form>
         </div>
     <div class="table-container">
@@ -52,9 +71,9 @@
                     <th>Acción</th>
                 </tr>
             </thead>
-            {% if context.users %}
-            {% for user in context.users %}
             <tbody>
+                {% if context.users %}
+                {% for user in context.users %}
                 <tr>
                     <td>{{ user.email }}</td>
                     <td>{{ user.alias }}</td>

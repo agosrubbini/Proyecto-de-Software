@@ -3,6 +3,8 @@
 <html lang="en">
     <head>
         {% block head %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link
           rel="stylesheet"
           href="{{ url_for('static', filename='styles/style.css') }}"
@@ -94,10 +96,6 @@
                             <i class="fas fa-user"></i>
                             <span>Mi Perfil</span>
                           </a>
-                          <a class="dropdown-item" href="/configuracion">
-                            <i class="fas fa-cog"></i>
-                            <span>Configuración</span>
-                          </a>
                           <a class="dropdown-item" href="{{ url_for('login.logout') }}" >
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Cerrar Sesión</span>
@@ -107,7 +105,7 @@
                     </div>
                   </div>
                       <div class="is-hidden-desktop">
-                        <a class="navbar-item" href="/perfil">
+                        <a class="navbar-item" href="{{ url_for('users.show_user', id=session["user_id"]) }}">
                           Perfil
                         </a>
                         <a class="navbar-item" href="/configuracion">

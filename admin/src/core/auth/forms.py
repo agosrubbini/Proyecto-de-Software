@@ -19,5 +19,10 @@ class registryForm(FlaskForm):
     role = SelectField(
         "Role",
         validators=[InputRequired()],
-        choices=["SuperAdministrador", "Administración", "Técnica", "Ecuestre", "Sin rol"],
+        choices=["SuperAdministrador", "Administración", "Técnica", "Voluntariado", "Ecuestre"],
+    )
+    active = SelectField(
+        "Activity",
+        choices=[(True, 'Active'), (False, 'Inactive')],
+        default=True,
     )
