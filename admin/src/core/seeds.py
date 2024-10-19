@@ -160,33 +160,6 @@ def run():
         healthcare_plan_id_employee=healthcare_plan1.id
     )
 
-    employee2 = create_employee(
-        name="Agostina",
-        last_name="R",
-        DNI="123456",
-        age=20,
-        phone_number="222",
-        address_id=address1.id,  # Atributos heredados de Person
-        profession= "Médico",  # Atributo específico de Employee
-        job_position="Jefe",
-        emergency_contact_id_employee=emergency_contact1.id,
-        condition="Voluntario",
-        healthcare_plan_id_employee=healthcare_plan1.id
-    )
-
-    employee2 = create_employee(
-        name="Agostina",
-        last_name="Rubbini",
-        DNI="654321",
-        age=36,
-        phone_number="333",
-        address_id=address1.id,  # Atributos heredados de Person
-        profession= "Docente",  # Atributo específico de Employee
-        job_position="Jefe",
-        emergency_contact_id_employee=emergency_contact1.id,
-        condition="Voluntario",
-        healthcare_plan_id_employee=healthcare_plan1.id
-    )
 
     horse1 = create_horse(
         name = "Mancha",
@@ -194,7 +167,7 @@ def run():
         gender = "Macho",
         race = "Mustang",
         fur = "Blanco y marron",
-        purchase_or_donation = "Donacion",
+        purchase_or_donation = "Donación",
         date_of_entry = datetime.now(),
         sede = "arg",
         type_jya_assigned = ["Hipoterapia","Equitacion"]
@@ -237,7 +210,7 @@ def run():
     horse_file1 = create_horse_file(
         file_url = "hola",
         file_type = "Link",
-        document_type = "Ficha general del caballo",
+        document_type = "Planificacion de entrenamiento",
         horses_id = horse1.id,
         title = "LINK DE PRUEBA",
     )

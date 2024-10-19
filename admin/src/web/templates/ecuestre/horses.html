@@ -3,22 +3,16 @@
 {% block title %}Listado de caballos{% endblock %}
 {% block head %}
     {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/ecuestre/horses_list.css') }}"/>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/ecuestre/horses_info.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_list.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_info.css') }}"/>
 {% endblock %}
 
 {% block content %}
 
-    <div class="encabezado">
-        <h1>Listado de Caballos</h1>
-    </div>
-    <hr class="separador">
-
-    <!-- Botón para agregar un nuevo caballo -->
-    <div class="control">
-        <a href="{{ url_for('horses.create_horse_view') }}" class="button is-primary is-outlined">
-            Agregar Caballo
-        </a>
+<div class="container">
+    <div class="header-container">
+        <h1 class="is-size-2-mobile is-size-2-tablet is-size-2-desktop">Lista de Caballos</h1>
+        <a href="{{ url_for('horses.create_horse_view') }}" class="button is-white is-size-6">Agregar Caballo</a>
     </div>
 
     <form method="GET" action="{{url_for('horses.list_horses')}}">
@@ -41,10 +35,10 @@
                     <select name="type_jya_assigned" class="input">
                         <option value="">Selecciona un tipo</option>
                         <option value="Hipoterapia">Hipoterapia</option>
-                        <option value="Monta Terapeutica">Monta Terapeutica</option>
+                        <option value="Monta Terapeutica">Monta Terapéutica</option>
                         <option value="Deporte Ecuestre Adaptado">Deporte Ecuestre Adaptado</option>
                         <option value="Actividades Recreativas">Actividades Recreativas</option>
-                        <option value="Equitacion">Equitacion</option>
+                        <option value="Equitacion">Equitación</option>
                     </select>
                 </div>
             </div>

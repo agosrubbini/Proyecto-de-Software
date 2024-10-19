@@ -20,8 +20,8 @@ class create_horse_Form(FlaskForm):
     fur = StringField("Pelaje", validators=[InputRequired(), Length(max=15)])
 
     purchase_or_donation = SelectField(
-        'Compra o Donacion',
-        choices=[('Compra','Compra'), ('Donacion','Donacion')]#revisar
+        'Compra o Donación',
+        choices=[('Compra','Compra'), ('Donación','Donación')]
     )
 
     date_of_entry = DateField('Fecha de ingreso', format='%Y-%m-%d', validators=[InputRequired()])
@@ -34,6 +34,7 @@ class create_horse_Form(FlaskForm):
     type_jya_ar = BooleanField (default=False) 
     type_jya_equitacion = BooleanField (default=False) 
     employees = SelectMultipleField('Empleados', coerce=int)
+
 class registryFileForm(FlaskForm):
 
     file_url = StringField("file_url", validators=[InputRequired(), Length(max=60)])
@@ -47,7 +48,7 @@ class registryFileForm(FlaskForm):
     document_type = SelectField(
         "Document_type",
         validators=[InputRequired()],
-        choices=["Ficha general del caballo", "Planificacion de entrenamiento", "Informe de evolucion", "Carga de imagenes", "Registro veterinario"],
+        choices=["Ficha general del caballo", "Planificación de entrenamiento", "Informe de evolución", "Carga de imagenes", "Registro veterinario"],
     )
     title = StringField("title", validators=[InputRequired(), Length(max=60)])
 

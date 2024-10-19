@@ -77,12 +77,12 @@
         {% endif %}
     <hr>
 
-    <label class="label" for="purchase_or_donation">Compra o Donacion</label>
+    <label class="label" for="purchase_or_donation">Compra o Donación</label>
     <div class="control">
         <select name="purchase_or_donation" id="purchase_or_donation">
             <option value=""></option>
             <option value="Compra" {% if horse.purchase_or_donation == 'Compra' %}selected{% endif %}>Compra</option>
-            <option value="Donacion" {% if horse.purchase_or_donation == 'Donacion' %}selected{% endif %}>Donacion</option>
+            <option value="Donación" {% if horse.purchase_or_donation == 'Donación' %}selected{% endif %}>Donación</option>
         </select>
     </div>
     {% if form.purchase_or_donation.errors %}
@@ -118,19 +118,31 @@
 
     <label class="label">Tipos J&A asignados</label>
     <div class="control">
-        <input type="checkbox" name="type_jya_hipoterapia" {% if horse.type_jya_hipoterapia %}checked{% endif %}> Hipoterapia<br>
-        <input type="checkbox" name="type_jya_monta_terapeutica" {% if horse.type_jya_monta_terapeutica %}checked{% endif %}> Monta Terapéutica<br>
-        <input type="checkbox" name="type_jya_dea" {% if horse.type_jya_dea %}checked{% endif %}> Deporte Ecuestre Adaptado<br>
-        <input type="checkbox" name="type_jya_ar" {% if horse.type_jya_ar %}checked{% endif %}> Actividades Recreativas<br>
-        <input type="checkbox" name="type_jya_equitacion" {% if horse.type_jya_equitacion %}checked{% endif %}> Equitación<br>
+        <!-- Checkboxes basados en el array 'type_jya_assigned' -->
+        <input type="checkbox" name="type_jya_hipoterapia" value="Hipoterapia" 
+               {% if "Hipoterapia" in horse.type_jya_assigned %}checked{% endif %}> Hipoterapia<br>
+    
+        <input type="checkbox" name="type_jya_monta_terapeutica" value="Monta terapeutica" 
+               {% if "Monta Terapéutica" in horse.type_jya_assigned %}checked{% endif %}> Monta Terapéutica<br>
+    
+        <!-- Checkboxes basados en booleanos individuales -->
+        <input type="checkbox" name="type_jya_dea" 
+                {% if "Deporte Ecuestre Adaptado" in horse.type_jya_assigned %}checked{% endif %}> Deporte Ecuestre Adaptado<br>
+    
+        <input type="checkbox" name="type_jya_ar" 
+                {% if "Actividades Recreativas" in horse.type_jya_assigned %}checked{% endif %}> Actividades Recreativas<br>
+    
+        <input type="checkbox" name="type_jya_equitacion" 
+                {% if "Equitación" in horse.type_jya_assigned %}checked{% endif %}> Equitación<br>
     </div>
+    
     <hr>
 
 
     <label class="label" for="employees">Empleados</label>
     <select name="employees" multiple>
         {% for employee in employee_list %}
-            <option value="{{ employee.id }}" {% if employee.id in horse.employees %}selected{% endif %}>{{ employee.name }}</option>
+            <option value="{{ employee.id }}" {% if employee in horse.employees %}selected{% endif %}>{{ employee.name }}</option>
         {% endfor %}
     </select>
     <hr>

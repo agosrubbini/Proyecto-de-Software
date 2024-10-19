@@ -18,7 +18,7 @@ class Horse(db.Model):
     gender = db.Column(db.Enum("Macho", "Hembra", name="gender"), nullable=False) 
     race = db.Column(db.String(255), nullable=False)
     fur = db.Column(db.String(255), nullable=False)
-    purchase_or_donation = db.Column(db.Enum("Compra", "Donacion", name="purchase_or_donation"), nullable=False) 
+    purchase_or_donation = db.Column(db.Enum("Compra", "Donación", name="purchase_or_donation"), nullable=False) 
     date_of_entry = db.Column(db.DateTime, nullable=False)
     sede = db.Column(db.String(255),nullable=False)
     type_jya_assigned = db.Column(ARRAY(db.String), nullable=False) 
@@ -43,7 +43,7 @@ class Horse(db.Model):
         self.date_of_entry = date_of_entry
         self.sede = sede
         self.type_jya_assigned = type_jya_assigned
-        self.employees = employees
+        #self.employees = employees
 
 
     def to_dict(self):

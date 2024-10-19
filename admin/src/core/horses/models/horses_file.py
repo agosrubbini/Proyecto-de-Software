@@ -9,7 +9,7 @@ class Horse_file(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     file_url = db.Column(db.String(1000), nullable=False)
     file_type = db.Column(db.Enum("Link", "Documento", name='file_type'), nullable=False)
-    document_type = db.Column(db.Enum("Ficha general del caballo", "Planificacion de entrenamiento", "Informe de evolucion", "Carga de imagenes", "Registro veterinario", name='document_type'), nullable=False)
+    document_type = db.Column(db.String(255), nullable=False)
     horses_id = db.Column(db.Integer, db.ForeignKey('horses.id'), nullable=False)
     title = db.Column(db.String(70), nullable=True)
     upload_date = db.Column(db.DateTime, default=datetime.now())

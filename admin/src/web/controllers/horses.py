@@ -84,13 +84,13 @@ def create_horse_view():
             if form.type_jya_hipoterapia.data:
                 type_jya_assigned.append ("Hipoterapia")
             if form.type_jya_monta_terapeutica.data:
-                type_jya_assigned.append ("Monta Terapeutica")
+                type_jya_assigned.append ("Monta Terapéutica")
             if form.type_jya_dea.data:
                 type_jya_assigned.append ("Deporte Ecuestre Adaptado")
             if form.type_jya_ar.data:
                 type_jya_assigned.append ("Actividades Recreativas")
             if form.type_jya_equitacion.data:
-                type_jya_assigned.append ("Equitacion")
+                type_jya_assigned.append ("Equitación")
             
             
             new_horse = Horse(
@@ -142,7 +142,7 @@ def edit_horse(horse_id):
     horse = Horse.query.get(horse_id)
     form = create_horse_Form(obj=horse)
     form.gender.choices = [('Macho', 'Macho'), ('Hembra', 'Hembra')]
-    form.purchase_or_donation.choices = [('Compra', 'Compra'), ('Donacion', 'Donacion')]
+    form.purchase_or_donation.choices = [('Compra', 'Compra'), ('Donación', 'Donación')]
     form.employees.choices = [(e.id, e.name) for e in employee_list]
 
 
@@ -253,10 +253,6 @@ def list_info_by_id(horse_id):
     pagination, page, order_by, title, document_type = show_files(horse_id, request)
 
     files_json = [file.to_dict() for file in pagination.items]
-
-    #if files:
-    #    for file in files:    
-    #        files_json.append(file.to_dict())
 
     context = {
         'pagination': pagination,
