@@ -10,7 +10,11 @@ bp = Blueprint("login", __name__, url_prefix="/login")
 @bp.route('/', methods=['GET'])
 @bp.get("/")
 @inject_user_permissions
-def login():#muestra el forms
+def login():
+    """
+        Método que renderiza la vista de login
+    """
+
     if is_authenticated(session):
         flash("Ya te encuentras logueado", "warning")
         return render_template("home.html")
@@ -20,6 +24,10 @@ def login():#muestra el forms
 @bp.post("/authenticate")
 @inject_user_permissions
 def authenticate():
+    """
+        Método que autentica a un usuario
+    """
+
     app.logger.info("Call to authenticate method")
     params = request.form  # objeto desde donde obtengo los parámetros de entrada de un form
     bcrypt = Bcrypt()  # inicializa Bcrypt
@@ -56,6 +64,9 @@ def authenticate():
 @bp.get("/logout")
 @inject_user_permissions
 def logout():
+    """
+        Método que cierra la sesión de un usuario
+    """
     app.logger.info("Call to logout method")
     if session.get("user"):
         app.logger.info("Deleting session of: %s",session.get("user"))

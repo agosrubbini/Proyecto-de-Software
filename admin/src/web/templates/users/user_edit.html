@@ -19,33 +19,33 @@
     {% if context.form.email.errors %}
             <div class="alert alert-danger">
                 {% for error in context.form.email.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
-    <hr>
+        <hr style="margin-top: 0;">
 
     <label class="label" for="alias">Alias</label>
     <input class="input" type="text" name="alias" id="alias" value="{{ context.user.alias }}"{% if context.user.system_admin %}disabled{% endif %} >
     {% if context.form.alias.errors %}
             <div class="alert alert-danger">
                 {% for error in context.form.alias.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
-    <hr>
+        <hr style="margin-top: 0;">
 
     <label class="label" for="password">Contraseña</label>
     <input class="input" type="password" name="password" id="password" value="{{ context.user.password }}" {% if context.user.system_admin %}disabled{% endif %}>
     {% if context.form.password.errors %}
             <div class="alert alert-danger">
                 {% for error in context.form.password.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
-    <hr>
+        <hr style="margin-top: 0;">
 
 
     <label class="label" for="confirm">Confirmacion contraseña</label>
@@ -53,11 +53,27 @@
     {% if context.form.confirm.errors %}
             <div class="alert alert-danger">
                 {% for error in context.form.confirm.errors %}
-                    <span>{{ error }}</span>
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
-    <hr>
+        <hr style="margin-top: 0;">
+
+    <label class="label" for="active">Actividad</label>
+    <select name="active" id="active"{% if context.user.system_admin %}disabled{% endif %}>
+        <option value="">Selecciona la actividad:</option>
+        <option value="True" {% if context.user.active == True %}selected{% endif %}>Activo</option>
+        <option value="False" {% if context.user.active == False %}selected{% endif %}>No Activo</option>
+    </select>
+    {% if context.form.active.errors %}
+            <div class="alert alert-danger">
+                {% for error in context.form.active.errors %}
+                    <span style="color: red">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <hr style="margin-top: 0;">        
+
 
 
     <label class="label" for="role">Rol</label>
@@ -65,17 +81,18 @@
         <option value="">Selecciona un rol:</option>
         <option value="Administración" {% if context.user.role.name == 'Administración' %}selected{% endif %}>Administración</option>
         <option value="Técnica" {% if context.user.role.name == 'Técnica' %}selected{% endif %}>Técnica</option>
+        <option value="Voluntariado" {% if context.user.role.name == 'Voluntariado' %}selected{% endif %}>Voluntariado</option>
         <option value="Ecuestre" {% if context.user.role.name == 'Ecuestre' %}selected{% endif %}>Ecuestre</option>
-        <option value="Sin Rol" {% if context.user.role.name == 'Sin Rol' %}selected{% endif %}>Sin Rol</option>
     </select>
-    {% if context.form.email.errors %}
+    {% if context.form.role.errors %}
             <div class="alert alert-danger">
-                {% for error in context.form.email.errors %}
-                    <span>{{ error }}</span>
+                {% for error in context.form.role.errors %}
+                    <span style="color: red">{{ error }}</span>
                 {% endfor %}
             </div>
         {% endif %}
-    <hr>
+        <hr style="margin-top: 0;">
+
     <div class="buttons">
         <a class="a-button" href="{{ url_for('users.show_user', id = context.user.id) }}" style="width:100px"><button type="button" >Volver</button></a>
         {%if not context.user.system_admin%}

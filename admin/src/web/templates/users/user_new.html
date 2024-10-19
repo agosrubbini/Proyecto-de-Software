@@ -24,8 +24,15 @@
             <i class="fas fa-envelope"></i>
         </span>
         <input class="input" type="email" id="email" name="{{ form.email.name }}" placeholder="Ingrese el correo electrónico" value="{{ form.email.value }}">
-    </div>  
-    <hr>
+        {% if form.email.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.email.errors %}
+                    <span style="color: red">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <hr style="margin-top: 0;">
     
     <label class="label">Alias</label>
     <div class="control has-icons-left">
@@ -33,8 +40,15 @@
             <i class="fa-solid fa-user"></i>
         </span>
         <input class="input" type="text" id="alias" name="{{ form.alias.name }}" placeholder="Ingrese el alias" value="{{ form.alias.value }}">
+        {% if form.alias.errors %}
+        <div class="alert alert-danger">
+            {% for error in form.alias.errors %}
+                <span style="color: red">{{ error }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
-    <hr>
+    <hr style="margin-top: 0;">
     
     <label class="label">Contraseña</label>
     <div class="control has-icons-left">
@@ -42,8 +56,15 @@
             <i class="fas fa-lock"></i>
         </span>
         <input class="input" type="password" id="password" name="{{ form.password.name }}" placeholder="Ingrese la contraseña" value="{{ form.password.value }}">
-    </div> 
-    <hr> 
+        {% if form.password.errors %}
+        <div class="alert alert-danger">
+            {% for error in form.password.errors %}
+                <span style="color: red">{{ error }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <hr style="margin-top: 0;">
     
     <label class="label">Repita la contraseña</label>
     <div class="control has-icons-left">
@@ -51,8 +72,16 @@
             <i class="fas fa-lock"></i>
         </span>
         <input class="input" type="password" id="confirm_password" name="{{ form.confirm.name }}" placeholder="Ingrese la contraseña nuevamente" value="{{ form.confirm.value }}">
+        {% if form.confirm.errors %}
+        <div class="alert alert-danger">
+            {% for error in form.confirm.errors %}
+                <span style="color: red">{{ error }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
-    <hr>
+    <hr style="margin-top: 0;">
+    
     
     <label class="label">Rol</label>
     <div class="control">
@@ -60,11 +89,18 @@
             <option>Selecciona un rol</option>
             <option>Administración</option>
             <option>Ecuestre</option>
+            <option>Voluntariado</option>
             <option>Técnica</option>
-            <option>Sin Rol</option>
         </select>
+        {% if form.role.errors %}
+        <div class="alert alert-danger">
+            {% for error in form.role.errors %}
+                <span style="color: red">{{ error }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
-    <hr>
+    <hr style="margin-top: 0;">
     
     <button type="submit">Registrar usuario</button>
 </form>
