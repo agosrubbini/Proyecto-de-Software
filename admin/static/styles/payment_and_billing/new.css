@@ -1,4 +1,8 @@
 
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    
     h1 {
         padding-top: 20px;
         font-size: 24px !important;
@@ -68,7 +72,7 @@
         border: 1px solid black;
     }
 
-    .input, input {
+    input {
         margin-bottom: 15px;
         border-radius: 10px;
         border: 1px solid hsl(221, 14%, 80%);
@@ -103,13 +107,12 @@
         transform: scale(1.05);
     }   
 
-    .input, .input::placeholder, .label {
+    .input, .input::placeholder, .label, .button {
         color: black;
         font-weight: 600;
         font-style: bold;
     }
     
-    i{
+    i {
         color: black;
     }
-    

@@ -3,6 +3,8 @@
 <html lang="en">
     <head>
         {% block head %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link
           rel="stylesheet"
           href="{{ url_for('static', filename='styles/style.css') }}"
@@ -43,17 +45,41 @@
                 
                 <div id="navbarElement" class="navbar-menu">
                   <div class="navbar-start">
-                    <a class="navbar-item">
+                  {% if 'jya_index' in g.user_permissions or g.user_system_admin %}
+                    <a class="navbar-item" href="{{ url_for('horsemen_and_amazons.list_jya_users') }}" >
                       J&A
                     </a>
-              
+                    {% endif %}
+
+                    {% if 'horse_index' in g.user_permissions or g.user_system_admin %}
                     <a class="navbar-item" href=" {{ url_for('horses.list_horses') }}">
                       Ecuestre
                     </a>
+                    {% endif %}
 
-                    <a class="navbar-item" href=" {{ url_for('registry.registry_function') }}">
+                    {% if 'team_index' in g.user_permissions or g.user_system_admin %}
+                    <a class="navbar-item" href=#>
                         Equipo
                     </a>
+                    {% endif %}
+                    {% if 'billing_index' in g.user_permissions or g.user_system_admin %}
+                    <a class="navbar-item" href="{{ url_for('billing.list_billings') }}">
+                        Cobros
+                    </a>
+                    {% endif %}
+
+                    {% if 'payment_index' in g.user_permissions or g.user_system_admin %}
+                    <a class="navbar-item" href="{{url_for('payment.list_payments')}}">
+                        Pagos
+                    </a>
+                    {% endif %}
+
+                    {% if g.user_system_admin %}
+                    <a class="navbar-item" href=" {{ url_for('users.index') }}">
+                        Usuarios
+                    </a>
+                    {% endif %}
+
                   </div>
                 
                 <div class="navbar-end">
@@ -63,10 +89,10 @@
                         <i class="fas fa-user-circle user-icon" id="userIcon"></i>
                         <div class="dropdown-content" id="userDropdown">
                           <div class="user-info">
-                            <div class="user-alias"> {{ user(session).alias}}</div>
+                            <div class="user-alias"> {{ user(session).alias }}</div>
                             <div class="user-email"> {{ user(session).email }} </div>
                           </div>
-                          <a class="dropdown-item" href="/perfil">
+                          <a class="dropdown-item" href="{{ url_for('users.show_user', id=session["user_id"]) }}">
                             <i class="fas fa-user"></i>
                             <span>Mi Perfil</span>
                           </a>
@@ -135,7 +161,7 @@
                                 {% if category == 'info' %} fa-info-circle has-text-info 
                                 {% elif category == 'success' %} fa-check-square has-text-success
                                 {% elif category == 'warning' %} fa-exclamation-triangle has-text-warning
-                                {% elif category == 'danger' %} fa-ban has-text-danger
+                                {% elif category == 'error' %} fa-ban has-text-danger
                                 {% endif %}">
                               </i>
                             </span>

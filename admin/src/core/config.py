@@ -29,6 +29,7 @@ class DevelopmentConfig(Config):
     """
         Configuración de desarrollo
     """
+    
     MINIO_SERVER = "localhost:9000"
     MINIO_ACCESS_KEY = "zMqOLexUSa8sEK1bNjoF"
     MINIO_SECRET_KEY = "mP4Mq3MvIzbjWYkH27wxulKuvItfvBKBDY5SKZNG"

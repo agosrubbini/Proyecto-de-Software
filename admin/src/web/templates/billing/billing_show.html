@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block title %}Cobro{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/payment_and_billing/show.css') }}">
+{% endblock %}
+
+
+{% block content %}
+
+<form action="">
+    <div class="div-titulo">
+        <h1 class="label">Cobro</h1>
+        <hr class="linea-titulo">
+    </div>
+
+    <label class="label" for="jya_id">J&A</label>
+    <div class="control">
+        <input disabled type="text" value="{{ billing.jya_name }}">
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="payment_date">Fecha de pago</label>
+    <input disabled type="date" name="payment_date" id="payment_date" value="{{ billing.payment_date.strftime('%Y-%m-%d') }}">
+    <hr>
+
+    <label class="label" for="payment_method">Metodo de pago</label>
+    <div class="control">
+        <input disabled type="text" value="{{ billing.payment_method }}">
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="amount">Monto</label>
+    <input disabled name="amount" type="number" step="0.01" value="{{ billing.amount }}">
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="employee_id">Empleado</label>
+    <div class="control">
+        <input disabled type="text" value="{{ billing.employee_name }}">
+    </div>
+    <hr style="margin-top: 0;">
+
+    <label class="label" for="observation">Observaciones:</label>
+    <input disabled type="text" name="observation" id="observation" value="{{ billing.observation }}">
+    <hr>
+
+    <div class="buttons">
+        <a class="a-button" href="{{ url_for('billing.list_billings') }}"><button type="button">Listado de cobros</button></a>
+        <a class="a-button" href="{{ url_for('billing.edit_billing', billing_id = billing.id) }} "><button type="button">Editar</button></a>
+    </div>
+</form>
+
+{% endblock %}

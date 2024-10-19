@@ -24,3 +24,9 @@ class Address(db.Model):
         self.locality = locality
         self.province = province
         self.phone_number = phone_number
+
+    def __repr__(self):
+        return f'{self.street} {self.number} "," {self.department} "," {self.locality} "," {self.province}'
+    
+    def string(self):
+        return f'{self.street} {self.number}, {self.department}, {self.locality}, {self.province}'
