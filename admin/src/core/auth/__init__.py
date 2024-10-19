@@ -36,6 +36,7 @@ def edit_user(**kwargs):
     hash = bcrypt.generate_password_hash(kwargs['password'].encode('utf-8'))
     user.email = kwargs['email']
     user.alias = kwargs['alias']
+    user.active = kwargs['active']
     user.password = hash.decode('utf-8')
     user.role_id = kwargs['role_id']
     db.session.commit()
