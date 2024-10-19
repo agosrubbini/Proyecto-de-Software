@@ -22,7 +22,7 @@ session = Session()
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
 
 
-def create_app(env="development", static_folder="../../static"):
+def create_app(env="production", static_folder="../../static"):
     app = Flask(__name__, static_folder=static_folder)
 
     # load config
