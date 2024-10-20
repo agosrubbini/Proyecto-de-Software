@@ -15,6 +15,7 @@ from src.web.storage import storage
 from src.web import commands
 from src.web import routes
 from src.web.handlers.auth import is_authenticated, get_user_info
+from src.web.controllers.horses import bp as bp_horses
 
 
 session = Session()

@@ -7,6 +7,7 @@ from src.core.payments import create_payment, create_billing
 from src.core.persons import (
     create_person, create_employee, create_JyA, create_family_member_or_tutor, create_address, create_emergency_contact, 
     create_healthcare_plan, create_file)
+from src.core.horses import create_file as create_horse_file
 
 
 
@@ -165,16 +166,17 @@ def run():
         healthcare_plan_id_employee=healthcare_plan1.id
     )
 
+
     horse1 = create_horse(
         name = "Mancha",
         date_of_birth = datetime.now(),
         gender = "Macho",
         race = "Mustang",
         fur = "Blanco y marron",
-        purchase_or_donation = "Donacion",
+        purchase_or_donation = "Donación",
         date_of_entry = datetime.now(),
         sede = "arg",
-        type_jya_assigned = "Hipoterapia"
+        type_jya_assigned = ["Hipoterapia","Equitacion"]
     )
 
     JyA1 = create_JyA(
@@ -210,6 +212,22 @@ def run():
         title = "ARCHIVO DE PRUEBA",
     )
 
+
+    horse_file1 = create_horse_file(
+        file_url = "hola",
+        file_type = "Link",
+        document_type = "Planificacion de entrenamiento",
+        horses_id = horse1.id,
+        title = "LINK DE PRUEBA",
+    )
+
+    horse_file2 = create_horse_file(
+        file_url = "chau",
+        file_type = "Documento",
+        document_type = "Registro veterinario",
+        horses_id = horse1.id,
+        title = "ARCHIVO DE PRUEBA",
+    )
 
     institutional_work1 = create_institutional_work(
         condicion="Regular",
