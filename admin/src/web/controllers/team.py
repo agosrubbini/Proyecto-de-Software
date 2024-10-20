@@ -1,15 +1,13 @@
 from datetime import timedelta
 from os import fstat
 from flask import Blueprint, current_app as app, render_template, redirect, request, url_for, flash
-from sqlalchemy import desc
-from src.core.persons import create_employee_file, delete_employee_file_by_id, find_address_by_id, find_employee_by_id, find_employee_file_by_id, find_employee_file_by_title, get_emergency_contact_by_id, get_files_by_employee_id, get_files_by_horseman_id, get_healthcare_plan_by_id, updated_employee_file
-from src.core.persons.models.file import File
+from src.core.persons import create_employee_file, delete_employee_file_by_id, find_address_by_id, find_employee_by_id, find_employee_file_by_id, find_employee_file_by_title, get_emergency_contact_by_id, get_files_by_employee_id, get_healthcare_plan_by_id, updated_employee_file
 from src.core.auth.auth import inject_user_permissions, permission_required
-from src.core.persons.models.person import Employee
+from src.core.persons.models.person import Employee, Person
 from src.core.persons.models.address import Address
 from src.core.persons.models.healthcare_plan import HealthcarePlan
 from src.core.persons.models.emergency_contact import EmergencyContact
-from src.core.persons.forms import EmployeeFileForm, EmployeeForm, HealthcarePlanForm
+from src.core.persons.forms import EmployeeFileForm, EmployeeForm
 from src.core.database import db
 
 bp = Blueprint('team', __name__, url_prefix='/empleados')
@@ -54,11 +52,9 @@ def list_team():
 @inject_user_permissions
 def new_employee():
     form = EmployeeForm()
-    form_hp = HealthcarePlanForm()
     form.address_id.choices = [(address.id, address.string()) for address in Address.query.all()]
     form.emergency_contact.choices = [(emergency_contact.id, emergency_contact.name, emergency_contact.phone_number) for emergency_contact in EmergencyContact.query.all()]
-    professions = ["Psicólogo", "Psicomotricista", "Médico", "Kinesiólogo", "Terapista Ocupacional", "Psicopedagogo", "Docente", "Profesor", "Fonoaudiólogo",
-    "Veterinario", "Otro"]
+    professions = ["Psicólogo", "Psicomotricista", "Médico", "Kinesiólogo", "Terapista Ocupacional", "Psicopedagogo", "Docente", "Profesor", "Fonoaudiólogo", "Veterinario", "Otro"]
     
     if form.validate_on_submit():
         if form.address_id.data:
@@ -116,7 +112,7 @@ def new_employee():
         flash('Employee created successfully!', 'success')
         return redirect(url_for('team.list_team'))
 
-    return render_template('team/team_new.html', form=form, form_hp=form_hp, professions=professions)
+    return render_template('team/team_new.html', form=form, professions=professions)
 
 @bp.route('/empleado/<int:id>')
 @permission_required('team_show')
@@ -151,20 +147,95 @@ def show_employee(id):
 
     return render_template('team/team_show.html', context=context)
 
-@bp.route('/empleado/editar/<int:id>')
+@bp.route('/empleado/editar/<int:id>', methods=['GET', 'POST'])
 @permission_required('team_update')
 @inject_user_permissions
 def edit_employee(id):
-    pass
+    employee = Employee.query.get(id)
+    employee.healthcare_plan = HealthcarePlan.query.get(employee.healthcare_plan_id_employee)
+    employee.start_date = employee.start_date.strftime('%Y-%m-%d')
+    employee.birth_date = employee.birth_date.strftime('%Y-%m-%d')
+    form = EmployeeForm()
+    form.address_id.choices = [(address.id, address.string()) for address in Address.query.all()]
+    form.emergency_contact.choices = [(emergency_contact.id, emergency_contact.name, emergency_contact.phone_number) for emergency_contact in EmergencyContact.query.all()]
+    professions = ["Psicólogo", "Psicomotricista", "Médico", "Kinesiólogo", "Terapista Ocupacional", "Psicopedagogo", "Docente", "Profesor", "Fonoaudiólogo", "Veterinario", "Otro"]
 
-@bp.route('/empleado/eliminar/<int:id>', methods=['POST'])
+    if form.validate_on_submit():
+        # Campos de address
+        if employee.address_id != form.address_id.data:
+            address = Address.query.get(form.address_id.data)
+            employee.address_id = address.id
+        elif form.new_address.street.data:
+            address = Address(
+                street=form.new_address.street.data,
+                number=form.new_address.number.data,
+                department=form.new_address.department.data,
+                locality=form.new_address.locality.data,
+                province=form.new_address.province.data,
+                phone_number=form.new_address.phone_number.data
+            )
+            db.session.add(address)
+            db.session.commit()
+            employee.address_id = address.id
+
+        # Campos de healthcare_plan
+        employee.healthcare_plan.social_security = form.healthcare_plan.social_security.data
+        employee.healthcare_plan.affiliate_number = form.healthcare_plan.affiliate_number.data
+        employee.healthcare_plan.has_guardianship = form.healthcare_plan.has_guardianship.data
+        employee.healthcare_plan.observation = form.healthcare_plan.observation.data
+        
+        print(form.emergency_contact.data)
+        print(form.new_emergency_contact.name)
+        print(form.new_emergency_contact.phone_number)
+
+        # Campos de emergency_contact
+        if employee.emergency_contact_id_employee != form.emergency_contact.data:
+            emergency_contact = EmergencyContact.query.get(form.emergency_contact.data)
+            employee.emergency_contact_id_employee = emergency_contact.id
+        elif form.new_emergency_contact.name != "":
+            emergency_contact = EmergencyContact(
+                name=form.new_emergency_contact.name,
+                phone_number=form.new_emergency_contact.phone_number.data
+            )
+            db.session.add(emergency_contact)
+            db.session.commit()
+            employee.emergency_contact_id_employee = emergency_contact.id
+
+        # Campos de employee
+        employee.name = form.name.data
+        employee.last_name = form.last_name.data
+        employee.DNI = form.dni.data
+        employee.phone_number = form.phone_number.data
+        employee.profession = form.profession.data
+        employee.job_position = form.job_position.data
+        employee.start_date = form.start_date.data
+        employee.end_date = form.end_date.data
+        employee.condition = form.condition.data
+        employee.active = form.active.data
+        employee.email = form.email.data
+        employee.birth_date = form.birth_date.data
+
+        db.session.commit()
+        flash('Employee updated successfully!', 'success')
+        return redirect(url_for('team.list_team'))
+    
+    return render_template('team/team_edit.html', form=form, employee=employee, professions=professions)
+
+@bp.route('/eliminar/<int:id>', methods=['POST'])
 @permission_required('team_destroy')
 @inject_user_permissions
 def delete_employee(id):
+    print('Employee id:', id)
     employee = Employee.query.get(id)
-    db.session.delete(employee)
-    db.session.commit()
-    flash('Employee deleted successfully!', 'success')
+    if not employee:
+        print('Employee not found', 'error')
+    else:
+        db.session.delete(employee)
+        db.session.commit()
+        print('Employee deleted successfully!', 'success')
+    # Que pasa cuando quiero eliminar un empleado que tiene billings asociados?
+    # Empleado con archivos se borran ambos.
+    # Que otro caso existe?
     return redirect(url_for('team.list_team'))
 
 @bp.route('/empleado/<int:id>/add_file', methods=['POST', 'GET'])

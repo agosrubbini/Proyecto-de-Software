@@ -151,7 +151,7 @@
             <span>{{ error }}</span>
         {% endfor %}
     </div>
-{% endif %}
+    {% endif %}
         
     <div class="new-contact-div">
         <input class="new-contact-checkbox" type="checkbox" name="new-contact-checkbox" id="new-contact-checkbox">
@@ -159,7 +159,7 @@
     </div>
 
     <label class="label new-contact" for="new_emergency_contact-name">Nombre</label>
-    <input disabled class="input new-contact" type="text" name="new_emergency_contact-name" id="new_emergency_contact-name" value="{{ form.new_emergency_contact.name.data or '' }}">
+    <input class="input new-contact" type="text" name="new_emergency_contact-name" id="new_emergency_contact-name" value="{{ form.new_emergency_contact.name.data or '' }}">
     {% if form.new_emergency_contact.name.errors %}
         <div class="alert alert-danger">
             {% for error in form.new_emergency_contact.name.errors %}
@@ -169,7 +169,7 @@
     {% endif %}
 
     <label class="label new-contact" for="new_emergency_contact-phone_number">Numero</label>
-    <input disabled class="input new-contact" type="text" name="new_emergency_contact-phone_number" id="new_emergency_contact-phone_number" value="{{ form.new_emergency_contact.phone_number.data or '' }}">
+    <input class="input new-contact" type="text" name="new_emergency_contact-phone_number" id="new_emergency_contact-phone_number" value="{{ form.new_emergency_contact.phone_number.data or '' }}">
     {% if form.new_emergency_contact.phone_number.errors %}
         <div class="alert alert-danger">
             {% for error in form.new_emergency_contact.phone_number.errors %}
@@ -315,15 +315,11 @@
             sortField: 'text'
         });
 
-        const address_select = document.getElementById('address_id');
-        const emergency_contact_select = document.getElementById('emergency_contact');
-
         // Oculta los campos de nueva dirección inicialmente
         $('.new_address').hide();
 
         // Detecta cuando se selecciona o deselecciona el checkbox
         $('#address_checkbox').change(function () {
-            address_select.disabled = !address_select.disabled;
             if ($(this).is(':checked')) {
                 $('.new_address').show();
                 $('.old_address').hide();
@@ -338,7 +334,6 @@
 
         // Detecta cuando se selecciona o deselecciona el checkbox
         $('#new-contact-checkbox').change(function () {
-            emergency_contact_select.disabled = !emergency_contact_select.disabled;
             if ($(this).is(':checked')) {
                 $('.new-contact').show();
                 $('.emergency-contact-div').hide();
