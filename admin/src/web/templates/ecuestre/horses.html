@@ -3,6 +3,7 @@
 {% block title %}Listado de caballos{% endblock %}
 {% block head %}
     {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/payment_and_billing/list.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_list.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_info.css') }}"/>
 {% endblock %}
@@ -15,7 +16,48 @@
         <a href="{{ url_for('horses.create_horse_view') }}" class="button is-white is-size-6">Agregar Caballo</a>
     </div>
 
-    <form id="form-search" method="GET" action="{{url_for('horses.list_horses')}}">
+    <div class="search-container">
+        <form class="form-container" method="get" action="{{ url_for('horses.list_horses') }}">
+            <div class="columns is-multiline">
+                <div class="column is-narrow">
+                    <input class="input" type="text" name="q" placeholder="Buscar por nombre" value="{{ request.args.get('q', '') }}">
+                </div>
+                <div class="column is-narrow">
+                    <div class="select">
+                        <select name="order" id="order" onchange="this.form.submit()">
+                            <option value="name_asc" {% if order == 'name_asc' %}selected{% endif %}>Nombre: A-Z</option>
+                            <option value="name_desc" {% if order == 'name_desc' %}selected{% endif %}>Nombre: Z-A</option>
+                            <option value="birth_date_asc" {% if order == 'birth_date_asc' %}selected{% endif %}>Fecha de nacimiento: Menor-Mayor</option>
+                            <option value="birth_date_desc" {% if order == 'birth_date_desc' %}selected{% endif %}>Fecha de nacimiento: Mayor-Menor</option>
+                            <option value="entry_date_asc" {% if order == 'entry_date_asc' %}selected{% endif %}>Fecha de entrada: Menor-Mayor</option>
+                            <option value="entry_date_desc" {% if order == 'entry_date_desc' %}selected{% endif %}>Fecha de entrada: Mayor-Menor</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="column is-narrow">
+                    <div class="select">
+                        <select name="type_jya" id="type_jya" onchange="this.form.submit()">
+                            <option value="">Tipo de jinetes y amazonas</option>
+                            <option value="Hipoterapia" {% if type_jya_assigned == 'Hipoterapia' %}selected{% endif %}>Hipoterapia</option>
+                            <option value="Monta Terapéutica" {% if type_jya_assigned == 'Monta Terapéutica' %}selected{% endif %}>Monta Terapéutica</option>
+                            <option value="Deporte Ecuestre Adaptado" {% if type_jya_assigned == 'Deporte Ecuestre Adaptado' %}selected{% endif %}>Deporte Ecuestre Adaptado</option>
+                            <option value="Actividades Recreativas" {% if type_jya_assigned == 'Actividades Recreativas' %}selected{% endif %}>Actividades Recreativas</option>
+                            <option value="Equitación" {% if type_jya_assigned == 'Equitación' %}selected{% endif %}>Equitación</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="column is-narrow">
+                    <button type="submit" class="button search-button">Buscar</button>
+                </div>
+                <div class="column is-narrow">
+                    <a class="button restore-button" href="{{ url_for('horses.list_horses', page=page) }}">Restablecer</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <!-- <form id="form-search" method="GET" action="{{url_for('horses.list_horses')}}">
         <div class="field is-grouped">
             <div class="field">
                 <label class="label">Nombre</label>
@@ -59,7 +101,7 @@
                 <option value="entry_date_desc">Fecha de entrada: Mayor-Menor</option>
             </select>
         </div>
-    </form>
+    </form> -->
     <div class="table-container" style="overflow: hidden; overflow-x:auto">
         <table class="table is-striped horses">
             <thead>
@@ -78,8 +120,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% if horses.items %}
-                    {% for horse in horses.items %}
+                {% if horses %}
+                    {% for horse in horses %}
                         <tr>
                             <td>
                                 <a href="{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}">
@@ -122,21 +164,19 @@
             </tbody>
         </table>
     </div>
-<!-- Controles de paginación -->
-<div class="pagination">
-    {% if horses.has_prev %}
-        <a href="{{ url_for('horses.list_horses', page=horses.prev_num, order_option=order_by, name=name, type_jya_assigned=type_jya_assigned) }}">
-            Anterior
-        </a>
-    {% endif %}
-
-    <span>Página {{ horses.page }} de {{ horses.pages }}</span>
-
-    {% if horses.has_next %}
-        <a href="{{ url_for('horses.list_horses', page=horses.next_num, order_option=order_by, name=name, type_jya_assigned=type_jya_assigned) }}">
-            Siguiente
-        </a>
-    {% endif %}
+    <nav class="pagination" role="navigation" aria-label="pagination">
+        <a class="pagination-previous" {% if not pagination.has_prev %}disabled{% else %}href="{{ url_for('horses.list_horses', page=pagination.prev_num,  order=order, q=q) }}"{% endif %}>Previous</a>
+        <a class="pagination-next" {% if not pagination.has_next %}disabled{% else %}href="{{ url_for('horses.list_horses', page=pagination.next_num,  order=order, q=q) }}"{% endif %}>Next page</a>
+    </nav>
+</div>
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h3>¿Estás seguro de que deseas eliminar el caballo?</h3>
+        <div class="modal-actions">
+            <button id="cancelButton" class="button">Cancelar</button>
+            <button id="confirmButton" class="button is-danger">Eliminar</button>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
