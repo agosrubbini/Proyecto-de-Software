@@ -141,6 +141,22 @@ def initialice_ecuestre_permissions():
 
     db.session.commit()
 
+
+def initialice_voluntariado_permissions():
+    voluntariado_role = Role.query.filter_by(name="Voluntariado").first()
+
+    # Lista de permisos para el rol Voluntariado
+    voluntariado_permissions = [
+        
+    ]
+
+    for perm_name in voluntariado_permissions:
+        permission = Permision.query.filter_by(name=perm_name).first()
+        if permission:
+            voluntariado_role.permissions.append(permission)
+
+    db.session.commit()    
+
 def get_user_permissions(user_mail):
     if user_mail:
         user = User.query.filter_by(email=user_mail).first()
