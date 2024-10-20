@@ -70,6 +70,16 @@ def run():
         is_blocked=False
     )
 
+    user_voluntariado = create_user(
+        email="user_voluntariado@gmail.com",
+        alias="user_voluntariado",
+        password="1234",
+        role_id=voluntariado.id,
+        system_admin=False,
+        active=True,
+        is_blocked=False
+    )
+
     address1 = create_address (
         street="Calle 45",
         number="985",

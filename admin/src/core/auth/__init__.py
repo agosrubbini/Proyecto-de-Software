@@ -142,6 +142,21 @@ def initialice_ecuestre_permissions():
 
     db.session.commit()
 
+def initialice_voluntariado_permissions():
+    voluntariado_role = Role.query.filter_by(name="Voluntariado").first()
+
+    # Lista de permisos para el rol Voluntariado
+    voluntariado_permissions = [
+        
+    ]
+
+    for perm_name in voluntariado_permissions:
+        permission = Permision.query.filter_by(name=perm_name).first()
+        if permission:
+            voluntariado_role.permissions.append(permission)
+
+    db.session.commit()    
+
 
 def initialice_voluntariado_permissions():
     voluntariado_role = Role.query.filter_by(name="Voluntariado").first()
@@ -179,8 +194,6 @@ def update_role(user, role):
 def get_all_roles():
     return Role.query.all()
 
-
-#TODO quitar este metodo
 def validate_role(role):
     return not role == "Selecciona un rol"
 
