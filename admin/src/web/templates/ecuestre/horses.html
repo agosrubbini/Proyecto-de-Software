@@ -15,8 +15,8 @@
         <a href="{{ url_for('horses.create_horse_view') }}" class="button is-white is-size-6">Agregar Caballo</a>
     </div>
 
-    <form method="GET" action="{{url_for('horses.list_horses')}}">
-        <div class="field is-grouped is-grouped-centered">
+    <form id="form-search" method="GET" action="{{url_for('horses.list_horses')}}">
+        <div class="field is-grouped">
             <div class="field">
                 <label class="label">Nombre</label>
                 <div class="control has-icons-left">
@@ -42,7 +42,9 @@
                     </select>
                 </div>
             </div>
-            <button class="boton filter" type="submit">Buscar</button>
+            <div class="field ">
+                <button class="boton boton-busqueda" type="submit">Buscar</button>
+            </div>
         </div>
     </form>
     <form method="GET" action="{{ url_for('horses.list_horses') }}">
@@ -58,66 +60,68 @@
             </select>
         </div>
     </form>
-    <table class="table is-striped horses">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Fecha de nacimiento</th>
-                <th>Genero</th>
-                <th>Raza</th>
-                <th>Pelaje</th>
-                <th>Compra/Donacion</th>
-                <th>Fecha de entrada</th>
-                <th>Sede</th>
-                <th>Tipo Jinetes/Amazonas asignados</th>
-                <th>Empleados</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if horses.items %}
-                {% for horse in horses.items %}
-                    <tr>
-                        <td>
-                            <a href="{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}">
-                            {{ horse.name }}
-                            </a>
-                        </td>
-                        <td> {{ horse.date_of_birth.strftime('%d-%m-%Y') }} </td>
-                        <td> {{horse.gender}} </td>
-                        <td> {{horse.race}} </td>
-                        <td> {{horse.fur}} </td>
-                        <td> {{horse.purchase_or_donation}} </td>
-                        <td> {{  horse.date_of_entry.strftime('%d-%m-%Y')  }} </td>
-                        <td> {{horse.sede}} </td>
-                        <td>
-                        {% for type in horse.type_jya_assigned %}
-                            {{ type }}{% if not loop.last %}, {% endif %}
-                        {% endfor %}
-                        </td>                   
-                        <td>
-                        {% for employee in horse.employees %}
-                            {{ employee.name }}{% if not loop.last %}, {% endif %}
-                        {% endfor %}
-                        </td>
-                        <td>
-                            <a href="{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}" class="button is-small is-white"><i class="fas fa-eye" title="Ver"></i></a>
-                            <a href="{{ url_for('horses.edit_horse', horse_id=horse.id) }}" class="button is-small is-white"><i class="fas fa-edit" title="Editar"></i></a>
-                            <form action="{{ url_for('horses.delete_horse', horse_id=horse.id) }}" 
-                            method="POST" style="display: inline;">
-                                <button type="submit" class="button is-small is-white">
-                                    <i class="fas fa-trash" title="Eliminar"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                
-                {% endfor %}
-            {% else %}
-                <p style="text-align: center;">No hay caballos registrados en el sistema</p>
-            {% endif %}
-        </tbody>
-    </table>
+    <div class="table-container" style="overflow: hidden; overflow-x:auto">
+        <table class="table is-striped horses">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Fecha de nacimiento</th>
+                    <th>Genero</th>
+                    <th>Raza</th>
+                    <th>Pelaje</th>
+                    <th>Compra/Donacion</th>
+                    <th>Fecha de entrada</th>
+                    <th>Sede</th>
+                    <th>Tipo Jinetes/Amazonas asignados</th>
+                    <th>Empleados</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if horses.items %}
+                    {% for horse in horses.items %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}">
+                                {{ horse.name }}
+                                </a>
+                            </td>
+                            <td> {{ horse.date_of_birth.strftime('%d-%m-%Y') }} </td>
+                            <td> {{horse.gender}} </td>
+                            <td> {{horse.race}} </td>
+                            <td> {{horse.fur}} </td>
+                            <td> {{horse.purchase_or_donation}} </td>
+                            <td> {{  horse.date_of_entry.strftime('%d-%m-%Y')  }} </td>
+                            <td> {{horse.sede}} </td>
+                            <td>
+                            {% for type in horse.type_jya_assigned %}
+                                {{ type }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                            </td>                   
+                            <td>
+                            {% for employee in horse.employees %}
+                                {{ employee.name }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}" class="button is-small is-white"><i class="fas fa-eye" title="Ver"></i></a>
+                                <a href="{{ url_for('horses.edit_horse', horse_id=horse.id) }}" class="button is-small is-white"><i class="fas fa-edit" title="Editar"></i></a>
+                                <form action="{{ url_for('horses.delete_horse', horse_id=horse.id) }}" 
+                                method="POST" style="display: inline;">
+                                    <button type="submit" class="button is-small is-white">
+                                        <i class="fas fa-trash" title="Eliminar"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    
+                    {% endfor %}
+                {% else %}
+                    <p style="text-align: center;">No hay caballos registrados en el sistema</p>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
 <!-- Controles de paginación -->
 <div class="pagination">
     {% if horses.has_prev %}

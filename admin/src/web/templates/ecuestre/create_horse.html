@@ -1,7 +1,7 @@
-{% extends "users/user_new.html" %}
+{% extends "layout.html" %}
 {% block head %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/users/auth.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/auth.css') }}">
 {% endblock %}
 {% block title %}Agregar Nuevo Caballo{% endblock %}
 {% block content %}

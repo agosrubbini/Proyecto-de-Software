@@ -1,5 +1,6 @@
 from flask import Blueprint, request, flash, session, redirect, render_template, url_for
 from flask import render_template, redirect, url_for
+from src.core.auth.auth import inject_user_permissions, permission_required
 from src.core.horses.models.horse import Horse
 from src.core.database import db
 from src.core.horses.forms import create_horse_Form, registryFileForm
@@ -58,7 +59,8 @@ def show_horses(request):
     return horse, page, order_by, name, type_jya_assigned
 
 @bp.get("/")
-#@inject_user_permissions
+@permission_required('horse_index')
+@inject_user_permissions
 def list_horses():
 
     """
@@ -73,6 +75,8 @@ def list_horses():
 
 
 @bp.route('/create', methods=['GET', 'POST'])
+@permission_required('horse_new')
+@inject_user_permissions
 def create_horse_view():
     form = create_horse_Form()
 
@@ -130,8 +134,8 @@ def create_horse_view():
     return render_template('ecuestre/create_horse.html', context=context)  # Renderizar el formulario
 
 @bp.route('/editar/<int:horse_id>', methods=['GET', 'POST'])
-#@permission_required('horse_edit')
-#@inject_user_permissions
+@permission_required('horse_update')
+@inject_user_permissions
 def edit_horse(horse_id):
 
     """
@@ -180,8 +184,8 @@ def edit_horse(horse_id):
     return render_template('ecuestre/edit_horse.html', form=form, employee_list=employee_list, horse=horse)
 
 @bp.route('/eliminar/<int:horse_id>', methods=['POST'])
-#@permission_required('billing_delete')
-#@inject_user_permissions
+@permission_required('horse_destroy')
+@inject_user_permissions
 def delete_horse(horse_id):
 
     """
@@ -237,7 +241,8 @@ def show_files(horse_id, request):
 
 
 @bp.get("/<int:horse_id>")
-#@inject_user_permissions
+@permission_required('horse_show')
+@inject_user_permissions
 def list_info_by_id(horse_id):
 
     """
@@ -266,7 +271,8 @@ def list_info_by_id(horse_id):
 
 
 @bp.route("/<int:horse_id>/delete_file/<int:file_id>", methods=['POST', 'GET'])
-#@inject_user_permissions
+@permission_required('horse_update')
+@inject_user_permissions
 def delete_file(horse_id, file_id):
 
     print("Este es el file id", file_id)
@@ -286,7 +292,8 @@ def delete_file(horse_id, file_id):
 
 
 @bp.route("/<int:horse_id>/add_file", methods=['POST', 'GET'])
-#@inject_user_permissions
+@permission_required('horse_update')
+@inject_user_permissions
 def add_file(horse_id):
 
     """
@@ -363,7 +370,8 @@ def add_file(horse_id):
 
 
 @bp.route("/<int:horse_id>/download_file/<file_id>", methods=['GET'])
-#@inject_user_permissions
+@permission_required('horse_update')
+@inject_user_permissions
 def download_file(horse_id, file_id):
     # Obtener el archivo de la base de datos usando el ID
     file = find_file_by_id(file_id)
@@ -383,7 +391,8 @@ def download_file(horse_id, file_id):
     return redirect(presigned_url)
 
 @bp.route("/<int:horse_id>/edit_file/<file_id>", methods=['POST', 'GET'])
-#@inject_user_permissions
+@permission_required('horse_update')
+@inject_user_permissions
 def edit_file(horse_id, file_id):
 
     """
