@@ -362,16 +362,18 @@ def edit_file(user_id, file_id):
         if new_file:
 
             # Obtener el tamaño del archivo
-            size = fstat(file.fileno()).st_size
+            new_file.seek(0, 2)
+            size = new_file.tell()
+            new_file.seek(0)
 
             minio_client.put_object(bucket_name,new_file.filename,new_file,size,content_type=new_file.content_type)
 
             updated_employee_file(
                 file, 
                 file_url = new_file.filename, 
-                file_type = form.file_type.data,  
-                document_type = form.document_type.data,
                 title = form.title.data,
+                document_type = form.document_type.data,
+                employee_id = user_id,
             )
             
         else:
