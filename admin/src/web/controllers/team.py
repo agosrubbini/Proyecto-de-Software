@@ -17,6 +17,8 @@ bp = Blueprint('team', __name__, url_prefix='/empleados')
 @inject_user_permissions
 def list_team():
     employees = Employee.query.all()
+    # Elimino del query aquellos empleados eliminados logicamente
+    employees = [employee for employee in employees if not employee.email.startswith('*')]
     order=request.args.get('order', 'last_name_asc')
     q=request.args.get('q', None)
     page=request.args.get('page', 1, type=int)
@@ -125,6 +127,10 @@ def show_employee(id):
     app.logger.info("Call to index function")
 
     employee = find_employee_by_id(id)
+    # Quita el asterisco si el empleado fue eliminado logicamente
+    if employee.email.startswith('*'):
+        employee.email = employee.email[1:]
+
     employee_address = find_address_by_id(employee.address_id).string()
     employee_healthcare_plan = get_healthcare_plan_by_id(employee.healthcare_plan_id_employee)
     employee_emergency_contact = get_emergency_contact_by_id(employee.emergency_contact_id_employee)
@@ -225,14 +231,14 @@ def edit_employee(id):
 @permission_required('team_destroy')
 @inject_user_permissions
 def delete_employee(id):
-    print('Employee id:', id)
     employee = Employee.query.get(id)
-    if not employee:
-        print('Employee not found', 'error')
-    else:
-        db.session.delete(employee)
+    if employee:
+        employee.email = f"*{employee.email}"
+        employee.active = False
         db.session.commit()
-        print('Employee deleted successfully!', 'success')
+        flash('Employee logically deleted successfully!', 'success')
+    else:
+        flash('Employee not found.', 'error')
     # Que pasa cuando quiero eliminar un empleado que tiene billings asociados?
     # Empleado con archivos se borran ambos.
     # Que otro caso existe?
@@ -287,7 +293,7 @@ def add_file(id):
     return render_template("team/file_new.html", form=form, id=id)
 
 @bp.route('/empleado/<int:id>/archivo/<int:file_id>/eliminar', methods=['POST', 'GET'])
-@permission_required('team_delete_file')
+@permission_required('team_update')
 @inject_user_permissions
 def delete_file(id, file_id):
     file = find_employee_file_by_id(file_id)
@@ -302,7 +308,7 @@ def delete_file(id, file_id):
     return redirect(url_for('team.show_employee', id=id))
 
 @bp.route('/empleado/<int:user_id>/archivo/<int:file_id>/descargar', methods=['GET'])
-@permission_required('team_download_file')
+@permission_required('team_update')
 @inject_user_permissions
 def download_file(user_id, file_id):
     # Obtener el archivo de la base de datos usando el ID
@@ -324,7 +330,7 @@ def download_file(user_id, file_id):
     return redirect(presigned_url)
 
 @bp.route('/empleado/<int:user_id>/archivo/<int:file_id>/editar', methods=['GET', 'POST'])
-@permission_required('team_view_file')
+@permission_required('team_update')
 @inject_user_permissions
 def edit_file(user_id, file_id):
     """
