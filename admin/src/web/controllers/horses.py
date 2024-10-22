@@ -16,50 +16,6 @@ from os import fstat
 
 bp = Blueprint('horses', __name__, url_prefix='/horses')
 
-#def show_horses(request):
-   
-    # # Determine the order option
-    # if request.method == 'POST':
-    #     order_by = request.args.get('order_option', 'name_asc', type=str)
-    # else:
-    #     order_by = request.args.get('order_option', 'name_asc', type=str)
-    
-
-    # # Map order options to actual column sorting
-    # order_mapping = {
-    #     'name_asc': Horse.name,
-    #     'name_desc': desc(Horse.name),
-    #     'birth_date_asc': Horse.date_of_birth,
-    #     'birth_date_desc': desc(Horse.date_of_birth),
-    #     'entry_date_asc': Horse.date_of_entry,
-    #     'entry_date_desc': desc(Horse.date_of_entry),
-    # }
-
-    # order_criteria = order_mapping.get(order_by, Horse_file.title)
-
-    # # Pagination
-    # page = request.args.get('page', 1, type=int)
-    
-    # # Filtering options
-    # name = request.args.get('name', '', type=str)
-    # type_jya_assigned = request.args.get('type_jya_assigned', '', type=str)
-
-
-    # # Build the query
-    # query = Horse.query
-    
-    # if name:
-    #     query = query.filter(Horse.name.ilike(f'%{name}%'))
-    # if type_jya_assigned:
-    #     query = query.filter(Horse.type_jya_assigned.contains([type_jya_assigned]))
-    
-    # # Apply ordering and pagination
-    # horse = query.order_by(order_criteria).paginate(page=page, per_page=2)
-
-    # return horse, page, order_by, name, type_jya_assigned
-
-
-
 
 @bp.get("/")
 @permission_required('horse_index')
@@ -70,26 +26,25 @@ def list_horses():
         Esta función retorna el listado con los caballos registrados en el sistema.
     """
 
-    #horse, page, order_by, name, type_jya_assigned = show_horses(request)
-    #return render_template ("ecuestre/horses.html", horses = horse, page=page, order_by=order_by, name=name, type_jya_assigned=type_jya_assigned)
     order = request.args.get('order', 'name_asc')
     q = request.args.get('q', None)
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 2, type=int)
     type_jya = request.args.get('type_jya', None)
+    horses_query = Horse.query.filter(~Horse.name.startswith('*'))
 
     if order == 'name_asc':
-        horses_query = Horse.query.order_by(Horse.name.asc())
+        horses_query = horses_query.order_by(Horse.name.asc())
     elif order == 'name_desc':
-        horses_query = Horse.query.order_by(Horse.name.desc())
+        horses_query = horses_query.order_by(Horse.name.desc())
     elif order == 'birth_date_asc':
-        horses_query = Horse.query.order_by(Horse.date_of_birth.asc())
+        horses_query = horses_query.order_by(Horse.date_of_birth.asc())
     elif order == 'birth_date_desc':
-        horses_query = Horse.query.order_by(Horse.date_of_birth.desc())
+        horses_query = horses_query.order_by(Horse.date_of_birth.desc())
     elif order == 'entry_date_asc':
-        horses_query = Horse.query.order_by(Horse.date_of_entry.asc())
+        horses_query = horses_query.order_by(Horse.date_of_entry.asc())
     elif order == 'entry_date_desc':
-        horses_query = Horse.query.order_by(Horse.date_of_entry.desc())
+        horses_query = horses_query.order_by(Horse.date_of_entry.desc())
 
     horse_pagination = horses_query.paginate(page=page, per_page=per_page, error_out=False)
     horses = horse_pagination.items
@@ -101,6 +56,7 @@ def list_horses():
     if type_jya:
         horses = [horse for horse in horses if type_jya in horse.type_jya_assigned]
 
+    
     return render_template('ecuestre/horses.html', horses=horses, order=order, q=q, pagination=horse_pagination, type_jya_assigned=type_jya, form=create_horse_Form())
 
 
@@ -165,6 +121,7 @@ def create_horse_view():
 
     return render_template('ecuestre/create_horse.html', context=context)  # Renderizar el formulario
 
+
 @bp.route('/editar/<int:horse_id>', methods=['GET', 'POST'])
 @permission_required('horse_update')
 @inject_user_permissions
@@ -215,23 +172,25 @@ def edit_horse(horse_id):
         return redirect(url_for('horses.list_info_by_id', horse_id=horse.id))
     return render_template('ecuestre/edit_horse.html', form=form, employee_list=employee_list, horse=horse)
 
+
 @bp.route('/eliminar/<int:horse_id>', methods=['POST'])
 @permission_required('horse_destroy')
 @inject_user_permissions
 def delete_horse(horse_id):
 
     """
-    Esta funcion se encarga de eliminar un cobro en especifico asociado a un id.
+    Esta funcion se encarga de eliminar un caballo de forma logica asociado a un id.
     """
 
     horse = Horse.query.get(horse_id)
     if horse:
-        db.session.delete(horse)
+        horse.name = f'*{horse.name.strip()}'
         db.session.commit()
         flash('Horse deleted successfully!', 'success')
     else:
         flash('Horse not found!', 'danger')
     return redirect(url_for('horses.list_horses'))
+
 
 def show_files(horse_id, request):
    
