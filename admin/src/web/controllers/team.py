@@ -16,15 +16,13 @@ bp = Blueprint('team', __name__, url_prefix='/empleados')
 @permission_required('team_index')
 @inject_user_permissions
 def list_team():
-    employees = Employee.query.all()
-    # Elimino del query aquellos empleados eliminados logicamente
-    employees = [employee for employee in employees if not employee.email.startswith('*')]
     order=request.args.get('order', 'last_name_asc')
     q=request.args.get('q', None)
     page=request.args.get('page', 1, type=int)
     per_page=request.args.get('per_page', 25, type=int)
     job_position=request.args.get('job_position', None)
 
+    # Ordeno según el parámetro seleccionado
     if order == 'last_name_asc':
         employees = Employee.query.order_by(Employee.last_name.asc())
     elif order == 'last_name_desc':
@@ -37,13 +35,21 @@ def list_team():
         employees = Employee.query.order_by(Employee.start_date.asc())
     else:
         employees = Employee.query.order_by(Employee.start_date.desc())
-    
+
+    # Elimino del query aquellos empleados logicamente
+    employees = employees.filter(Employee.email.notlike('*%'))
+
+    # Aplico paginación al query
     employees_pagination = employees.paginate(page=page, per_page=per_page, error_out=False)
+
+    # Me quedo con los objetos resultantes de la paginación
     employees = employees_pagination.items
 
+    # Si se realizo una búsqueda, busco si "q" está presente en alguno de los campos
     if q:
         employees = [employee for employee in employees if q.lower() in employee.name.lower() or q.lower() in employee.last_name.lower() or q.lower() in employee.email.lower() or q in employee.DNI]
 
+    # Si se aplico un filtro según la posición, me quedo solo con los que apliquen
     if job_position:
         employees = [employee for employee in employees if job_position == employee.job_position]
 
@@ -127,6 +133,7 @@ def show_employee(id):
     app.logger.info("Call to index function")
 
     employee = find_employee_by_id(id)
+    
     # Quita el asterisco si el empleado fue eliminado logicamente
     if employee.email.startswith('*'):
         employee.email = employee.email[1:]
