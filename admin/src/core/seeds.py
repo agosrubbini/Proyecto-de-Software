@@ -3,9 +3,9 @@ from datetime import datetime
 from src.core.auth import create_user, create_role, create_permission, initialice_admin_permissions, initialice_tecnica_permissions, initialice_ecuestre_permissions
 from src.core.horses import create_horse
 from src.core.institutions import create_institutional_work, create_school
-from src.core.payments import create_payment, create_billing
+from src.core.payments import create_billing, create_payment
 from src.core.persons import (
-    create_person, create_employee, create_JyA, create_family_member_or_tutor, create_address, create_emergency_contact, 
+    create_employee_file, create_person, create_employee, create_JyA, create_address, create_emergency_contact, 
     create_healthcare_plan, create_file)
 from src.core.horses import create_file as create_horse_file
 
@@ -149,7 +149,9 @@ def run():
         job_position="Jefe",
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",
-        healthcare_plan_id_employee=healthcare_plan1.id
+        healthcare_plan_id_employee=healthcare_plan1.id,
+        email="empleado@gmail.com",
+        birth_date = datetime.now(),
     )
 
     employee2 = create_employee(
@@ -163,7 +165,9 @@ def run():
         job_position="Jefe",
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",
-        healthcare_plan_id_employee=healthcare_plan1.id
+        healthcare_plan_id_employee=healthcare_plan1.id,
+        email="empleado2@gmail.com",
+        birth_date = datetime.now(),
     )
 
 
@@ -212,6 +216,12 @@ def run():
         title = "ARCHIVO DE PRUEBA",
     )
 
+    employee_file1 = create_employee_file(
+        file_url = "titulo1",
+        title = "Titulo-58843",
+        document_type = "Título",
+        employee_id = employee2.id,
+    )
 
     horse_file1 = create_horse_file(
         file_url = "hola",

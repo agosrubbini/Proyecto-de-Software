@@ -3,7 +3,7 @@ from src.core.persons.models.person import Person, Employee, JyA, FamilyMemberOr
 from src.core.persons.models.address import Address
 from src.core.persons.models.emergency_contact import EmergencyContact
 from src.core.persons.models.healthcare_plan import HealthcarePlan
-from src.core.persons.models.file import File
+from src.core.persons.models.file import EmployeeFile, File
 from datetime import datetime
 
 def create_person(**kwargs):
@@ -61,6 +61,13 @@ def create_file(**kwargs):
     db.session.commit()
 
     return file
+
+def create_employee_file(**kwargs):
+    employee_file = EmployeeFile(**kwargs)
+    db.session.add(employee_file)
+    db.session.commit()
+
+    return employee_file
 
 def get_jya_users():
 
@@ -178,4 +185,51 @@ def get_healthcare_plan_by_id(healthcare_plan_id):
 
     return HealthcarePlan.query.filter_by(id=healthcare_plan_id).first()
 
-   
+def find_employee_by_id(id):
+
+    """Devuelve el empleado con el id pasado por parámetro"""
+
+    return Employee.query.filter_by(id=id).first()
+
+def get_files_by_employee_id(id):
+    
+    """Devuelve los archivos asociados al empleado con el id pasado por parámetro"""
+
+    return EmployeeFile.query.filter_by(employee_id = id).all()
+
+def find_employee_file_by_title(title):
+
+    """Devuelve el archivo con el titulo pasado por parámetro"""
+
+    return EmployeeFile.query.filter_by(title=title).first()
+
+def find_employee_file_by_id(id):
+
+    """Devuelve el archivo con el id pasado por parámetro"""
+
+    return EmployeeFile.query.filter_by(id=id).first()
+
+def delete_employee_file_by_id(id):
+
+    """Elimina de la base de datos el archivo con el id pasado como parámetro """
+    
+    employee_file = EmployeeFile.query.filter_by(id = id).first()
+    db.session.delete(employee_file)
+    db.session.commit()
+
+def updated_employee_file(employee_file, **kwargs):
+
+    """Edita el archivo con el id pasado por parámetro"""
+
+    allowed_fields = ['file_url', 'title', 'document_type', 'employee_id']
+    
+    for key, value in kwargs.items():
+        if key in allowed_fields and value is not None:
+            setattr(employee_file, key, value)
+            
+    employee_file.upload_date = datetime.now()  # Actualizar la fecha de subida
+
+    db.session.add(employee_file)
+    db.session.commit()
+
+    return employee_file

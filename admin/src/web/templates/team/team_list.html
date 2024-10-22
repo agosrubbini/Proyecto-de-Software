@@ -1,0 +1,233 @@
+{% extends "layout.html" %}
+{% block title %}Empleados{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="header-container">
+        <h1>Lista de Empleados</h1>
+        <a href="{{ url_for('team.new_employee') }}" class="button is-white is-size-6">Agregar empleado</a>
+    </div>
+
+    <div class="search-container">
+        <form class="form-container" method="get" action="{{ url_for('team.list_team') }}">
+            <input type="text" name="q" placeholder="Buscar..." value="{{ request.args.get('q', '') }}">
+
+            <select name="order" id="order" onchange="this.form.submit()">
+                <option value="name_asc" {% if order == 'name_asc' %}selected{% endif %}>Nombre: Orden Ascendente</option>
+                <option value="name_desc" {% if order == 'name_desc' %}selected{% endif %}>Nombre: Orden Descendente</option>
+                <option value="last_name_asc" {% if order == 'last_name_asc' %}selected{% endif %}>Apellido: Orden Ascendente</option>
+                <option value="last_name_desc" {% if order == 'last_name_desc' %}selected{% endif %}>Apellido: Orden Descendente</option>
+                <option value="date_asc" {% if order == 'date_asc' %}selected{% endif %}>Fecha de ingreso: Orden Ascendente</option>
+                <option value="date_desc" {% if order == 'date_desc' %}selected{% endif %}>Fecha de ingreso: Orden Descendente</option>
+            </select>
+
+            <select name="job_position" id="job_position" onchange="this.form.submit()">
+                <option value="">Puesto laboral</option>
+                <option value="administrativo" {% if job_position == 'administrativo' %}selected{% endif %}>Administrativo/a</option>
+                <option value="terapeuta" {% if job_position == 'terapeuta' %}selected{% endif %}>Terapeuta</option>
+                <option value="conductor" {% if job_position == 'conductor' %}selected{% endif %}>Conductor</option>
+                <option value="auxiliar_de_pista" {% if job_position == 'auxiliar_de_pista' %}selected{% endif %}>Auxiliar de pista</option>
+                <option value="herrero" {% if job_position == 'herrero' %}selected{% endif %}>Herrero</option>
+                <option value="veterinario" {% if job_position == 'veterinario' %}selected{% endif %}>Veterinario</option>
+                <option value="entrenador_de_caballos" {% if job_position == 'entrenador_de_caballos' %}selected{% endif %}>Entrenador de Caballos</option>
+                <option value="domador" {% if job_position == 'domador' %}selected{% endif %}>Domador</option>
+                <option value="profesor_de_equitacion" {% if job_position == 'profesor_de_equitacion' %}selected{% endif %}>Profesor de Equitación</option>
+                <option value="docente_de_capacitacion" {% if job_position == 'docente_de_capacitacion' %}selected{% endif %}>Docente de Capacitación</option>
+                <option value="auxiliar_de_mantenimiento" {% if job_position == 'auxiliar_de_mantenimiento' %}selected{% endif %}>Auxiliar de mantenimiento</option>
+                <option value="otro" {% if job_position == 'otro' %}selected{% endif %}>Otro</option>
+            </select>
+            <button type="submit" class="button">Buscar</button>
+        </form>
+
+        <form class="search-form" method="get" action="{{ url_for('team.list_team') }}">
+            <input hidden name="q" id="q" value="">
+            <input hidden name="order" id="order" value="name_asc">
+            <input hidden name="job_position" id="job_position" value="">
+            <button type="submit" style="margin-left: 5px;" class="button">Restablecer</button>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>DNI</th>
+                    <th>Apellido</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Puesto laboral</th>
+                    <th>Actividad</th>
+                    <th>Fecha de inicio</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if employees %}
+                    {% for employee in employees %}
+                    <tr>
+                        <td><a href="{{ url_for('team.show_employee', id=employee.id) }}">{{ employee.DNI }}</a></td>
+                        <td>{{ employee.last_name }}</td>
+                        <td>{{ employee.name }}</td>
+                        <td>{{ employee.email }}</td>
+                        <td>{{ employee.job_position }}</td>
+                        {% if employee.active %}
+                            <td>Activo</td>
+                        {% else %}
+                            <td>Inactivo</td>
+                        {% endif %}
+                        <td>{{ employee.start_date.strftime('%Y/%m/%d') }}</td>
+                        <td>
+                            <a href="{{ url_for('team.show_employee', id=employee.id) }}" class="button is-small is-white"><i class="fas fa-eye" title="Ver"></i></a>
+                            <a href="{{ url_for('team.edit_employee', id=employee.id) }}" class="button is-small is-white"><i class="fas fa-edit" title="Editar"></i></a>
+                            <a class="button is-small is-white delete-button" data-employee-id="{{ employee.id }}" data-employee-dni="{{ employee.DNI }}"><i class="fas fa-trash" title="Eliminar"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5">No hay empleados</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <nav class="pagination" role="navigation" aria-label="pagination">
+        <a class="pagination-previous" {% if not pagination.has_prev %}disabled{% else %}href="{{ url_for('team.list_team', page=pagination.prev_num,  order=order, q=q) }}"{% endif %}>Previous</a>
+        <a class="pagination-next" {% if not pagination.has_next %}disabled{% else %}href="{{ url_for('team.list_team', page=pagination.next_num,  order=order, q=q) }}"{% endif %}>Next page</a>
+    </nav>
+</div>
+
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h3>¿Estás seguro de que deseas eliminar el empleado de DNI: <span id="employeeDNIToDelete"></span>?</h3>
+        <div class="modal-actions">
+            <button id="cancelButton" class="button">Cancelar</button>
+            <button id="confirmButton" class="button is-danger">Eliminar</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        width: 70%;
+    }
+
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .form-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .search-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .table-container {
+        width: 100%;
+        margin: 0 auto;
+    }
+    
+    .table {
+        width: 100%;
+        margin: 0 auto;
+        border-collapse: collapse;
+    }
+    
+    .table th, .table td {
+        padding: 8px;
+    }
+    
+    .table th {
+        text-align: left;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+    }
+
+    .modal-actions {
+        display: flex;
+        justify-content: space-between;
+    }
+
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('.delete-button');
+        const deleteModal = document.getElementById('deleteModal');
+        const cancelButton = document.getElementById('cancelButton');
+        const confirmButton = document.getElementById('confirmButton');
+        const employeeDNIToDeleteSpan = document.getElementById('employeeDNIToDelete');
+        let employeeIDToDelete = null;
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                employeeIDToDelete = this.dataset.employeeId;
+                employeeDNIToDelete = this.dataset.employeeDni;
+                employeeDNIToDeleteSpan.textContent = employeeDNIToDelete;
+                deleteModal.style.display = 'block';
+            });
+        });
+
+        cancelButton.addEventListener('click', function () {
+            deleteModal.style.display = 'none';
+            employeeIDToDelete = null;
+        });
+
+        confirmButton.addEventListener('click', function () {
+            if (employeeIDToDelete) {
+                fetch(`/empleados/eliminar/${employeeIDToDelete}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ form.csrf_token._value() }}'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error al eliminar el empleado');
+                    }
+                });
+            }
+        });
+
+        window.onclick = function (event) {
+            if (event.target == deleteModal) {
+                deleteModal.style.display = 'none';
+            }
+        }
+    });
+</script>
+{% endblock %}

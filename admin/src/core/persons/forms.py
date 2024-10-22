@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import EmailField, StringField, PasswordField, SelectField, FileField, IntegerField, DateField, BooleanField
-from wtforms.validators import InputRequired, Length, EqualTo, Optional
-
+from wtforms import RadioField, StringField, SelectField, FileField, IntegerField, DateField, BooleanField, DateField, BooleanField, FormField
+from wtforms.validators import InputRequired, Length, Optional
 
 
 class registryFileForm(FlaskForm):
@@ -132,3 +131,56 @@ class registryHorsemanForm(FlaskForm):
 
         return True
    
+class EmployeeFileForm(FlaskForm):
+    title = StringField("Title", validators=[InputRequired(), Length(max=255)])
+    document_type = SelectField("Document Type", validators=[InputRequired()], choices=["Título", "Copia DNI", "CV Actualizado"])
+    file_url = FileField("File", validators=[InputRequired()])
+
+class AddressForm(FlaskForm):
+    street = StringField("Street", validators=[Optional(), Length(max=255)])
+    number = StringField("Number", validators=[Optional(), Length(max=255)])
+    department = StringField("Department", validators=[Optional(), Length(max=255)])
+    locality = StringField("Locality", validators=[Optional(), Length(max=255)])
+    province = StringField("Province", validators=[Optional(), Length(max=255)])
+    phone_number = StringField("Phone Number", validators=[Optional(), Length(max=255)])
+
+class EmergencyContactForm(FlaskForm):
+    name = StringField("Name", validators=[Optional(), Length(max=255)])
+    phone_number = StringField("Phone Number", validators=[Optional(), Length(max=255)])
+
+class HealthcarePlanForm(FlaskForm):
+    social_security = StringField("Social Security", validators=[InputRequired(), Length(max=255)])
+    affiliate_number = StringField("Affiliate Number", validators=[InputRequired(), Length(max=255)])
+    has_guardianship = BooleanField("Has Guardianship", default=False)
+    observation = StringField("Observation", validators=[Optional()])
+
+class EmployeeForm(FlaskForm):
+    # Campos de Person
+    name = StringField("Name", validators=[InputRequired(), Length(max=255)])
+    last_name = StringField("Last Name", validators=[InputRequired(), Length(max=255)])
+    dni = StringField("DNI", validators=[InputRequired(), Length(max=12)])
+    phone_number = StringField("Phone Number", validators=[InputRequired(), Length(max=255)])
+    
+    # Campos de Employee
+    profession = StringField('Profession', validators=[InputRequired()])
+    job_position = StringField("Job Position", validators=[InputRequired(), Length(max=255)])
+    start_date = DateField("Start Date", validators=[InputRequired()])
+    end_date = DateField("End Date", validators=[Optional()])
+    condition = RadioField("Condition", choices=[
+            ('Voluntario', 'Voluntario'),
+            ('Personal rentado', 'Personal rentado')
+        ], validators=[InputRequired()])
+    active = BooleanField("Active", default=True)
+    email = StringField("Email", validators=[InputRequired(), Length(max=255)])
+    birth_date = DateField("Birth Date", validators=[InputRequired()])
+    
+    # Campos de Address
+    address_id = SelectField("Address", coerce=int, validators=[Optional()])
+    new_address = FormField(AddressForm)
+
+    # Campos de EmergencyContact
+    emergency_contact = SelectField("Emergency Contact", coerce=int, validators=[Optional()])
+    new_emergency_contact = FormField(EmergencyContactForm)
+
+    # Campos de HealthcarePlan
+    healthcare_plan = FormField(HealthcarePlanForm)

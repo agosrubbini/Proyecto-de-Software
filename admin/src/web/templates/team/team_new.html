@@ -1,0 +1,516 @@
+{% extends "layout.html" %}
+{% block title %}Nuevo empleado{% endblock %}
+{% block head %}
+    {{ super() }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+{% endblock %}
+{% block content%}
+<form method="POST" action="{{ url_for('team.new_employee') }}">
+    {{ form.csrf_token }}
+    {{ form.new_address.csrf_token }}
+    {{ form.new_emergency_contact.csrf_token }}
+    {{ form.healthcare_plan.csrf_token }}
+
+    <div class="div-titulo">
+        <h1 class="label">Agregar empleado</h1>
+        <hr class="linea-titulo">
+    </div>
+
+    <label class="label" for="name">Nombre</label>
+    <input class="input" type="text" name="name" id="name" placeholder="Nombre" value="{{ form.name.data or '' }}">
+    {% if form.name.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.name.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <hr>
+
+    <label class="label" for="last_name">Apellido</label>
+    <input class="input" type="text" name="last_name" id="last_name" placeholder="Apellido" value="{{ form.last_name.data or '' }}">
+    {% if form.last_name.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.last_name.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <hr>
+
+    <label class="label" for="dni">DNI (sin puntos)</label>
+    <input class="input" maxlength="9" type="text" name="dni" id="dni" placeholder="DNI" value="{{ form.dni.data or '' }}" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+    {% if form.dni.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.dni.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <hr>
+
+    <label class="label" for="phone_number">Numero de telefono</label>
+    <input class="input" type="text" name="phone_number" id="phone_number" placeholder="Numero de telefono" value="{{ form.phone_number.data or '' }}">
+    {% if form.phone_number.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.phone_number.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <hr>
+
+    <label class="label" for="email">Email</label>
+    <input class="input" type="email" name="email" id="email" placeholder="Email" value="{{ form.email.data or '' }}">
+    {% if form.email.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.email.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <hr>
+
+    <label class="label" for="birth_date">Fecha de nacimiento</label>
+    <input class="input" type="date" name="birth_date" id="birth_date" value="{{ form.birth_date.data or '' }}">
+    {% if form.birth_date.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.birth_date.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <hr>
+
+    <label class="label" for="profession">Profesión</label>
+    <div class="control">
+        <select name="profession" id="profession" value="{{ form.profession.data or '' }}">
+            {% for profession in professions %}
+            <option value="{{ profession }}">{{ profession }}</option>
+            {% endfor %}
+        </select>
+
+        {% if form.profession.errors %}
+        <div class="alert alert-danger">
+            {% for error in form.profession.errors %}
+                <span>{{ error }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <hr>
+
+    <label class="label" for="job_position">Puesto laboral</label>
+    <input class="input" type="text" name="job_position" id="job_position" value="{{ form.job_position.data or '' }}">
+    {% if form.job_position.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.job_position.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <hr>
+
+    <label class="label" for="start_date">Fecha de inicio</label>
+    <input class="input" type="date" name="start_date" id="start_date" value="{{ form.start_date.data or '' }}">
+    {% if form.start_date.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.start_date.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <hr>
+
+    <label class="label" for="end_date">Fecha de cese</label>
+    <input class="input" type="date" name="end_date" id="end_date" value="{{ form.end_date.data or '' }}">
+    {% if form.end_date.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.end_date.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <hr>
+
+    <label class="label" for="emergency_contact">Contacto de emergencia</label>
+    <div class="emergency-contact-div">
+        <div class="control">
+            <select name="emergency_contact" id="emergency_contact" value="{{ form.emergency_contact.data or '' }}">
+                {% for id, name, phone_number in form.emergency_contact.choices %}
+                <option value="{{ id }}">{{ name }} - {{ phone_number }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    {% if form.emergency_contact.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.emergency_contact.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+        
+    <div class="new-contact-div">
+        <input class="new-contact-checkbox" type="checkbox" name="new-contact-checkbox" id="new-contact-checkbox">
+        <label class="label" for="new-contact-checkbox">Nuevo contacto</label>
+    </div>
+
+    <label class="label new-contact" for="new_emergency_contact-name">Nombre</label>
+    <input class="input new-contact" type="text" name="new_emergency_contact-name" id="new_emergency_contact-name" value="{{ form.new_emergency_contact.name.data or '' }}">
+    {% if form.new_emergency_contact.name.errors %}
+        <div class="alert alert-danger">
+            {% for error in form.new_emergency_contact.name.errors %}
+                <span>{{ error }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <label class="label new-contact" for="new_emergency_contact-phone_number">Numero</label>
+    <input class="input new-contact" type="text" name="new_emergency_contact-phone_number" id="new_emergency_contact-phone_number" value="{{ form.new_emergency_contact.phone_number.data or '' }}">
+    {% if form.new_emergency_contact.phone_number.errors %}
+        <div class="alert alert-danger">
+            {% for error in form.new_emergency_contact.phone_number.errors %}
+                <span>{{ error }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <hr>
+
+    <label class="label" for="condition">Condicion</label>
+    <div class="condition-div">
+        <div class="condition-option">
+            <input class="condition-radio" type="radio" name="condition" id="condition-v" value="Voluntario">
+            <label for="condition-v">Voluntario</label> 
+        </div>
+        <div class="condition-option">
+            <input class="condition-radio" type="radio" name="condition" id="condition-p" value="Personal rentado">
+            <label for="condition-p">Personal rentado</label>
+        </div>
+    </div>
+
+    {% if form.condition.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.condition.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <hr>
+
+    <label class="label address" for="address_id">Dirección</label>
+    <div class="control old_address">
+        <select name="address_id" id="address_id" value="{{ form.address_id.data or '' }}">
+            {% for id, address in form.address_id.choices %}
+            <option value="{{ id }}">{{ address }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="new-address-div">
+        <input class="address_checkbox" type="checkbox" name="address_checkbox" id="address_checkbox">
+        <label class="label" for="address_checkbox">Agregar nueva dirección</label>
+    </div>
+        
+    <label class="label new_address" for="new_address-street">Calle</label>
+    <input class="input new_address" type="text" name="new_address-street" id="new_address-street" value="{{ form.new_address.street.data or ''}}">
+    <label class="label new_address" for="new_address-number">Numero</label>
+    <input class="input new_address" type="text" name="new_address-number" id="new_address-number" value="{{ form.new_address.number.data or '' }}">
+    <label class="label new_address" for="new_address-department">Piso</label>
+    <input class="input new_address" type="text" name="new_address-department" id="new_address-department" value="{{ form.new_address.department.data or '' }}">
+    <label class="label new_address" for="new_address-locality">Localidad</label>
+    <input class="input new_address" type="text" name="new_address-locality" id="new_address-locality" value="{{ form.new_address.locality.data or '' }}">
+    <label class="label new_address" for="new_address-province">Provincia</label>
+    <input class="input new_address" type="text" name="new_address-province" id="new_address-province" value="{{ form.new_address.province.data or '' }}">
+    <label class="label new_address" for="new_address-phone_number">Telefono</label>
+    <input class="input new_address" type="text" name="new_address-phone_number" id="new_address-phone_number" value="{{ form.new_address.phone_number.data or '' }}">
+
+
+    {% if form.address_id.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.address_id.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if form.new_address.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.new_address.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <hr>
+
+    <label class="label" for="healthcare_plan-social_security">Obra social</label>
+    <input class="input" type="text" name="healthcare_plan-social_security" id="healthcare_plan-social_security" value="{{ form.healthcare_plan.social_security.data or '' }}">
+
+    {% if form.healthcare_plan.social_security.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.healthcare_plan.social_security.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <label class="label" for="healthcare_plan-affiliate_number">Numero de afiliado</label>
+    <input class="input" type="text" name="healthcare_plan-affiliate_number" id="healthcare_plan-affiliate_number" value="{{ form.healthcare_plan.affiliate_number.data or '' }}">
+
+    {% if form.healthcare_plan.affiliate_number.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.healthcare_plan.affiliate_number.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="tutor-div">
+        <label class="label" for="healthcare_plan-has_guardianship">Tiene tutor</label>
+        <input class="tutor-checkbox" type="checkbox" name="healthcare_plan-has_guardianship" id="healthcare_plan-has_guardianship">
+    </div>
+
+    {% if form.healthcare_plan.has_guardianship.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.healthcare_plan.has_guardianship.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <label class="label" for="healthcare_plan-observation">Observación</label>
+    <textarea name="healthcare_plan.observation" id="healthcare_plan-observation" rows="5" value="{{ form.healthcare_plan.social_security.data or '' }}"></textarea>
+
+    {% if form.healthcare_plan.observation.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.healthcare_plan.observation.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <hr>
+
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        {% for error in form.errors %}
+            <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
+    <button type="submit">Crear</button>
+</form>
+
+<script>
+    $(document).ready(function () {
+        //Script para el select
+        $('select').selectize({
+            sortField: 'text'
+        });
+
+        // Oculta los campos de nueva dirección inicialmente
+        $('.new_address').hide();
+
+        // Detecta cuando se selecciona o deselecciona el checkbox
+        $('#address_checkbox').change(function () {
+            if ($(this).is(':checked')) {
+                $('.new_address').show();
+                $('.old_address').hide();
+            } else {
+                $('.new_address').hide();
+                $('.old_address').show();
+            }
+        });
+
+        // Oculta los campos de nuevo contacto inicialmente
+        $('.new-contact').hide();
+
+        // Detecta cuando se selecciona o deselecciona el checkbox
+        $('#new-contact-checkbox').change(function () {
+            if ($(this).is(':checked')) {
+                $('.new-contact').show();
+                $('.emergency-contact-div').hide();
+            } else {
+                $('.new-contact').hide();
+                $('.emergency-contact-div').show();
+            }
+        });
+    });
+</script>
+
+<style>
+    
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    h1 {
+        padding-top: 20px;
+        font-size: 24px !important;
+        margin-bottom: 0 !important;
+        font-weight: 600;
+    }
+
+    select {
+        border-radius: 10px;
+        background-color: hsl(221, 14%, 20%);
+        width: 175px;
+        height: 40px;
+        text-align: center;
+        color: hsl(221, 14%, 93%);
+        font-family: 'Poppins', sans-serif;
+        margin-bottom: 15px;
+        border-color: hsl(221, 14%, 50%);
+        padding-inline-end: 2px;
+        transition: background-color 0.3s ease;
+    }
+    
+    select:hover {
+        background-color: hsl(221, 14%, 15%);
+    }
+
+    .input, form {
+        background-color: white;
+    }
+    
+    .div-titulo {
+        width: fit-content;
+    }
+
+    .linea-titulo {
+        border: none;
+        border: 2px solid var(--primary-color);
+        margin-top: 0px;
+        width: 100%;
+    }
+    
+    form {
+        display: block;
+        width: 30%;
+        margin: 60px auto;
+        height: 80%;
+        padding: 30px 50px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        background-color: white;
+    }
+
+    hr {
+        border: 1px solid black;
+    }
+
+    input {
+        margin-bottom: 15px;
+        border-radius: 10px;
+        border: 1px solid hsl(221, 14%, 80%);
+        padding: 10px;
+        height: 40px;
+        transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        width: 100%;
+    }
+
+    input:focus {
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        border-color: hsl(221, 14%, 50%);
+        outline: none;
+    }
+
+    button {
+        background-color: var(--primary-color);
+        width: 100%;
+        height: 40px;
+        color: white;
+        font-weight: bold;
+        display: block;
+        margin: 20px auto;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+        background-color: hsl(221, 14%, 40%);
+        transform: scale(1.05);
+    }   
+
+    .input, .input::placeholder, .label, .button {
+        color: black;
+        font-weight: 600;
+        font-style: bold;
+    }
+    
+    .alert {
+        color: red;
+        margin-top: -8px;
+    }
+
+    i {
+        color: black;
+    }
+
+    .new-contact-div {
+        display: flex;
+        justify-content: center;
+    }
+
+    .new-contact-checkbox {
+        margin: 0px 16px;
+        height: 26px;
+        width: 16px;
+    }
+
+    .new_address {
+        display: none;
+    }
+
+    .new-address-div {
+        display: flex;
+        justify-content: center;
+    }
+
+    .address_checkbox {
+        margin: 0px;
+        margin-left: 32px;
+        margin-right: 16px;
+        height: auto;
+        width: 16px;
+    }
+
+    .tutor-div {
+        display: flex;
+        justify-content: flex-start;
+        margin-top: 4px;
+    }
+
+    .tutor-checkbox {
+        margin: 0px 16px;
+        height: 26px;
+        width: 16px;
+    }
+    
+    textarea {
+        width: 100%;
+        resize: none;
+    }
+
+    .condition-option {
+        display: flex;
+        align-items: center;
+    }
+
+    .condition-radio {
+        margin: 8px;
+        width: 16px;
+        height: 16px;
+    }
+
+</style>
+{% endblock %}
