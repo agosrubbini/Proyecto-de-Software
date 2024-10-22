@@ -1,60 +1,182 @@
 {% extends "layout.html" %}
-{% block title %}Caballos{% endblock %}
-{% block content%}
+
+{% block title %}Listado de caballos{% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/payment_and_billing/list.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_list.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/horsemen_and_amazons/jya_info.css') }}"/>
+{% endblock %}
+
+{% block content %}
+
 <div class="container">
-    <h1 class="title is-size-2 has-text-centered  has-text-black-bis mt-5">Caballos</h1>
-    <div class="container">
-        <a class="has-text-link  is-size-4" href="{{ url_for('horses.create_horse_view') }}">
-            <strong>Agregar nuevo Caballo</strong>
-        </a>
-        <form method="POST" action="{{url_for('horses.order_by')}}">
-            <div class="select">
-                <select name="order_option" onchange="this.form.submit()">
-                  <option value="default">Ordenar por:</option>
-                  <option value="name_asc">Nombre: Orden ascendente</option>
-                  <option value="name_desc">Nombre: Orden descendente</option>
-                  <option value="birth_date_asc">Fecha de nacimiento: Orden ascendente</option>
-                  <option value="birth_date_desc">Fecha de nacimiento: Orden descendente</option>
-                  <option value="entry_date_asc">Fecha de ingreso: Orden ascendente</option>
-                  <option value="entry_date_desc">Fecha de ingreso: Orden descendente</option>
-                </select>
-              </div>
+    <div class="header-container">
+        <h1 class="is-size-2-mobile is-size-2-tablet is-size-2-desktop">Lista de Caballos</h1>
+        <a href="{{ url_for('horses.create_horse_view') }}" class="button is-white is-size-6">Agregar Caballo</a>
+    </div>
+
+    <div class="search-container">
+        <form class="form-container" method="get" action="{{ url_for('horses.list_horses') }}">
+            <div class="columns is-multiline">
+                <div class="column is-narrow">
+                    <input class="input" type="text" name="q" placeholder="Buscar por nombre" value="{{ request.args.get('q', '') }}">
+                </div>
+                <div class="column is-narrow">
+                    <div class="select">
+                        <select name="order" id="order" onchange="this.form.submit()">
+                            <option value="name_asc" {% if order == 'name_asc' %}selected{% endif %}>Nombre: A-Z</option>
+                            <option value="name_desc" {% if order == 'name_desc' %}selected{% endif %}>Nombre: Z-A</option>
+                            <option value="birth_date_asc" {% if order == 'birth_date_asc' %}selected{% endif %}>Fecha de nacimiento: Menor-Mayor</option>
+                            <option value="birth_date_desc" {% if order == 'birth_date_desc' %}selected{% endif %}>Fecha de nacimiento: Mayor-Menor</option>
+                            <option value="entry_date_asc" {% if order == 'entry_date_asc' %}selected{% endif %}>Fecha de entrada: Menor-Mayor</option>
+                            <option value="entry_date_desc" {% if order == 'entry_date_desc' %}selected{% endif %}>Fecha de entrada: Mayor-Menor</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="column is-narrow">
+                    <div class="select">
+                        <select name="type_jya" id="type_jya" onchange="this.form.submit()">
+                            <option value="">Tipo de jinetes y amazonas</option>
+                            <option value="Hipoterapia" {% if type_jya_assigned == 'Hipoterapia' %}selected{% endif %}>Hipoterapia</option>
+                            <option value="Monta Terapéutica" {% if type_jya_assigned == 'Monta Terapéutica' %}selected{% endif %}>Monta Terapéutica</option>
+                            <option value="Deporte Ecuestre Adaptado" {% if type_jya_assigned == 'Deporte Ecuestre Adaptado' %}selected{% endif %}>Deporte Ecuestre Adaptado</option>
+                            <option value="Actividades Recreativas" {% if type_jya_assigned == 'Actividades Recreativas' %}selected{% endif %}>Actividades Recreativas</option>
+                            <option value="Equitación" {% if type_jya_assigned == 'Equitación' %}selected{% endif %}>Equitación</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="column is-narrow">
+                    <button type="submit" class="button search-button">Buscar</button>
+                </div>
+                <div class="column is-narrow">
+                    <a class="button restore-button" href="{{ url_for('horses.list_horses', page=page) }}">Restablecer</a>
+                </div>
+            </div>
         </form>
     </div>
-    <table class="table is-striped is-bordered is-fullwidth">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Fecha de Nacimiento</th>
-                <th>Género</th>
-                <th>Raza</th>
-                <th>Pelaje</th>
-                <th>Compra/Donacion</th>
-                <th>Fecha de Ingreso</th>
-                <th>Sede</th>
-                <th>Tipo de Jinetes y Amazonas asignados</th>
-                <th>Entrenadores y Conductores</th>
-            </tr>
-        </thead>
-        {% if context.horses %}
-        {% for horse in context.horses %}
-        <tbody>
-            <tr>
-                <td>{{ horse.name }}</td>
-                <td>{{ horse.date_of_birth.strftime('%Y/%m/%d') }}</td>
-                <td>{{ 'Macho' if horse.gender == 'M' else 'Hembra' }}</td>
-                <td>{{ horse.race }}</td>
-                <td>{{ horse.fur }}</td>
-                <td>{{ 'Compra' if horse.purchase_or_donation == 'C' else 'Donación' }}</td>
-                <td>{{ horse.date_of_entry.strftime('%Y/%m/%d') }}</td>
-                <td>{{ horse.sede }}</td>
-                <td>{{ horse.type_jya_assigned }}</td>
-                <td>{{ horse.employees }}</td>
-            </tr>
-        </tbody>
-        {% endfor %}
-        {% endif %}
-    </table>
+
+
+    <!-- <form id="form-search" method="GET" action="{{url_for('horses.list_horses')}}">
+        <div class="field is-grouped">
+            <div class="field">
+                <label class="label">Nombre</label>
+                <div class="control has-icons-left">
+                    <span class="icon is-small is-left">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input class="input" type="text" name="name" placeholder="Nombre del caballo" value="{{ name }}" />
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Tipo de jinetes y amazonas asignados</label>
+                <div class="control has-icons-left">
+                    <span class="icon is-small is-left">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <select name="type_jya_assigned" class="input">
+                        <option value="">Selecciona un tipo</option>
+                        <option value="Hipoterapia">Hipoterapia</option>
+                        <option value="Monta Terapeutica">Monta Terapéutica</option>
+                        <option value="Deporte Ecuestre Adaptado">Deporte Ecuestre Adaptado</option>
+                        <option value="Actividades Recreativas">Actividades Recreativas</option>
+                        <option value="Equitacion">Equitación</option>
+                    </select>
+                </div>
+            </div>
+            <div class="field ">
+                <button class="boton boton-busqueda" type="submit">Buscar</button>
+            </div>
+        </div>
+    </form>
+    <form method="GET" action="{{ url_for('horses.list_horses') }}">
+        <div class="control order_options">
+            <select id="order_option" name="order_option" onchange="this.form.submit()">
+                <option value="default">Selecciona un orden</option>
+                <option value="name_asc">Nombre: A-Z</option>
+                <option value="name_desc">Nombre: Z-A</option>
+                <option value="birth_date_asc">Fecha de nacimiento: Menor-Mayor</option>
+                <option value="birth_date_desc">Fecha de nacimiento: Mayor-Menor</option>
+                <option value="entry_date_asc">Fecha de entrada: Menor-Mayor</option>
+                <option value="entry_date_desc">Fecha de entrada: Mayor-Menor</option>
+            </select>
+        </div>
+    </form> -->
+    <div class="table-container" style="overflow: hidden; overflow-x:auto">
+        <table class="table is-striped horses">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Fecha de nacimiento</th>
+                    <th>Genero</th>
+                    <th>Raza</th>
+                    <th>Pelaje</th>
+                    <th>Compra/Donacion</th>
+                    <th>Fecha de entrada</th>
+                    <th>Sede</th>
+                    <th>Tipo Jinetes/Amazonas asignados</th>
+                    <th>Empleados</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if horses %}
+                    {% for horse in horses %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}">
+                                {{ horse.name }}
+                                </a>
+                            </td>
+                            <td> {{ horse.date_of_birth.strftime('%d-%m-%Y') }} </td>
+                            <td> {{horse.gender}} </td>
+                            <td> {{horse.race}} </td>
+                            <td> {{horse.fur}} </td>
+                            <td> {{horse.purchase_or_donation}} </td>
+                            <td> {{  horse.date_of_entry.strftime('%d-%m-%Y')  }} </td>
+                            <td> {{horse.sede}} </td>
+                            <td>
+                            {% for type in horse.type_jya_assigned %}
+                                {{ type }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                            </td>                   
+                            <td>
+                            {% for employee in horse.employees %}
+                                {{ employee.name }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('horses.list_info_by_id', horse_id=horse.id) }}" class="button is-small is-white"><i class="fas fa-eye" title="Ver"></i></a>
+                                <a href="{{ url_for('horses.edit_horse', horse_id=horse.id) }}" class="button is-small is-white"><i class="fas fa-edit" title="Editar"></i></a>
+                                <form action="{{ url_for('horses.delete_horse', horse_id=horse.id) }}" 
+                                method="POST" style="display: inline;">
+                                    <button type="submit" class="button is-small is-white">
+                                        <i class="fas fa-trash" title="Eliminar"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    
+                    {% endfor %}
+                {% else %}
+                    <p style="text-align: center;">No hay caballos registrados en el sistema</p>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <nav class="pagination" role="navigation" aria-label="pagination">
+        <a class="pagination-previous" {% if not pagination.has_prev %}disabled{% else %}href="{{ url_for('horses.list_horses', page=pagination.prev_num,  order=order, q=q) }}"{% endif %}>Previous</a>
+        <a class="pagination-next" {% if not pagination.has_next %}disabled{% else %}href="{{ url_for('horses.list_horses', page=pagination.next_num,  order=order, q=q) }}"{% endif %}>Next page</a>
+    </nav>
+</div>
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h3>¿Estás seguro de que deseas eliminar el caballo?</h3>
+        <div class="modal-actions">
+            <button id="cancelButton" class="button">Cancelar</button>
+            <button id="confirmButton" class="button is-danger">Eliminar</button>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

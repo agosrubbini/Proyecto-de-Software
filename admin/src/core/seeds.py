@@ -7,6 +7,7 @@ from src.core.payments import create_billing, create_payment
 from src.core.persons import (
     create_employee_file, create_person, create_employee, create_JyA, create_address, create_emergency_contact, 
     create_healthcare_plan, create_file)
+from src.core.horses import create_file as create_horse_file
 
 
 
@@ -65,6 +66,16 @@ def run():
         alias="user_ecuestre",
         password="1234",
         role_id=ecuestre.id,
+        system_admin=False,
+        active=True,
+        is_blocked=False
+    )
+
+    user_voluntariado = create_user(
+        email="user_voluntariado@gmail.com",
+        alias="user_voluntariado",
+        password="1234",
+        role_id=voluntariado.id,
         system_admin=False,
         active=True,
         is_blocked=False
@@ -159,16 +170,17 @@ def run():
         birth_date = datetime.now(),
     )
 
+
     horse1 = create_horse(
         name = "Mancha",
         date_of_birth = datetime.now(),
         gender = "Macho",
         race = "Mustang",
         fur = "Blanco y marron",
-        purchase_or_donation = "Donacion",
+        purchase_or_donation = "Donación",
         date_of_entry = datetime.now(),
         sede = "arg",
-        type_jya_assigned = "Hipoterapia"
+        type_jya_assigned = ["Hipoterapia","Equitacion"]
     )
 
     JyA1 = create_JyA(
@@ -209,6 +221,22 @@ def run():
         title = "Titulo-58843",
         document_type = "Título",
         employee_id = employee2.id,
+    )
+
+    horse_file1 = create_horse_file(
+        file_url = "hola",
+        file_type = "Link",
+        document_type = "Planificacion de entrenamiento",
+        horses_id = horse1.id,
+        title = "LINK DE PRUEBA",
+    )
+
+    horse_file2 = create_horse_file(
+        file_url = "chau",
+        file_type = "Documento",
+        document_type = "Registro veterinario",
+        horses_id = horse1.id,
+        title = "ARCHIVO DE PRUEBA",
     )
 
     institutional_work1 = create_institutional_work(
