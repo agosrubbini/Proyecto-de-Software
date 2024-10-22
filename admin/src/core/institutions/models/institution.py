@@ -13,7 +13,7 @@ class InstitutionalWork(db.Model):
     days = db.Column(ARRAY(db.String), nullable=False)
     professional = db.Column(db.Integer, db.ForeignKey("persons.id"))
     rider = db.Column(db.Integer, db.ForeignKey("persons.id"))
-    horse = db.Column(db.Integer, db.ForeignKey("horses.id", ondelete='CASCADE'))
+    horse = db.Column(db.Integer, db.ForeignKey("horses.id"))
     auxiliar = db.Column(db.Integer, db.ForeignKey("persons.id"))
 
     def __init__(self, id=None, proposal=None, condicion=None, location=None, days=None, professional=None, rider=None, horse=None, auxiliar=None):

@@ -56,52 +56,6 @@
         </form>
     </div>
 
-
-    <!-- <form id="form-search" method="GET" action="{{url_for('horses.list_horses')}}">
-        <div class="field is-grouped">
-            <div class="field">
-                <label class="label">Nombre</label>
-                <div class="control has-icons-left">
-                    <span class="icon is-small is-left">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                    <input class="input" type="text" name="name" placeholder="Nombre del caballo" value="{{ name }}" />
-                </div>
-            </div>
-            <div class="field">
-                <label class="label">Tipo de jinetes y amazonas asignados</label>
-                <div class="control has-icons-left">
-                    <span class="icon is-small is-left">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                    <select name="type_jya_assigned" class="input">
-                        <option value="">Selecciona un tipo</option>
-                        <option value="Hipoterapia">Hipoterapia</option>
-                        <option value="Monta Terapeutica">Monta Terapéutica</option>
-                        <option value="Deporte Ecuestre Adaptado">Deporte Ecuestre Adaptado</option>
-                        <option value="Actividades Recreativas">Actividades Recreativas</option>
-                        <option value="Equitacion">Equitación</option>
-                    </select>
-                </div>
-            </div>
-            <div class="field ">
-                <button class="boton boton-busqueda" type="submit">Buscar</button>
-            </div>
-        </div>
-    </form>
-    <form method="GET" action="{{ url_for('horses.list_horses') }}">
-        <div class="control order_options">
-            <select id="order_option" name="order_option" onchange="this.form.submit()">
-                <option value="default">Selecciona un orden</option>
-                <option value="name_asc">Nombre: A-Z</option>
-                <option value="name_desc">Nombre: Z-A</option>
-                <option value="birth_date_asc">Fecha de nacimiento: Menor-Mayor</option>
-                <option value="birth_date_desc">Fecha de nacimiento: Mayor-Menor</option>
-                <option value="entry_date_asc">Fecha de entrada: Menor-Mayor</option>
-                <option value="entry_date_desc">Fecha de entrada: Mayor-Menor</option>
-            </select>
-        </div>
-    </form> -->
     <div class="table-container" style="overflow: hidden; overflow-x:auto">
         <table class="table is-striped horses">
             <thead>
