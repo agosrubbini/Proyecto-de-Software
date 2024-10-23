@@ -10,40 +10,53 @@
 
     <div class="search-container">
         <form class="form-container" method="get" action="{{ url_for('team.list_team') }}">
-            <input type="text" name="q" placeholder="Buscar..." value="{{ request.args.get('q', '') }}">
 
-            <select name="order" id="order" onchange="this.form.submit()">
-                <option value="name_asc" {% if order == 'name_asc' %}selected{% endif %}>Nombre: Orden Ascendente</option>
-                <option value="name_desc" {% if order == 'name_desc' %}selected{% endif %}>Nombre: Orden Descendente</option>
-                <option value="last_name_asc" {% if order == 'last_name_asc' %}selected{% endif %}>Apellido: Orden Ascendente</option>
-                <option value="last_name_desc" {% if order == 'last_name_desc' %}selected{% endif %}>Apellido: Orden Descendente</option>
-                <option value="date_asc" {% if order == 'date_asc' %}selected{% endif %}>Fecha de ingreso: Orden Ascendente</option>
-                <option value="date_desc" {% if order == 'date_desc' %}selected{% endif %}>Fecha de ingreso: Orden Descendente</option>
-            </select>
-
-            <select name="job_position" id="job_position" onchange="this.form.submit()">
-                <option value="">Puesto laboral</option>
-                <option value="administrativo" {% if job_position == 'administrativo' %}selected{% endif %}>Administrativo/a</option>
-                <option value="terapeuta" {% if job_position == 'terapeuta' %}selected{% endif %}>Terapeuta</option>
-                <option value="conductor" {% if job_position == 'conductor' %}selected{% endif %}>Conductor</option>
-                <option value="auxiliar_de_pista" {% if job_position == 'auxiliar_de_pista' %}selected{% endif %}>Auxiliar de pista</option>
-                <option value="herrero" {% if job_position == 'herrero' %}selected{% endif %}>Herrero</option>
-                <option value="veterinario" {% if job_position == 'veterinario' %}selected{% endif %}>Veterinario</option>
-                <option value="entrenador_de_caballos" {% if job_position == 'entrenador_de_caballos' %}selected{% endif %}>Entrenador de Caballos</option>
-                <option value="domador" {% if job_position == 'domador' %}selected{% endif %}>Domador</option>
-                <option value="profesor_de_equitacion" {% if job_position == 'profesor_de_equitacion' %}selected{% endif %}>Profesor de Equitación</option>
-                <option value="docente_de_capacitacion" {% if job_position == 'docente_de_capacitacion' %}selected{% endif %}>Docente de Capacitación</option>
-                <option value="auxiliar_de_mantenimiento" {% if job_position == 'auxiliar_de_mantenimiento' %}selected{% endif %}>Auxiliar de mantenimiento</option>
-                <option value="otro" {% if job_position == 'otro' %}selected{% endif %}>Otro</option>
-            </select>
-            <button type="submit" class="button">Buscar</button>
-        </form>
-
-        <form class="search-form" method="get" action="{{ url_for('team.list_team') }}">
-            <input hidden name="q" id="q" value="">
-            <input hidden name="order" id="order" value="name_asc">
-            <input hidden name="job_position" id="job_position" value="">
-            <button type="submit" style="margin-left: 5px;" class="button">Restablecer</button>
+            <div class="columns is-multiline">
+                <div class="column is-narrow">
+                    <input class="input" type="text" name="q" placeholder="Buscar" value="{{ request.args.get('q', '') }}">
+                </div>
+    
+                <div class="column is-narrow">
+                    <div class="select">
+                        <select name="order" id="order" onchange="this.form.submit()">
+                            <option value="name_asc" {% if order == 'name_asc' %}selected{% endif %}>Nombre: Orden Ascendente</option>
+                            <option value="name_desc" {% if order == 'name_desc' %}selected{% endif %}>Nombre: Orden Descendente</option>
+                            <option value="last_name_asc" {% if order == 'last_name_asc' %}selected{% endif %}>Apellido: Orden Ascendente</option>
+                            <option value="last_name_desc" {% if order == 'last_name_desc' %}selected{% endif %}>Apellido: Orden Descendente</option>
+                            <option value="date_asc" {% if order == 'date_asc' %}selected{% endif %}>Fecha de ingreso: Orden Ascendente</option>
+                            <option value="date_desc" {% if order == 'date_desc' %}selected{% endif %}>Fecha de ingreso: Orden Descendente</option>
+                        </select>
+                    </div>
+                </div>
+    
+                <div class="column is-narrow">
+                    <div class="select">
+                        <select name="job_position" id="job_position" onchange="this.form.submit()">
+                            <option value="">Puesto laboral</option>
+                            <option value="administrativo" {% if job_position == 'administrativo' %}selected{% endif %}>Administrativo/a</option>
+                            <option value="terapeuta" {% if job_position == 'terapeuta' %}selected{% endif %}>Terapeuta</option>
+                            <option value="conductor" {% if job_position == 'conductor' %}selected{% endif %}>Conductor</option>
+                            <option value="auxiliar_de_pista" {% if job_position == 'auxiliar_de_pista' %}selected{% endif %}>Auxiliar de pista</option>
+                            <option value="herrero" {% if job_position == 'herrero' %}selected{% endif %}>Herrero</option>
+                            <option value="veterinario" {% if job_position == 'veterinario' %}selected{% endif %}>Veterinario</option>
+                            <option value="entrenador_de_caballos" {% if job_position == 'entrenador_de_caballos' %}selected{% endif %}>Entrenador de Caballos</option>
+                            <option value="domador" {% if job_position == 'domador' %}selected{% endif %}>Domador</option>
+                            <option value="profesor_de_equitacion" {% if job_position == 'profesor_de_equitacion' %}selected{% endif %}>Profesor de Equitación</option>
+                            <option value="docente_de_capacitacion" {% if job_position == 'docente_de_capacitacion' %}selected{% endif %}>Docente de Capacitación</option>
+                            <option value="auxiliar_de_mantenimiento" {% if job_position == 'auxiliar_de_mantenimiento' %}selected{% endif %}>Auxiliar de mantenimiento</option>
+                            <option value="otro" {% if job_position == 'otro' %}selected{% endif %}>Otro</option>
+                        </select>
+                    </div>
+                </div>
+    
+                <div class="column is-narrow">
+                    <button type="submit" class="button search-button">Buscar</button>
+                </div>
+                
+                <div class="column is-narrow">
+                    <a class="button restore-button" href="{{ url_for('team.list_team', page=page)}}">Restablecer</a>
+                </div>
+            </div>
         </form>
     </div>
 
@@ -109,6 +122,10 @@
 </div>
 
 <style>
+    select {
+        width: auto !important;
+    }
+
     .container {
         width: 70%;
     }
