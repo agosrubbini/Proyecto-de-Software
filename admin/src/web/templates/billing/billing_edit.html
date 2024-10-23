@@ -65,7 +65,7 @@
     <hr style="margin-top: 0;">
 
     <label class="label" for="amount">Monto</label>
-    <input class="input" name="amount" type="number" step="0.01" value="{{ billing.amount }}">
+    <input class="input" name="amount" type="number" step="0.01" min="0" value="{{ billing.amount }}">
     {% if form.amount.errors %}
             <div class="alert alert-danger">
                 {% for error in form.amount.errors %}

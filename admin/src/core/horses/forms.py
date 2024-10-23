@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, DateField
-from wtforms.validators import InputRequired, Length
+from wtforms import StringField, SelectField, DateField, SelectMultipleField, SelectField, FileField, BooleanField
+from wtforms.validators import InputRequired, Length, Optional
 
 
 
@@ -12,7 +12,7 @@ class create_horse_Form(FlaskForm):
 
     gender = SelectField(
         'Genero',
-        choices=[('M', 'Macho'), ('F', 'Hembra')]
+        choices=[('Macho', 'Macho'), ('Hembra', 'Hembra')]
     )
     
     race = StringField("Raza", validators=[InputRequired(), Length(max=15)])
@@ -20,22 +20,35 @@ class create_horse_Form(FlaskForm):
     fur = StringField("Pelaje", validators=[InputRequired(), Length(max=15)])
 
     purchase_or_donation = SelectField(
-        'Compra o Donacion',
-        choices=[('C','Compra'), ('D','Donacion')]#revisar
+        'Compra o Donación',
+        choices=[('Compra','Compra'), ('Donación','Donación')]
     )
 
     date_of_entry = DateField('Fecha de ingreso', format='%Y-%m-%d', validators=[InputRequired()])
 
     sede = StringField("Sede", validators=[InputRequired(), Length(max=255)])
 
-    type_jya_assigned = SelectField(
-        'Tipo de Jinetes y Amazonas asignados',
-        choices=[("Hipoterapia", "Hipoterapia"), 
-                 ("Monta Terapeutica", "Monta Terapeutica"), 
-                 ("Deporte Ecuestre Adaptado", "Deporte Ecuestre Adaptado"),
-                 ("Actividades Recreativas", "Actividades Recreativas"), 
-                 ("Equitación", "Equitación")]  # revisar
-    )
+    type_jya_hipoterapia = BooleanField (default=False) 
+    type_jya_monta_terapeutica = BooleanField (default=False) 
+    type_jya_dea = BooleanField (default=False) 
+    type_jya_ar = BooleanField (default=False) 
+    type_jya_equitacion = BooleanField (default=False) 
+    employees = SelectMultipleField('Empleados', coerce=int)
 
-    employees = StringField("Asociar entrenadores y conductores", validators=[InputRequired(), Length(max=15)]) #terminar de hacer 
+class registryFileForm(FlaskForm):
+
+    file_url = StringField("file_url", validators=[InputRequired(), Length(max=60)])
+    file_type = SelectField(
+        "File_type",
+        validators=[InputRequired()],
+        choices=["Link", "Documento"],
+    )
+    file_url = FileField('File', validators=[Optional()])  # Campo de tipo archivo
+    link_url = StringField('Link', validators=[Optional()])  # Campo para ingresar un enlace
+    document_type = SelectField(
+        "Document_type",
+        validators=[InputRequired()],
+        choices=["Ficha general del caballo", "Planificación de entrenamiento", "Informe de evolución", "Carga de imagenes", "Registro veterinario"],
+    )
+    title = StringField("title", validators=[InputRequired(), Length(max=60)])
 

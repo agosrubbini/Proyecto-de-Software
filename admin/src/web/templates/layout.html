@@ -58,7 +58,7 @@
                     {% endif %}
 
                     {% if 'team_index' in g.user_permissions or g.user_system_admin %}
-                    <a class="navbar-item" href=#>
+                    <a class="navbar-item" href="{{ url_for('team.list_team') }}">
                         Equipo
                     </a>
                     {% endif %}
