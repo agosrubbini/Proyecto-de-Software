@@ -24,7 +24,7 @@
         <div class="modal-background"></div>
         <div class="modal-content">
             <div class="box">
-                <p>¿Estás seguro que quieres eliminar este jinete?</p>
+                <p>¿Estás seguro que quieres eliminar este archivo?</p>
                 <button id="confirmDelete" class="button is-danger">Eliminar</button>
                 <button id="cancelDelete" class="button">Cancelar</button>
             </div>
@@ -44,6 +44,48 @@
             const confirmButton = document.getElementById('confirmDelete');
             const cancelButton = document.getElementById('cancelDelete');
             let fileIdToDelete = null;
+
+                // Función para ajustar el layout de la tabla de documentos
+            function ajustarLayout() {
+                const tabla = document.querySelector('.table-docs');
+                const boton = document.querySelector('.add-file');
+                const options = document.querySelector('.order_options_docs');
+                const boton_next = document.querySelector('.pagination-next.docs');
+                const boton_previous = document.querySelector('.pagination-previous.docs');
+
+                // Ocultar elementos mientras se ajustan
+                if (tabla) {
+                    tabla.style.visibility = 'hidden';
+                    if (boton) boton.style.visibility = 'hidden';
+                    if (options) options.style.visibility = 'hidden';
+                    if (boton_next) boton_next.style.visibility = 'hidden';
+                    if (boton_previous) boton_previous.style.visibility = 'hidden';
+
+                    // Realizar ajustes
+                    if (boton) {
+                        boton.style.width = tabla.offsetWidth + 'px';
+                    }
+
+                    if (options && boton_next && boton_previous) {
+                        const estilos = window.getComputedStyle(tabla);
+                        const marginLeft = estilos.marginLeft;
+                        const marginRight = estilos.marginRight;
+
+                        options.style.marginLeft = marginLeft;
+                        boton_previous.style.marginLeft = marginLeft;
+                        boton_next.style.marginRight = marginRight;
+                    }
+
+                    // Mostrar elementos después de ajustarlos
+                    requestAnimationFrame(() => {
+                        tabla.style.visibility = 'visible';
+                        if (boton) boton.style.visibility = 'visible';
+                        if (options) options.style.visibility = 'visible';
+                        if (boton_next) boton_next.style.visibility = 'visible';
+                        if (boton_previous) boton_previous.style.visibility = 'visible';
+                    });
+                }
+            }
             
             // Función para cargar la información del usuario
             function cargarInformacion() {
@@ -51,22 +93,25 @@
                 buttonDocs.classList.remove('clicked');
                 contenedor.classList.remove('docs');
 
-                let table_users = `<table class="table is-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Campo</th>
-                                            <th>Valor</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr><td>Nombre</td><td>${user.name}</td></tr>
-                                        <tr><td>Apellido</td><td>${user.last_name}</td></tr>
-                                        <tr><td>DNI</td><td>${user.DNI}</td></tr>
-                                        <tr><td>Edad</td><td>${user.age}</td></tr>
-                                        <tr><td>Número de Teléfono</td><td>${user.phone_number}</td></tr>
-                                        <tr><td>Dirección</td><td>${user.address}</td></tr>
-                                    </tbody>
-                                </table>`;
+                let table_users = `
+                                <div class="table-container">
+                                    <table class="table is-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Campo</th>
+                                                <th>Valor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td>Nombre</td><td>${user.name}</td></tr>
+                                            <tr><td>Apellido</td><td>${user.last_name}</td></tr>
+                                            <tr><td>DNI</td><td>${user.DNI}</td></tr>
+                                            <tr><td>Edad</td><td>${user.age}</td></tr>
+                                            <tr><td>Número de Teléfono</td><td>${user.phone_number}</td></tr>
+                                            <tr><td>Dirección</td><td>${user.address}</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>`;
 
                 contenedor.innerHTML = table_users;
             }
@@ -124,49 +169,55 @@
                     `;
                     contenedor.innerHTML = inputs;
 
-                    let table_docs = `
-                        <table class="table table-docs is-striped">
-                            <thead>
-                                <tr>
-                                    <th>Titulo</th>
-                                    <th>Fecha de subida</th>
-                                    <th>Tipo</th>
-                                    <th>Operaciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                    `;
-                    files.forEach(file => {
-                        table_docs += `
-                            <tr>
-                                <td>${file.title}</td>
-                                <td>${file.upload_date}</td>
-                                <td>${file.document_type}</td>
-                                <td>
-                                    <select class="operations" data-file-id="${file.id}" data-file-type="${file.file_type}">
-                                        <option value="default">Selecciona la operación</option>
-                                        <option value="edit">Editar</option>
-                                        <option value="delete">Eliminar</option>
-                                        <option value="${file.file_type === 'Link' ? 'open' : 'download'}">
-                                            ${file.file_type === 'Link' ? 'Ir al documento' : 'Descargar'}
-                                        </option>
-                                    </select>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    table_docs += `
-                            </tbody>
-                        </table>
-                        <nav class="pagination" role="navigation" aria-label="pagination">
-                            <a class="boton pagination-previous" {% if not context.pagination.has_prev %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id, page=page-1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Anterior</a>
-                            <a class="boton pagination-next" {% if not context.pagination.has_next %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id, page=page+1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Siguiente</a>
-                        </nav>
+                    let table_docs = `  <div class="table-container">
+                                            <table class="table is-striped table-docs">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Titulo</th>
+                                                        <th>Fecha de subida</th>
+                                                        <th>Tipo</th>
+                                                        <th>Operaciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                    `;
 
-                    `;
+                                    files.forEach(file => {
+                                        const operation = file.file_type === 'Link' ? 'open' : 'download';
+                                        const operationText = file.file_type === 'Link' ? 'Ir al documento' : 'Descargar';
 
+                                        table_docs += `
+                                            <tr>
+                                                <td>${file.title}</td>
+                                                <td>${file.upload_date}</td>
+                                                <td>${file.document_type}</td>
+                                                <td class="botones">
+                                                    <button class="icon-button edit" data-file-id="${file.id}">
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                    <button class="icon-button eliminar" data-file-id="${file.id}">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                    <button class="icon-button ${operation}" data-file-id="${file.id}" data-file-type="${file.file_type}">
+                                                        <i class="fa ${file.file_type === 'Link' ? 'fa-external-link-alt' : 'fa-download'}"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `;
+                                    });
 
-                    contenedor.innerHTML += table_docs;
+                                    table_docs += `
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <nav class="pagination" role="navigation" aria-label="pagination">
+                                            <a class="boton pagination-previous docs" {% if not context.pagination.has_prev %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id, page=page-1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Anterior</a>
+                                            <a class="boton pagination-next docs" {% if not context.pagination.has_next %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id, page=page+1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Siguiente</a>
+                                        </nav>
+                                    `;
+
+                                    contenedor.innerHTML += table_docs;
+
         
                 }
                 else{
@@ -176,8 +227,32 @@
                 let boton = ` <a href="{{ url_for('horsemen_and_amazons.add_file', user_id=context.id) }}"><button class="boton add-file">Añadir archivo</button></a>`;
 
                 contenedor.innerHTML += boton;
+                 // Ocultar el contenedor mientras se carga
+                contenedor.style.visibility = 'hidden';
+                
+                // ... resto del código existente para cargar documentos
+
+                // Después de cargar los documentos, ajustar el layout y mostrar
+                requestAnimationFrame(() => {
+                    ajustarLayout();
+                    contenedor.style.visibility = 'visible';
+                });
             }
 
+             // Observer para detectar cambios en el contenedor
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'childList') {
+                        setTimeout(ajustarLayout, 0);
+                    }
+                });
+            });
+
+            // Observar cambios en el contenedor
+            observer.observe(contenedor, { 
+                childList: true, 
+                subtree: true 
+            });
             // Recuperar el estado del Local Storage
             const selectedTab = localStorage.getItem('selectedTab');
 
@@ -218,7 +293,7 @@
             // Manejar la confirmación de eliminación
             confirmButton.addEventListener('click', function () {
                 if (fileIdToDelete) {
-                    const deleteUrl = "{{ url_for('horsemen_and_amazons.delete_horseman', user_id=context.id, file_id=0) }}".replace('/0', `/${fileIdToDelete}`);
+                    const deleteUrl = "{{ url_for('horsemen_and_amazons.delete_file', user_id=context.id, file_id=0) }}".replace('/0', `/${fileIdToDelete}`);
                     window.location.href = deleteUrl;
                 }
             });
@@ -227,66 +302,35 @@
             cancelButton.addEventListener('click', closeModal);
             document.querySelector('.modal-close').addEventListener('click', closeModal);
             
-            // Manejo de cambios en las operaciones
-            document.addEventListener('change', (e) => {
-                if (e.target.classList.contains('operations')) {
-                    const selectedValue = e.target.value;
-                    
-                    const fileType = e.target.dataset.fileType;
-                    const fileId = e.target.dataset.fileId;
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.icon-button')) {
+                    const button = e.target.closest('.icon-button');
+                    const fileId = button.dataset.fileId;
+                    const fileType = button.dataset.fileType;
 
-                    const selectElement = e.target;
-                    
-                    if (selectedValue === 'delete'){
-                        fileIdToDelete = fileId; // Almacenar el ID del jinete a eliminar
-                        openModal(); // Mostrar el modal
+                    if (button.classList.contains('eliminar')) {
+                        fileIdToDelete = fileId; // Almacenar el ID del archivo a eliminar
+                        openModal(); // Mostrar el modal de confirmación de eliminación
                     }
 
-                    // Si la opción seleccionada es "Ir al documento"
-                    if (selectedValue === 'open' && fileType === 'Link') {
-                        const selectedFile = files.find(file => file.id === parseInt(fileId));
-                        window.open(selectedFile.file_url, '_blank'); // Abre el enlace en una nueva pestaña
-                    }
-
-                    if (selectedValue === 'download' && fileType !== 'Link') {
-                        const downloadUrl = "{{ url_for('horsemen_and_amazons.download_file', user_id=context.id, file_id=0) }}".replace('/0', `/${fileId}`);
-                        window.location.href = downloadUrl;
-                    }
-
-                    if (selectedValue === 'edit'){
+                    if (button.classList.contains('edit')) {
                         const editUrl = "{{ url_for('horsemen_and_amazons.edit_file', user_id=context.id, file_id=0) }}".replace('/0', `/${fileId}`);
-                        window.location.href = editUrl;
+                        window.location.href = editUrl; // Redirigir a la página de edición
                     }
 
-                    resetSelect(selectElement);
+                    if (button.classList.contains('open') && fileType === 'Link') {
+                        const selectedFile = files.find(file => file.id === parseInt(fileId));
+                        window.open(selectedFile.file_url, '_blank'); // Abrir el enlace en una nueva pestaña
+                    }
+
+                    if (button.classList.contains('download') && fileType !== 'Link') {
+                        const downloadUrl = "{{ url_for('horsemen_and_amazons.download_file', user_id=context.id, file_id=0) }}".replace('/0', `/${fileId}`);
+                        window.location.href = downloadUrl; // Descargar el archivo
+                    }
                 }
             });
 
-            function ajustarLayout() {
-                const tabla = document.querySelector('.table-docs');
-                const boton = document.querySelector('.add-file');
-                const options = document.querySelector('.order_options_docs');
-                const boton_next = document.querySelector('.pagination-next');
-                const boton_previous = document.querySelector('.pagination-previous');
-
-                const anchoTabla = tabla.offsetWidth;
-                boton.style.width = anchoTabla + 'px';
-
-                // Ajustar el margen del select
-                const estilos = window.getComputedStyle(tabla);
-                const marginLeft = estilos.marginLeft;
-                const marginRight = estilos.marginRight;
-
-                options.style.marginLeft = marginLeft;
-                boton_previous.style.marginLeft = marginLeft;
-                boton_next.style.marginRight = marginRight;
-            }
-
-            ajustarLayout();
-            
-            // Escuchar el evento 'resize' para ajustar el select al redimensionar la ventana
             window.addEventListener('resize', ajustarLayout);
-
         });
     </script>
 {% endblock %}

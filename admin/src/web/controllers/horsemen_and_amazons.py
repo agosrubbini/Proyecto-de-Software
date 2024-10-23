@@ -4,7 +4,7 @@ from src.core.persons import (get_jya_users, find_address_by_id, find_jya_by_id,
                               get_healthcare_plans, get_emergency_contact_by_id, get_healthcare_plan_by_id)
 from src.core.institutions import get_schools, get_school_by_id
 from src.core.persons.forms import registryFileForm, registryHorsemanForm
-from src.core.auth.auth import inject_user_permissions
+from src.core.auth.auth import inject_user_permissions, permission_required
 from flask import current_app as app
 from datetime import timedelta
 from src.core.persons.models.file import File
@@ -121,6 +121,7 @@ def obtenerChoices(form):
     form.healthcare_plan_id_jya.choices = [(healthcare_plan.id, healthcare_plan.social_security) for healthcare_plan in healthcare_plans]
 
 @bp.get("/")
+@permission_required('jya_index')
 @inject_user_permissions
 def list_jya_users():
 
@@ -178,6 +179,7 @@ def showFiles(request):
 
 
 @bp.get("/<int:user_id>")
+@permission_required('jya_show')
 @inject_user_permissions
 def list_info_by_jya(user_id):
 
@@ -211,6 +213,7 @@ def list_info_by_jya(user_id):
     return render_template('horsemen_and_amazons/jya_user_info.html', context=context, page=page, order_by=order_by, search=search, document_type=document_type)
 
 @bp.route("/add_jya", methods=['POST', 'GET'])
+@permission_required('jya_new')
 @inject_user_permissions
 def add_horseman():
 
@@ -272,6 +275,7 @@ def add_horseman():
     return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
 
 @bp.route("/edit_horseman/<user_id>", methods=['POST', 'GET'])
+@permission_required('jya_update')
 @inject_user_permissions
 def edit_horseman(user_id):
 
@@ -339,6 +343,7 @@ def edit_horseman(user_id):
     return render_template("horsemen_and_amazons/edit_horseman.html", form=form, user_id=user_id, horseman=horseman, address=address, healthcare_plan=healthcare_plan, emergency_contact=emergency_contact, school=school)
 
 @bp.route("/delete_horseman/<int:user_id>", methods=['POST', 'GET'])
+@permission_required('jya_destroy')
 @inject_user_permissions
 def delete_horseman(user_id):
 
@@ -351,6 +356,7 @@ def delete_horseman(user_id):
     return redirect(url_for('horsemen_and_amazons.list_jya_users'))
 
 @bp.route("/<int:user_id>/delete_file/<int:file_id>", methods=['POST', 'GET'])
+@permission_required('jya_destroy')
 @inject_user_permissions
 def delete_file(user_id, file_id):
 
@@ -369,6 +375,7 @@ def delete_file(user_id, file_id):
     return redirect(url_for('horsemen_and_amazons.list_info_by_jya', user_id=user_id))
    
 @bp.route("/<int:user_id>/add_file", methods=['POST', 'GET'])
+@permission_required('jya_new')
 @inject_user_permissions
 def add_file(user_id):
 
@@ -445,6 +452,7 @@ def add_file(user_id):
     return render_template("horsemen_and_amazons/registry_file.html", form=form, user_id=user_id)
 
 @bp.route("/<int:user_id>/download_file/<file_id>", methods=['GET'])
+@permission_required('jya_new')
 @inject_user_permissions
 def download_file(user_id, file_id):
     # Obtener el archivo de la base de datos usando el ID

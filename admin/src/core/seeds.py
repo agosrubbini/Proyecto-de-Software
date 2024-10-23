@@ -185,7 +185,7 @@ def run():
     )
 
     file1 = create_file(
-        file_url = "hola",
+        file_url = "https://www.python.org/",
         file_type = "Link",
         document_type = "Entrevista",
         horsemen_and_amazons_id = JyA1.id,
