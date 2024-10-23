@@ -48,6 +48,8 @@ class Employee(Person):
     condition = db.Column(db.Enum("Voluntario", "Personal Rentado", name="condition"), nullable=False)
     active = db.Column(db.Boolean, default=True)
     healthcare_plan_id_employee = db.Column(db.Integer, db.ForeignKey("healthcare_plan.id"), nullable=True)
+    email = db.Column(db.String(255), nullable=False)
+    birth_date = db.Column(db.DateTime, nullable=False)
     # degree  = db.Column(db.String(255), nullable=True)--> Se debe poder subir un archivo, se guarda la ruta?
     # DNI_copy = db.Column(db.String(255), nullable=True)  --> Se debe poder subir un archivo, se guarda la ruta?
     # updated_CV = db.Columnt(db.String(255), nullable=True) --> Se debe poder subir un archivo, se guarda la ruta?
@@ -58,6 +60,8 @@ class Employee(Person):
     billings = db.relationship("Billing", backref="billings_employee", foreign_keys="Billing.employee_id")
     payments = db.relationship("Payment", backref="payments")
     institutional_works = db.relationship("InstitutionalWork", backref="institutional_works", foreign_keys="InstitutionalWork.professional")
+    files = db.relationship("EmployeeFile", backref="files", cascade='all, delete-orphan')
+    
 
     __mapper_args__ = {
         'polymorphic_identity': 'employee',
@@ -65,7 +69,7 @@ class Employee(Person):
 
     def __init__(self, name=None, last_name=None, DNI=None, age=None, phone_number=None, address_id=None, user_id=None, 
                  profession=None, job_position=None, start_date=None, end_date=None, emergency_contact_id_employee=None, 
-                 condition=None, active=None, healthcare_plan_id_employee=None):
+                 condition=None, active=None, healthcare_plan_id_employee=None, email=None, birth_date=None):
 
         super().__init__(name=name, last_name=last_name, DNI=DNI, age=age, phone_number=phone_number, address_id=address_id, user_id=user_id)
         self.profession = profession
@@ -76,6 +80,28 @@ class Employee(Person):
         self.condition = condition
         self.active = active
         self.healthcare_plan_id_employee = healthcare_plan_id_employee
+        self.email = email
+        self.birth_date = birth_date
+
+    def to_dict(self, addres, healthcare_plan, emergency_contact):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "last_name": self.last_name,
+            "DNI": self.DNI,
+            "birth_date": self.birth_date.strftime('%Y/%m/%d'),
+            "phone_number": self.phone_number,
+            "address": addres,
+            "profession": self.profession,
+            "job_position": self.job_position,
+            "start_date": self.start_date.strftime('%Y/%m/%d'),
+            "end_date": self.end_date.strftime('%Y/%m/%d') if self.end_date else "Incierta",
+            "emergency_contact": emergency_contact.string(),
+            "condition": self.condition,
+            "active": self.active,
+            "healthcare_plan": healthcare_plan.string(),
+            "email": self.email,
+        }
 
 class JyA(Person):
 

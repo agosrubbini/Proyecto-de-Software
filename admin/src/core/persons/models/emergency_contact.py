@@ -16,4 +16,23 @@ class EmergencyContact(db.Model):
         self.id = id
         self.name = name
         self.phone_number = phone_number
-        
+    
+    def __repr__(self):
+        return f'{self.name} {self.phone_number}'
+    
+    def string(self):
+        return f'{self.name} {self.phone_number}'
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "phone_number": self.phone_number
+        }
+    
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "phone_number": self.phone_number
+        }

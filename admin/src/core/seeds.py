@@ -3,10 +3,11 @@ from datetime import datetime
 from src.core.auth import create_user, create_role, create_permission, initialice_admin_permissions, initialice_tecnica_permissions, initialice_ecuestre_permissions
 from src.core.horses import create_horse
 from src.core.institutions import create_institutional_work, create_school
-from src.core.payments import create_payment, create_billing
+from src.core.payments import create_billing, create_payment
 from src.core.persons import (
-    create_person, create_employee, create_JyA, create_family_member_or_tutor, create_address, create_emergency_contact, 
+    create_employee_file, create_person, create_employee, create_JyA, create_address, create_emergency_contact, 
     create_healthcare_plan, create_file)
+from src.core.horses import create_file as create_horse_file
 
 
 
@@ -65,6 +66,16 @@ def run():
         alias="user_ecuestre",
         password="1234",
         role_id=ecuestre.id,
+        system_admin=False,
+        active=True,
+        is_blocked=False
+    )
+
+    user_voluntariado = create_user(
+        email="user_voluntariado@gmail.com",
+        alias="user_voluntariado",
+        password="1234",
+        role_id=voluntariado.id,
         system_admin=False,
         active=True,
         is_blocked=False
@@ -138,7 +149,9 @@ def run():
         job_position="Jefe",
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",
-        healthcare_plan_id_employee=healthcare_plan1.id
+        healthcare_plan_id_employee=healthcare_plan1.id,
+        email="empleado@gmail.com",
+        birth_date = datetime.now(),
     )
 
     employee2 = create_employee(
@@ -152,8 +165,11 @@ def run():
         job_position="Jefe",
         emergency_contact_id_employee=emergency_contact1.id,
         condition="Voluntario",
-        healthcare_plan_id_employee=healthcare_plan1.id
+        healthcare_plan_id_employee=healthcare_plan1.id,
+        email="empleado2@gmail.com",
+        birth_date = datetime.now(),
     )
+
 
     horse1 = create_horse(
         name = "Mancha",
@@ -161,10 +177,10 @@ def run():
         gender = "Macho",
         race = "Mustang",
         fur = "Blanco y marron",
-        purchase_or_donation = "Donacion",
+        purchase_or_donation = "Donación",
         date_of_entry = datetime.now(),
         sede = "arg",
-        type_jya_assigned = "Hipoterapia"
+        type_jya_assigned = ["Hipoterapia","Equitacion"]
     )
 
     JyA1 = create_JyA(
@@ -200,6 +216,28 @@ def run():
         title = "ARCHIVO DE PRUEBA",
     )
 
+    employee_file1 = create_employee_file(
+        file_url = "titulo1",
+        title = "Titulo-58843",
+        document_type = "Título",
+        employee_id = employee2.id,
+    )
+
+    horse_file1 = create_horse_file(
+        file_url = "hola",
+        file_type = "Link",
+        document_type = "Planificacion de entrenamiento",
+        horses_id = horse1.id,
+        title = "LINK DE PRUEBA",
+    )
+
+    horse_file2 = create_horse_file(
+        file_url = "chau",
+        file_type = "Documento",
+        document_type = "Registro veterinario",
+        horses_id = horse1.id,
+        title = "ARCHIVO DE PRUEBA",
+    )
 
     institutional_work1 = create_institutional_work(
         condicion="Regular",

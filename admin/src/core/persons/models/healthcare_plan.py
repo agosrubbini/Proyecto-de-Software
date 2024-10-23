@@ -21,3 +21,29 @@ class HealthcarePlan(db.Model):
         self.affiliate_number = affiliate_number
         self.has_guardianship = has_guardianship
         self.observation = observation
+    
+    def __repr__(self):
+        guardianship = "Tiene tutela" if self.has_guardianship else "No tiene tutela"
+        return f'{self.social_security} {self.affiliate_number}, {guardianship}, {self.observation}'
+    
+    def string(self):
+        guardianship = "Tiene tutela" if self.has_guardianship else "No tiene tutela"
+        return f'{self.social_security} {self.affiliate_number}, {guardianship}, {self.observation}'
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "social_security": self.social_security,
+            "affiliate_number": self.affiliate_number,
+            "has_guardianship": self.has_guardianship,
+            "observation": self.observation
+        }
+    
+    def to_json(self):
+        return {
+            "id": self.id,
+            "social_security": self.social_security,
+            "affiliate_number": self.affiliate_number,
+            "has_guardianship": self.has_guardianship,
+            "observation": self.observation
+        }
