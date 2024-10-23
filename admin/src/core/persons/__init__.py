@@ -114,6 +114,11 @@ def get_files_by_horseman_id(horseman_id):
 
     return File.query.filter_by(horsemen_and_amazons_id = horseman_id).all()
 
+def find_jya_by_dni(horseman_dni):
+
+    """Devuelve el jinete con el dni pasado por parámetro en caso de que exista en la base de datos"""
+
+    return JyA.query.filter_by(DNI = horseman_dni).first()
 
 def delete_file_by_id(file_id):
 
@@ -148,7 +153,7 @@ def updated_file(file, **kwargs):
             setattr(file, key, value)
             
 
-    file.upload_date = datetime.now()  # Actualizar la fecha de subida
+    file.upload_date = datetime.now()  
 
     db.session.add(file)
     db.session.commit()
