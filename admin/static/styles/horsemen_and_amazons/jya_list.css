@@ -1,7 +1,19 @@
-table.users tbody tr:hover {
-    cursor: pointer; /* Cambia el puntero a mano */
-    transform: scale(1.05); /* Cambia el color de fondo al pasar el mouse */
-    transition: background-color 0.3s; /* Suaviza el cambio de color */
+* {
+    box-sizing: border-box; 
+    max-width: 100%;
+}
+
+.table {
+    margin: 0 auto !important;
+    border-collapse: collapse;
+  }
+
+.table th, .table td {
+    padding: 8px;
+}
+
+.table th {
+    text-align: left;
 }
 
 .separador{
@@ -35,8 +47,55 @@ div.field.is-grouped {
     width: 80%;
 }
 
+@media (max-width: 426px){
+
+    div.field.is-grouped {
+        flex-wrap: wrap;
+    }
+
+    div.field {
+        width: 100%;
+    }
+
+    div.control {
+        width: 100%;
+    }
+
+    th, td {
+        text-overflow: ellipsis; /* Muestra '...' si el texto es muy largo */
+        white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    }
+    
+    th {
+        font-size: 14px; /* Reduce el tamaño de fuente de los encabezados */
+    }
+
+    td {
+        font-size: 12px; /* Reduce el tamaño de fuente de las celdas */
+    }
+
+    .add-horseman, .add-file{
+        width: 90% !important;
+        margin: auto !important;
+    }
+
+    .pagination-previous.docs, .pagination-next.docs{
+        width: 10px !important;
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+    }
+  
+}
+
+.order_options, 
+.pagination-next, 
+.pagination-previous {
+    visibility: hidden;
+}
+
 h1 {
     font-size: 2rem;
+    text-align: center;
 }
 
 p {
@@ -64,15 +123,6 @@ p {
     white-space: nowrap;
 }
 
-.filter {
-    margin-left: 0px;
-    margin-right: 0px;
-}
-
-.filter:hover {
-    background-color: hsl(221, 14%, 40%);
-    transform: scale(1.05);
-}   
 
 i {
     color: black !important;
@@ -89,13 +139,9 @@ select:hover {
 }
 
 .pagination-previous, .pagination-next {
-    width: 10% ;
-    margin-top: 0px;
+    width: 10%;
 }
 
-.pagination {
-    max-width: 100%;
-}
 
 .box{
     background-color: white !important;
@@ -112,3 +158,5 @@ select:hover {
 .box button{
     color: white !important;
 }
+
+

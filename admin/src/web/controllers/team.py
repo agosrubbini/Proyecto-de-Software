@@ -16,6 +16,17 @@ bp = Blueprint('team', __name__, url_prefix='/empleados')
 @permission_required('team_index')
 @inject_user_permissions
 def list_team():
+    """Redirige a la vista de listado de empleados, con los parámetros de orden, búsqueda, paginación y filtro aplicados.
+
+    Returns:
+        render_template: Renderiza la vista de listado de empleados con los parámetros de orden, búsqueda, paginación y filtro aplicados.
+        employees: Lista de empleados que cumplen con los parámetros de orden, búsqueda, paginación y filtro aplicados.
+        order: Parámetro de orden seleccionado.
+        q: Parámetro de búsqueda seleccionado.
+        pagination: Paginación de los empleados.
+        job_position: Filtro de posición laboral seleccionado.
+        form: Formulario de empleado.
+    """
     order=request.args.get('order', 'last_name_asc')
     q=request.args.get('q', None)
     page=request.args.get('page', 1, type=int)
@@ -59,6 +70,14 @@ def list_team():
 @permission_required('team_new')
 @inject_user_permissions
 def new_employee():
+    """Redirige a la vista de creación de empleado, con el formulario de empleado y los campos de dirección, contacto de emergencia y obra social cargados.
+
+    Returns:
+        render_template: Renderiza la vista de creación de empleado con el formulario de empleado y los campos de dirección, contacto de emergencia y obra social cargados.
+        professions: Lista de profesiones.
+        form: Formulario de empleado.
+        redirect: Redirige a la vista de listado de empleados si el formulario es válido.
+    """
     form = EmployeeForm()
     form.address_id.choices = [(address.id, address.string()) for address in Address.query.all()]
     form.emergency_contact.choices = [(emergency_contact.id, emergency_contact.name, emergency_contact.phone_number) for emergency_contact in EmergencyContact.query.all()]
@@ -126,8 +145,14 @@ def new_employee():
 @permission_required('team_show')
 @inject_user_permissions
 def show_employee(id):
-    """
-    Esta función retorna la información del jinete o amazona asociado al id pasado por parámetro en la url.
+    """Redirige a la vista de detalle de empleado, con los archivos asociados al empleado.
+
+    Args:
+        id (int): ID del empleado.
+
+    Returns:
+        render_template: Renderiza la vista de detalle de empleado con los archivos asociados al empleado.
+        context: Contexto con los archivos asociados al empleado.
     """
     
     app.logger.info("Call to index function")
@@ -164,6 +189,18 @@ def show_employee(id):
 @permission_required('team_update')
 @inject_user_permissions
 def edit_employee(id):
+    """Redirige a la vista de edición de empleado, con el formulario de empleado y los campos de dirección, contacto de emergencia y obra social cargados.
+
+    Args:
+        id (int): ID del empleado.
+    
+    Returns:
+        render_template: Renderiza la vista de edición de empleado con el formulario de empleado y los campos de dirección, contacto de emergencia y obra social cargados.
+        professions: Lista de profesiones.
+        form: Formulario de empleado.
+        redirect: Redirige a la vista de listado de empleados si el formulario es válido.
+    """
+
     employee = Employee.query.get(id)
     employee.healthcare_plan = HealthcarePlan.query.get(employee.healthcare_plan_id_employee)
     employee.start_date = employee.start_date.strftime('%Y-%m-%d')
@@ -238,6 +275,15 @@ def edit_employee(id):
 @permission_required('team_destroy')
 @inject_user_permissions
 def delete_employee(id):
+    """Elimina lógicamente al empleado.
+
+    Args:
+        id (int): ID del empleado.
+
+    Returns:
+        redirect: Redirige a la vista de listado de empleados.
+    """
+
     employee = Employee.query.get(id)
     if employee:
         employee.email = f"*{employee.email}"
@@ -246,19 +292,21 @@ def delete_employee(id):
         flash('Employee logically deleted successfully!', 'success')
     else:
         flash('Employee not found.', 'error')
-    # Que pasa cuando quiero eliminar un empleado que tiene billings asociados?
-    # Empleado con archivos se borran ambos.
-    # Que otro caso existe?
     return redirect(url_for('team.list_team'))
 
 @bp.route('/empleado/<int:id>/add_file', methods=['POST', 'GET'])
 @permission_required('team_update')
 @inject_user_permissions    
 def add_file(id):
-    
-    """
-    Muestra la vista del registro, además valida los parametros, y guarda al archivo en la base de datos si
-    se recibió el formulario y el mismo es válido.
+    """Redirige a la vista de registro de archivo, además valida los parametros, y guarda al archivo en la base de datos si se recibió el formulario y el mismo es válido.
+
+    Args:
+        id (int): ID del empleado.
+
+    Returns:
+        render_template: Renderiza la vista de registro de archivo.
+        form: Formulario de archivo.
+        redirect: Redirige a la vista de detalle de empleado si el formulario es válido.
     """
 
     app.logger.info("Call to add_file")
@@ -303,6 +351,15 @@ def add_file(id):
 @permission_required('team_update')
 @inject_user_permissions
 def delete_file(id, file_id):
+    """Elimina el archivo de la base de datos.
+
+    Args:
+        id (int): ID del empleado.
+        file_id (int): ID del archivo.
+
+    Returns:
+        redirect: Redirige a la vista de detalle de empleado.
+    """
     file = find_employee_file_by_id(file_id)
     minio_client = app.storage.client
     bucket_name = app.config['BUCKET_NAME']
@@ -318,9 +375,18 @@ def delete_file(id, file_id):
 @permission_required('team_update')
 @inject_user_permissions
 def download_file(user_id, file_id):
+    """Descarga el archivo del empleado.
+
+    Args:
+        user_id (int): ID del empleado.
+        file_id (int): ID del archivo.
+
+    Returns:
+        redirect: Redirige al enlace de descarga del archivo
+    """
+
     # Obtener el archivo de la base de datos usando el ID
     file = find_employee_file_by_id(file_id)  # Función que obtenga el archivo desde la base de datos
-    
 
     # Configurar MinIO
     minio_client = app.storage.client
@@ -340,9 +406,18 @@ def download_file(user_id, file_id):
 @permission_required('team_update')
 @inject_user_permissions
 def edit_file(user_id, file_id):
-    """
-    Muestra la vista del registro, además valida los parametros, y guarda al archivo en la base de datos si
-    se recibió el formulario y el mismo es válido.
+    """Redirige a la vista de edición de archivo, además valida los parametros, y guarda al archivo en la base de datos si se recibió el formulario y el mismo es válido.
+
+    Args:
+        user_id (int): ID del empleado. 
+        file_id (int): ID del archivo.
+
+    Returns:
+        render_template: Renderiza la vista de edición de archivo.
+        form: Formulario de archivo.
+        user_id: ID del empleado.
+        file: Archivo a editar.
+        redirect: Redirige a la vista de detalle de empleado si el formulario es válido.
     """
 
     app.logger.info("Call to add_file")

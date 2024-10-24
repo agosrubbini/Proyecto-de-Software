@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from src.core.persons import (get_jya_users, find_address_by_id, find_jya_by_id, delete_jya_by_id, get_files_by_horseman_id, delete_file_by_id, 
                               create_JyA, create_file, updated_jya, find_file_by_title, find_file_by_id, updated_file, get_emergency_contacts, get_address, 
-                              get_healthcare_plans, get_emergency_contact_by_id, get_healthcare_plan_by_id)
+                              get_healthcare_plans, get_emergency_contact_by_id, get_healthcare_plan_by_id, find_jya_by_dni)
 from src.core.institutions import get_schools, get_school_by_id
 from src.core.persons.forms import registryFileForm, registryHorsemanForm
-from src.core.auth.auth import inject_user_permissions
+from src.core.auth.auth import inject_user_permissions, permission_required
 from flask import current_app as app
 from datetime import timedelta
 from src.core.persons.models.file import File
@@ -121,11 +121,12 @@ def obtenerChoices(form):
     form.healthcare_plan_id_jya.choices = [(healthcare_plan.id, healthcare_plan.social_security) for healthcare_plan in healthcare_plans]
 
 @bp.get("/")
+@permission_required('jya_index')
 @inject_user_permissions
 def list_jya_users():
 
     """ 
-        Muestra la vista del del listado de los jinetes y amazonas registrados en el sistema    
+        Muestra la vista del listado de los jinetes y amazonas registrados en el sistema    
     """
 
     horsemen, page, order_by, name, last_name, dni, attending_professionals = showHorsemen(request)
@@ -133,7 +134,35 @@ def list_jya_users():
     return render_template("horsemen_and_amazons/jya_users_list.html", users = horsemen, page=page, order_by=order_by, name=name, last_name=last_name, dni=dni, professionals=attending_professionals)
 
 def showFiles(request):
-   
+
+    """
+         Obtiene una lista paginada de archivos con opciones de filtrado y ordenación.
+
+        Esta función recupera archivos de la base de datos basándose en varios parámetros de consulta opcionales: términos de búsqueda, tipo de documento, 
+        orden de clasificación y paginación. Si no se proporcionan parámetros, se ordena de forma predeterminada por título en orden ascendente.
+
+        Parámetros:
+            request (flask.Request): El objeto de solicitud de Flask que contiene posibles parámetros de consulta para el filtrado, ordenación y paginación.
+
+        Parámetros de consulta:
+            - order_option (str): Define el orden de clasificación de los archivos.
+                Valores posibles:
+                * 'title_asc' (predeterminado): Ordena por título en orden ascendente.
+                * 'title_desc': Ordena por título en orden descendente.
+                * 'date_asc': Ordena por fecha de subida en orden ascendente.
+                * 'date_desc': Ordena por fecha de subida en orden descendente.
+            - search (str): Un término de búsqueda usado para filtrar archivos por título (predeterminado: '').
+            - document_type (str): Filtra por tipo de documento específico (predeterminado: '').
+            - page (int): El número de página actual para la paginación (predeterminado: 1).
+
+        Retorna:
+            tuple: Una tupla que contiene lo siguiente:
+                - files (Pagination): Una lista paginada de archivos.
+                - page (int): El número de página actual.
+                - order_by (str): La opción de orden seleccionada para la clasificación.
+                - search (str): El término de búsqueda usado para filtrar.
+                - document_type (str): El filtro aplicado por tipo de documento.
+    """
     # Determine the order option
     if request.method == 'POST':
         order_by = request.args.get('order_option', 'title_asc', type=str)
@@ -178,11 +207,15 @@ def showFiles(request):
 
 
 @bp.get("/<int:user_id>")
+@permission_required('jya_show')
 @inject_user_permissions
 def list_info_by_jya(user_id):
 
     """
         Esta función retorna la información del jinete o amazona asociado al id pasado por parámetro en la url.
+
+        Parámetros:
+            user_id (int): Id del jinete del cual se necesita la información.
     """
     
     app.logger.info("Call to index function")
@@ -211,12 +244,13 @@ def list_info_by_jya(user_id):
     return render_template('horsemen_and_amazons/jya_user_info.html', context=context, page=page, order_by=order_by, search=search, document_type=document_type)
 
 @bp.route("/add_jya", methods=['POST', 'GET'])
+@permission_required('jya_new')
 @inject_user_permissions
 def add_horseman():
 
     """
-    Muestra la vista del registro, además valida los parametros, y guarda al archivo en la base de datos si
-    se recibió el formulario y el mismo es válido.
+        Muestra la vista del registro de un jinete o amazona, además valida los parametros, y guarda al mismo en la base de datos si se recibió el formulario y 
+        el mismo es válido.
     """
 
     app.logger.info("Call to add_horseman")
@@ -227,10 +261,10 @@ def add_horseman():
     app.logger.info("El formulario del jinete es valido: %s", form.validate_on_submit())
     if (form.validate_on_submit()):
         
-        """if (find_jya_by_id(user_id)):
-            app.logger.error("The following jinete is already registered: %s ", form.title.data)
-            flash("Ya existe un jinete con el id ingresado registrado en el sistema", "error")
-            return redirect(url_for("horsemen_and_amazons.add_file", user_id=user_id)) """
+        if (find_jya_by_dni(form.DNI.data)):
+            app.logger.error("The following jinete is already registered: %s ", form.DNI.data)
+            flash("Ya existe un jinete con el dni ingresado registrado en el sistema", "info")
+            return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
 
         create_JyA(
             
@@ -272,12 +306,16 @@ def add_horseman():
     return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
 
 @bp.route("/edit_horseman/<user_id>", methods=['POST', 'GET'])
+@permission_required('jya_update')
 @inject_user_permissions
 def edit_horseman(user_id):
 
     """
-    Muestra la vista de edición del jinete, además valida los parametros, y guarda al jinete con los datos editados en la base de datos si
-    se recibió el formulario y el mismo es válido.
+        Muestra la vista de edición del jinete, además valida los parametros, y guarda al jinete con los datos editados en la base de datos si se recibió el formulario 
+        y el mismo es válido.
+
+        Parámetros:
+            user_id (int): Id del jinete del cual se quiere editar su información.
     """
 
     app.logger.info("Call to edit_horseman")
@@ -339,8 +377,16 @@ def edit_horseman(user_id):
     return render_template("horsemen_and_amazons/edit_horseman.html", form=form, user_id=user_id, horseman=horseman, address=address, healthcare_plan=healthcare_plan, emergency_contact=emergency_contact, school=school)
 
 @bp.route("/delete_horseman/<int:user_id>", methods=['POST', 'GET'])
+@permission_required('jya_destroy')
 @inject_user_permissions
 def delete_horseman(user_id):
+
+    """ 
+        Elimina el jinete con el id pasado como parámetro en la url, de la base de datos y retorna a la vista que muestra la lista de los mismos
+
+        Parámetros:
+            user_id (int): Id del jinete que se va a eliminar.
+    """
 
     horseman = find_jya_by_id(user_id)
     delete_jya_by_id(user_id)
@@ -351,8 +397,17 @@ def delete_horseman(user_id):
     return redirect(url_for('horsemen_and_amazons.list_jya_users'))
 
 @bp.route("/<int:user_id>/delete_file/<int:file_id>", methods=['POST', 'GET'])
+@permission_required('jya_destroy')
 @inject_user_permissions
 def delete_file(user_id, file_id):
+
+    """ Elimina de la base de datos el archivo con el id pasado como parámetro, asociado al jinete con el id pasado como parámetro 
+
+        Parámetros:
+            user_id (int): Id del jinete al que pertenece el archivo a eliminar.
+            file_id (int): Id del archivo que se va a eliminar.
+    """
+
 
     file = find_file_by_id(file_id)
     minio_client = app.storage.client
@@ -365,16 +420,19 @@ def delete_file(user_id, file_id):
     delete_file_by_id(file_id)
     flash('Archivo eliminado correctamente', 'success')
 
-    # Redirigir a la vista order_by pasando el user_id y la opción de orden como query parameters
     return redirect(url_for('horsemen_and_amazons.list_info_by_jya', user_id=user_id))
    
 @bp.route("/<int:user_id>/add_file", methods=['POST', 'GET'])
+@permission_required('jya_new')
 @inject_user_permissions
 def add_file(user_id):
 
     """
-    Muestra la vista del registro, además valida los parametros, y guarda al archivo en la base de datos si
-    se recibió el formulario y el mismo es válido.
+        Muestra la vista del registro de un archivo, además valida los parametros, y guarda al archivo en la base de datos si se recibió el formulario y el mismo es válido,
+        asociandolo al jinete con el id pasado como parámetro.
+
+        Parámetros:
+            user_id (int): Id del jinete al cual se le va a asociar un nuevo archivo.
     """
 
     app.logger.info("Call to add_file")
@@ -416,7 +474,7 @@ def add_file(user_id):
             link_filename = f"{form.title.data}_link.txt"
             link_content = link.encode('utf-8')  # Convertir el enlace a bytes
 
-                    # Subir a MinIO
+            # Subir a MinIO
             minio_client.put_object(
             bucket_name,
             link_filename,
@@ -445,8 +503,17 @@ def add_file(user_id):
     return render_template("horsemen_and_amazons/registry_file.html", form=form, user_id=user_id)
 
 @bp.route("/<int:user_id>/download_file/<file_id>", methods=['GET'])
+@permission_required('jya_new')
 @inject_user_permissions
 def download_file(user_id, file_id):
+
+    """
+        Descarga el archivo con el id pasado como parámetro, el cuál está asociado al jinete con el id pasado como parámetro.
+
+        Parámetros:
+            user_id (int): Id del jinete al que pertenece el archivo que se quiere descargar.
+            file_id (int): Id del archivo que se quiere descargar.
+    """
     # Obtener el archivo de la base de datos usando el ID
     file = find_file_by_id(file_id)  # Función que obtenga el archivo desde la base de datos
     
@@ -455,14 +522,12 @@ def download_file(user_id, file_id):
     minio_client = app.storage.client
     bucket_name = app.config['BUCKET_NAME']
 
-    # Parámetros adicionales para forzar la descarga
     download_headers = {
         'response-content-disposition': f'attachment; filename="{file.file_url}"'
     }
 
     presigned_url = minio_client.presigned_get_object(bucket_name, file.file_url, expires=timedelta(hours=1), response_headers=download_headers)
 
-        # Redirigir al usuario al enlace de descarga
     return redirect(presigned_url)
 
 @bp.route("/<int:user_id>/edit_file/<file_id>", methods=['POST', 'GET'])
@@ -470,8 +535,12 @@ def download_file(user_id, file_id):
 def edit_file(user_id, file_id):
 
     """
-    Muestra la vista del registro, además valida los parametros, y guarda al archivo en la base de datos si
-    se recibió el formulario y el mismo es válido.
+        Muestra la vista de edición del archivo, además valida los parametros, y guarda al archivo con los datos editados en la base de datos si se recibió el formulario 
+        y el mismo es válido.
+
+        Parámetros:
+            user_id (int): Id del jinete al cual está asociado el archivo que se quiere editar.
+            file_id (int): Id del archivo que se quiere editar.
     """
 
     app.logger.info("Call to add_file")
