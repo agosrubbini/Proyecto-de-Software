@@ -1,7 +1,8 @@
 from datetime import timedelta
 from os import fstat
 from flask import Blueprint, current_app as app, render_template, redirect, request, url_for, flash
-from src.core.persons import create_employee_file, delete_employee_file_by_id, find_address_by_id, find_employee_by_id, find_employee_file_by_id, find_employee_file_by_title, get_emergency_contact_by_id, get_files_by_employee_id, get_healthcare_plan_by_id, updated_employee_file
+from src.core.auth.models.user import User
+from src.core.persons import create_employee_file, delete_employee_file_by_id, find_address_by_id, find_employee_by_id, find_employee_file_by_id, find_employee_file_by_title, get_emergency_contact_by_id, get_employee_user_by_id, get_files_by_employee_id, get_healthcare_plan_by_id, updated_employee_file
 from src.core.auth.auth import inject_user_permissions, permission_required
 from src.core.persons.models.person import Employee, Person
 from src.core.persons.models.address import Address
@@ -81,6 +82,7 @@ def new_employee():
     form = EmployeeForm()
     form.address_id.choices = [(address.id, address.string()) for address in Address.query.all()]
     form.emergency_contact.choices = [(emergency_contact.id, emergency_contact.name, emergency_contact.phone_number) for emergency_contact in EmergencyContact.query.all()]
+    form.user_id.choices = [(user.id, user.email) for user in User.query.all()]
     professions = ["Psicólogo", "Psicomotricista", "Médico", "Kinesiólogo", "Terapista Ocupacional", "Psicopedagogo", "Docente", "Profesor", "Fonoaudiólogo", "Veterinario", "Otro"]
     
     if form.validate_on_submit():
@@ -132,7 +134,8 @@ def new_employee():
             active=True,
             healthcare_plan_id_employee=healthcare_plan.id,
             email=form.email.data,
-            birth_date=form.birth_date.data
+            birth_date=form.birth_date.data,
+            user_id=form.user_id.data
         )
         db.session.add(employee)
         db.session.commit()
@@ -166,14 +169,18 @@ def show_employee(id):
     employee_address = find_address_by_id(employee.address_id).string()
     employee_healthcare_plan = get_healthcare_plan_by_id(employee.healthcare_plan_id_employee)
     employee_emergency_contact = get_emergency_contact_by_id(employee.emergency_contact_id_employee)
+    employee_user = get_employee_user_by_id(employee.user_id)
     files = get_files_by_employee_id(employee.id)
-    employee_json = employee.to_dict(employee_address, employee_healthcare_plan, employee_emergency_contact)
+    employee_json = employee.to_dict(employee_address, employee_healthcare_plan, employee_emergency_contact, employee_user.email if employee_user else None)
     employee_json['active'] = 'Activo' if employee.active else 'Inactivo'
 
     files_json = []
     if files:
         for file in files:    
             files_json.append(file.to_dict())
+
+    if not employee_json['user']:
+        employee_json['user'] = 'No asignado'
 
     context = {
         'files': files_json,

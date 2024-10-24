@@ -168,11 +168,12 @@ class EmployeeForm(FlaskForm):
     end_date = DateField("End Date", validators=[Optional()])
     condition = RadioField("Condition", choices=[
             ('Voluntario', 'Voluntario'),
-            ('Personal rentado', 'Personal rentado')
+            ('Personal Rentado', 'Personal Rentado')
         ], validators=[InputRequired()])
     active = BooleanField("Active", default=True)
     email = StringField("Email", validators=[InputRequired(), Length(max=255)])
     birth_date = DateField("Birth Date", validators=[InputRequired()])
+    user_id = SelectField("User", coerce=int, validators=[Optional()])
     
     # Campos de Address
     address_id = SelectField("Address", coerce=int, validators=[Optional()])
