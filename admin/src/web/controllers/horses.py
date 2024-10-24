@@ -5,7 +5,7 @@ from src.core.horses.models.horse import Horse
 from src.core.database import db
 from src.core.horses.forms import create_horse_Form, registryFileForm
 from flask import current_app as app
-from src.core.horses.__init__ import create_horse, find_horse_by_id, get_files_by_horse_id, find_file_by_id, delete_file_by_id, get_horses, create_file, find_file_by_title, updated_file
+from src.core.horses.__init__ import create_horse, find_horse_by_id, find_file_by_id, delete_file_by_id, create_file, find_file_by_title, updated_file
 from sqlalchemy import desc
 from src.core.persons import Employee
 from src.core.horses.models.horses_file import Horse_file
@@ -23,10 +23,10 @@ bp = Blueprint('horses', __name__, url_prefix='/horses')
 def list_horses():
 
     """
-        Esta función retorna el listado con los caballos registrados en el sistema.
+        Esta función retorna el listado con los caballos registrados en el sistema, aplicando filtros de busqueda y realizando la paginacion.
     """
 
-    order = request.args.get('order', 'name_asc')
+    order = request.args.get('order', 'name_asc') #orden default por nombre ascendente 
     q = request.args.get('q', None)
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 2, type=int)
@@ -241,7 +241,6 @@ def list_info_by_id(horse_id):
     """
 
     horse = find_horse_by_id(horse_id)
-    #files = get_files_by_horse_id(horse.id)
     horse_json = horse.to_dict()  
     files_json = []
 
