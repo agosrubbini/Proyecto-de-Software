@@ -1,5 +1,4 @@
 from flask import Blueprint, request, flash, session, redirect, render_template, url_for
-from flask import render_template, redirect, url_for
 from src.core.auth.auth import inject_user_permissions, permission_required
 from src.core.horses.models.horse import Horse
 from src.core.database import db
@@ -70,7 +69,7 @@ def list_horses():
         horses = [horse for horse in horses if type_jya in horse.type_jya_assigned]
 
     
-    return render_template('ecuestre/horses.html', horses=horses, order=order, q=q, pagination=horse_pagination, type_jya_assigned=type_jya, form=create_horse_Form())
+    return render_template('ecuestre/horse_list.html', horses=horses, order=order, q=q, pagination=horse_pagination, type_jya_assigned=type_jya, form=create_horse_Form())
 
 
 
@@ -156,7 +155,7 @@ def create_horse_view():
         'horses': Horse.query.order_by(Horse.name).all() 
     }
 
-    return render_template('ecuestre/create_horse.html', context=context)  # Renderizar el formulario
+    return render_template('ecuestre/horse_new.html', context=context)  # Renderizar el formulario
 
 
 @bp.route('/editar/<int:horse_id>', methods=['GET', 'POST'])
@@ -224,7 +223,7 @@ def edit_horse(horse_id):
         db.session.commit()
         flash('Horse updated successfully!', 'success')
         return redirect(url_for('horses.list_info_by_id', horse_id=horse.id))
-    return render_template('ecuestre/edit_horse.html', form=form, employee_list=employee_list, horse=horse)
+    return render_template('ecuestre/horse_edit.html', form=form, employee_list=employee_list, horse=horse)
 
 
 @bp.route('/eliminar/<int:horse_id>', methods=['POST'])
@@ -279,7 +278,7 @@ def show_files(horse_id, request):
     page = request.args.get('page', 1, type=int)
     
     # Filtering options
-    title = request.args.get('title', '', type=str)
+    title = request.args.get('search', '', type=str)
     document_type = request.args.get('document_type', '', type=str)
 
 
@@ -344,7 +343,7 @@ def list_info_by_id(horse_id):
     }
 
     
-    return render_template('ecuestre/horses_info.html', context=context, page=page, order_by=order_by, title=title, document_type=document_type)
+    return render_template('ecuestre/horse_info.html', context=context, page=page, order_by=order_by, title=title, document_type=document_type)
 
 
 @bp.route("/<int:horse_id>/delete_file/<int:file_id>", methods=['POST', 'GET'])
@@ -478,7 +477,7 @@ def add_file(horse_id):
             for error in errors:
                 flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
 
-    return render_template("ecuestre/registry_file.html", form=form, horse_id=horse_id)
+    return render_template("ecuestre/file_new.html", form=form, horse_id=horse_id)
 
 
 @bp.route("/<int:horse_id>/download_file/<file_id>", methods=['GET'])
@@ -612,5 +611,4 @@ def edit_file(horse_id, file_id):
             for error in errors:
                 flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
             
-    return render_template("ecuestre/edit_file.html", form=form, horse_id=horse_id, file=file)
-
+    return render_template("ecuestre/file_edit.html", form=form, horse_id=horse_id, file=file)

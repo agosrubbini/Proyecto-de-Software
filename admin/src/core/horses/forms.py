@@ -48,7 +48,7 @@ class registryFileForm(FlaskForm):
     document_type = SelectField(
         "Document_type",
         validators=[InputRequired()],
-        choices=["Ficha general del caballo", "Planificación de entrenamiento", "Informe de evolución", "Carga de imagenes", "Registro veterinario"],
+        choices=["Ficha general del caballo", "Planificacion de entrenamiento", "Informe de evolucion", "Carga de imagenes", "Registro veterinario"],
     )
     title = StringField("title", validators=[InputRequired(), Length(max=60)])
 

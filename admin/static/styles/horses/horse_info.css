@@ -1,0 +1,92 @@
+
+#info {
+    margin-right: 40px;
+}
+
+.clicked {
+    border-bottom: solid 2px var(--primary-color);
+    color: grey;
+}
+
+
+td.botones{
+    display: flex;
+    justify-content: space-between;
+}
+
+.boton-filtrado {
+    width: 100% !important;
+}
+
+
+.docs {
+    visibility: hidden;
+}
+.docs.loaded {
+    visibility: visible;
+}
+
+
+.boton {
+    background-color: var(--primary-color);
+    width: auto;
+    height: 40px;
+    color: white;
+    font-weight: bold;
+    display: block;
+    margin: 23px auto;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+}
+
+
+
+.botones-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px; /* Espacio entre los botones */
+    margin-top: 20px;
+    margin-right: 400px;
+    padding: 10px 20px; 
+}
+
+.add-file-button{
+    width: 100% !important;
+    padding: 10px 20px; 
+
+}
+.show-list{
+    width: 100% !important;
+    padding: 10px 20px; 
+
+}
+.boton-restablecer{
+    width: 100% !important;
+    padding: 10px 20px; 
+
+}
+
+.botones-cont {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px 20px; 
+}
+.show-list-info{
+    width: 100% !important;
+    padding: 10px 20px!important; 
+    margin: 0 auto!important;
+    display: flex!important;
+}
+.edit-info{
+    width: 100% !important;
+    padding: 10px 20px!important; 
+    margin: 0 auto!important;
+    display: flex!important; 
+}  
+
+
+  
