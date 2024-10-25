@@ -82,6 +82,13 @@ def find_user_by_id(id):
 
     return User.query.filter_by(id=id).first()
 
+
+def find_user_by_alias(alias):
+
+    """Devuelve al usuario con el email pasado por parámetro"""
+
+    return User.query.filter_by(alias=alias).first()
+
 def find_role_id_by_name(name):
 
     """Devuelve el id del rol con el nombre pasado por parámetro"""
@@ -184,6 +191,9 @@ def get_user_permissions(user_mail):
 
 
 def update_role(user, role):
+    '''
+        Permite dado un usuario y un rol cambiar el rol del usuario.
+    '''
     user.role_id = role
 
     db.session.add(user)
@@ -194,13 +204,11 @@ def update_role(user, role):
 def get_all_roles():
     return Role.query.all()
 
-def validate_role(role):
-    return not role == "Selecciona un rol"
-
-def validate_passwords(password, confirm_password):
-    return password == confirm_password
 
 def validate_all_form_fields(form):
+    '''
+        Valida que todos los campos del formulario de update_user estén correctos
+    '''
     form_errors = form.errors
     for field in form:
         if field.errors:

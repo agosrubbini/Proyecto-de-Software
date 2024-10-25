@@ -1,12 +1,13 @@
 from flask import Blueprint, flash, redirect, request,url_for
 from flask import render_template
-from core.auth import create_user, edit_user, find_role_id_by_name, find_user_by_email, find_user_by_id, get_all_roles, validate_all_form_fields, validate_passwords, validate_role
+from core.auth import create_user, edit_user, find_role_id_by_name, find_user_by_id, get_all_roles
 from core.auth.forms import registryForm
 from src.core.auth.models.user import User
 from flask import current_app as app
 from src.core.database import db
 from sqlalchemy import desc
 from src.core.auth.auth import inject_user_permissions, permission_required
+from web.validations import validate_unique_fields, validate_user_form, validate_user_update_form
 
 bp = Blueprint('users', __name__, url_prefix='/users')
 
@@ -77,12 +78,24 @@ def index():
     app.logger.info("End of call to index function")
     return render_template('users/user_list.html', context=context, page=page, order_option=order_option, search=search, role=role, activity=activity)
 
-
-
-@bp.route('/crear', methods=['GET', 'POST'])
+@bp.route('/crear', methods=['GET'])
 @permission_required('user_new')
 @inject_user_permissions
 def new_user():
+
+    """
+        Esta función muestra la vista del registro.
+    """
+
+    app.logger.info("Call to new_user function")
+    form = registryForm()
+    app.logger.info("End of call to new_user function")
+    return render_template("users/user_new.html", form=form)
+
+@bp.route('/crear', methods=['POST'])
+@permission_required('user_new')
+@inject_user_permissions
+def create_user():
 
     """
         Esta función muestra la vista del registro, además valida los 
@@ -94,21 +107,17 @@ def new_user():
     form = registryForm()
 
     app.logger.info("El formulario es valido: %s", form.validate_on_submit())
-
-#TODO esto podría ser un case de strings que vaya concatenando los errores y luego los imprima todos juntos
-    if(validate_passwords(form.password.data, form.confirm.data) == False):
-        app.logger.error("The passwords do not match")
-    
-    if(validate_role(form.role.data) == False):
-        app.logger.error("The role was not selected")
+    errors = validate_user_form(form)
+    if errors:
+        flash(errors, "error")
+        return redirect(url_for("users.new_user"))
     
     if (form.validate_on_submit()):
+        valid_from_errors = validate_unique_fields(form)
+        if valid_from_errors:
+            flash(valid_from_errors, "error")
+            return redirect(url_for("users.new_user"))
         
-        if (find_user_by_email(form.email.data)):
-                app.logger.error("The following email is already registered: %s ", form.email.data)
-                flash("Ya existe un usuario con el mail ingresado", "error")
-                return redirect(url_for("users.new_user"))  
-
         create_user(
             email = form.email.data,
             alias = form.alias.data,
@@ -159,8 +168,21 @@ def block_user(id):
     app.logger.info("End of call to block_user function")
     return render_template('users/user_list.html', context=context, page=page, order_option=order_option, search=search, role=role, activity=activity)
 
+@bp.route('/update/<int:id>', methods=['GET'])
+@permission_required('user_update')
+@inject_user_permissions
+def modify_user(id):
+    form = registryForm()
+    user = find_user_by_id(id)
+    roles = get_all_roles()
+    context = {
+        'user': user,
+        'roles': roles,
+        'form': form
+    }
+    return render_template('users/user_edit.html', context=context)
 
-@bp.route('/update/<int:id>', methods=['GET','POST'])
+@bp.route('/update/<int:id>', methods=['POST'])
 @permission_required('user_update')
 @inject_user_permissions
 def update_user(id):
@@ -174,14 +196,16 @@ def update_user(id):
     form = registryForm()
 
     app.logger.info("El formulario es valido: %s", form.validate_on_submit())
-    form_errors = validate_all_form_fields(form)
-    app.logger.info("Errores en el formulario: %s", form_errors)
+    errors = validate_user_form(form)
+    if errors:
+        flash(errors, "error")
+        return redirect(url_for("users.update_user", id=id))
 
     if form.validate_on_submit():
-        if (find_user_by_email(form.email.data) and find_user_by_email(form.email.data).id != id):
-            app.logger.error("The following email is already registered: %s ", form.email.data)
-            flash("Ya existe un usuario con el mail ingresado", "error")
-            return redirect(url_for('users.update_user', id=id))      
+        errors = validate_user_update_form(form, id)
+        if errors:
+            flash(errors, "error")
+            return redirect(url_for('users.update_user', id=id))     
         edit_user(
             user = user,
             id = id,

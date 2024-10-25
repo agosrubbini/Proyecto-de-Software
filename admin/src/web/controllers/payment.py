@@ -9,6 +9,7 @@ from src.core.persons.models.person import Employee
 from flask import current_app as app
 from src.core.payments.models.payment import Payment
 from web.controllers.billing import get_person_name_and_last_name
+from web.validations import validate_payment_form
 
 
 bp = Blueprint('payment', __name__, url_prefix='/pagos')
@@ -60,19 +61,30 @@ def list_payments():
         payments = [payment for payment in payments if payment_method.lower() in payment.payment_type.lower()]
 
     return render_template('payment/payment_list.html', payments=payments, order=order, pagination=payments_pagination, payment_method=payment_method, start_date=start_date_str, end_date=end_date_str, form=PaymentForm())
-    
 
-@bp.route('/crear', methods=['GET', 'POST'])
+@bp.route('/crear', methods=['GET'])
 @permission_required('payment_new')
 @inject_user_permissions
 def new_payment():
+    """
+        Esta función muestra la vista de la creacion de pagos.
+    """
+
+    form = PaymentForm()
+    employee_list = Employee.query.all()
+    employee_actual = find_user_by_email(session.get('user'))
+    return render_template('payment/payment_new.html', form=form, employee_list=employee_list, employee_actual=employee_actual)
+
+@bp.route('/crear', methods=['POST'])
+@permission_required('payment_new')
+@inject_user_permissions
+def create_payment():
 
     """
         Esta funcion se encarga de crear un nuevo pago.
     """
 
-
-    app.logger.info("Call to new_payment function")
+    app.logger.info("Call to create_payment function")
     form = PaymentForm()
     employee_list = Employee.query.all()
     
@@ -89,6 +101,10 @@ def new_payment():
         for field, errors in form.errors.items():
             for error in errors:
                 app.logger.error("Error in the %s field - %s", field, error)
+    errors = validate_payment_form(form)
+    if errors:
+        flash(errors, "error")
+        return redirect(url_for('payment.create_payment'))  
 
     if form.validate_on_submit():
         create_payment(
@@ -101,7 +117,7 @@ def new_payment():
         flash('Payment created successfully!', 'success')
         app.logger.info('Payment created successfully!')
         return redirect(url_for('payment.list_payments'))
-    app.logger.info("End of call to new_payment function")
+    app.logger.info("End of call to create_payment function")
     return render_template('payment/payment_new.html', form=form, employee_list=employee_list, employee_actual=employee_actual)
 
 
@@ -121,8 +137,19 @@ def show_payment(id):
         payment.employee_name = "-"
     return render_template('payment/payment_show.html', payment=payment)
 
+@bp.route('/update/<int:id>', methods=['GET'])
+@permission_required('payment_update')
+@inject_user_permissions
+def update_payment(id):
+    """
+        Esta funcion se encarga mostrar la vista de edicion de un pago en especifico asociado a un id.
+    """
+    payment = Payment.query.get(id)
+    form = PaymentForm(obj=payment)
+    employee_list = Employee.query.all()
+    return render_template('payment/payment_edit.html', form=form, employee_list=employee_list, payment=payment)
 
-@bp.route('/update/<int:id>', methods=['GET', 'POST'])
+@bp.route('/update/<int:id>', methods=['POST'])
 @permission_required('payment_update')
 @inject_user_permissions
 def edit_payment(id):
@@ -135,11 +162,16 @@ def edit_payment(id):
     form = PaymentForm(obj=payment)
     employee_list = Employee.query.all()
     beneficiary = form.beneficiary.data
+    errors = validate_payment_form(form)
+    if errors:
+        flash(errors, "error")
+        return redirect(url_for('payment.edit_payment', id=payment.id))  
     if form.payment_type.data != "Honorarios":
         beneficiary = None
     if form.validate_on_submit():
         payment.beneficiary = beneficiary
         payment.amount = form.amount.data
+        payment.payment_date = form.payment_date.data
         payment.payment_type = form.payment_type.data
         payment.description = form.description.data
         db.session.commit()

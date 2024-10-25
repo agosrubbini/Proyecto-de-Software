@@ -15,3 +15,9 @@ def create_billing(**kwargs):
     db.session.commit()
 
     return billing
+
+def validate_beneficiary(beneficiary):
+    '''
+        Valida que el beneficiario ingresado sea un usuario registrado
+    '''
+    return Payment.query.filter_by(beneficiary=beneficiary).first()
