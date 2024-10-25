@@ -28,3 +28,17 @@ def get_school_by_id(school_id):
     """Devuelve la escuela con el id pasado por parámetro"""
 
     return School.query.filter_by(id=school_id).first()
+
+
+def update_school(school, **kwargs):
+
+    """Edita la escuela pasada como parámetro, con los valores pasados como parámetro en los kwargs"""
+    
+    for key, value in kwargs.items():
+        if value is not None:
+            setattr(school, key, value)
+            
+    db.session.add(school)
+    db.session.commit()
+
+    return school

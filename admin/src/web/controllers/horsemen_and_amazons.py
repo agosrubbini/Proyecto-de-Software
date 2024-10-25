@@ -1,14 +1,15 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from src.core.persons import (get_jya_users, find_address_by_id, find_jya_by_id, delete_jya_by_id, get_files_by_horseman_id, delete_file_by_id, 
-                              create_JyA, create_file, updated_jya, find_file_by_title, find_file_by_id, updated_file, get_emergency_contacts, get_address, 
-                              get_healthcare_plans, get_emergency_contact_by_id, get_healthcare_plan_by_id, find_jya_by_dni)
-from src.core.institutions import get_schools, get_school_by_id
+from src.core.persons import (find_address_by_id, find_jya_by_id, delete_jya_by_id, get_files_by_horseman_id, delete_file_by_id, 
+                              create_JyA, create_file, create_address, create_emergency_contact, create_healthcare_plan, updated_jya, find_file_by_title, find_file_by_id, updated_file, get_emergency_contacts, get_address, get_address_by_id,
+                              get_emergency_contact_by_id, get_healthcare_plan_by_id, find_jya_by_dni, updated_healthcare_plan, update_address, update_emergency_contact)
+from src.core.institutions import get_school_by_id, create_school, update_school
 from src.core.persons.forms import registryFileForm, registryHorsemanForm
 from src.core.auth.auth import inject_user_permissions, permission_required
 from flask import current_app as app
 from datetime import timedelta
 from src.core.persons.models.file import File
 from src.core.persons.models.person import JyA
+from src.core.persons.models.emergency_contact import EmergencyContact
 from sqlalchemy import desc
 import json
 import io
@@ -97,7 +98,7 @@ def showHorsemen(request):
 
 def obtenerChoices(form):
 
-    """ Esta función recibe el formulario de jinetes y amazonas y devuelve las instituciones, los contactos de emergencia, las obras sociales y las direcciones, 
+    """ Esta función recibe el formulario de jinetes y amazonas y devuelve las instituciones, los contactos de emergencia, y las direcciones, 
         utilizadas como opciones de los distintos campos del formulario.
 
 
@@ -105,20 +106,14 @@ def obtenerChoices(form):
             - form (FlaskForm): Formulario de jinetes y amazonas.
         
     """
-       
-    schools = get_schools()
 
     emergency_contacts = get_emergency_contacts()
-
-    healthcare_plans = get_healthcare_plans()
 
     addresses = get_address()
 
     # Asignar el id como value y la representación amigable como label
-    form.address.choices = [(address.id, address.string()) for address in addresses]
-    form.school.choices = [(school.id, school.name) for school in schools]
-    form.emergency_contact_id_jya.choices = [(emergency_contact.id, emergency_contact.name) for emergency_contact in emergency_contacts]
-    form.healthcare_plan_id_jya.choices = [(healthcare_plan.id, healthcare_plan.social_security) for healthcare_plan in healthcare_plans]
+    form.address_id.choices = [(address.id, address.string()) for address in addresses]
+    form.emergency_contact_id_jya.choices = [(emergency_contact.id, emergency_contact.name, emergency_contact.phone_number) for emergency_contact in emergency_contacts]
 
 @bp.get("/")
 @permission_required('jya_index')
@@ -258,6 +253,11 @@ def add_horseman():
 
     obtenerChoices(form)
 
+    print(form.healthcare_plan.social_security.data)
+    print(form.healthcare_plan.affiliate_number.data)
+    print(form.healthcare_plan.has_guardianship.data)
+    print(form.school.name_school.data)
+
     app.logger.info("El formulario del jinete es valido: %s", form.validate_on_submit())
     if (form.validate_on_submit()):
         
@@ -265,23 +265,68 @@ def add_horseman():
             app.logger.error("The following jinete is already registered: %s ", form.DNI.data)
             flash("Ya existe un jinete con el dni ingresado registrado en el sistema", "info")
             return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
+    
+
+        if form.address_id.data:
+            address_id = form.address_id.data
+        else:
+            address_id = create_address(
+                street=form.new_address.street.data,
+                number=form.new_address.number.data,
+                department=form.new_address.department.data,
+                locality=form.new_address.locality.data,
+                province=form.new_address.province.data,
+                phone_number=form.new_address.phone_number.data
+            )
+
+        if form.emergency_contact_id_jya.data:
+            emergency_contact_id_jya = get_emergency_contact_by_id(form.emergency_contact_id_jya.data).id
+        else:
+            emergency_contact = create_emergency_contact(
+                name=form.new_emergency_contact.name.data,
+                phone_number=form.new_emergency_contact.phone_number.data,
+            )
+
+        healthcare_plan = create_healthcare_plan(
+            social_security = form.healthcare_plan.social_security.data,
+            affiliate_number = form.healthcare_plan.affiliate_number.data,
+            has_guardianship = form.healthcare_plan.has_guardianship.data,
+            observation = form.healthcare_plan.observation.data,
+        )
+
+        address_school_id = create_address(
+            street=form.school.address_school_id.street.data,
+            number=form.school.address_school_id.number.data,
+            department=form.school.address_school_id.department.data,
+            locality=form.school.address_school_id.locality.data,
+            province=form.school.address_school_id.province.data,
+            phone_number= " ",
+        )
+
+        school = create_school(
+            name = form.school.name_school.data,
+            addres_id = address_school_id.id,
+            phone_number = form.school.phone_number.data,
+            current_year = form.school.current_year.data,
+            observation = form.school.observation.data,
+        )
+
 
         create_JyA(
-            
             name = form.name.data,
             last_name = form.last_name.data,
             DNI = form.DNI.data,
             age = form.age.data,
             phone_number = form.phone_number.data,
-            address_id = form.address.data,
+            address_id = address_id,
             birthdate = form.birthdate.data,
             birth_place = form.birth_place.data,
             current_phone = form.current_phone.data,
-            emergency_contact_id_jya = form.emergency_contact_id_jya.data,
+            emergency_contact_id_jya = emergency_contact_id_jya,
             is_scholarshipped = form.is_scholarshipped.data,
             scholarship_percentage = form.scholarship_percentage.data,
             attending_professionals = form.attending_professionals.data,
-            healthcare_plan_id_jya = form.healthcare_plan_id_jya.data,
+            healthcare_plan_id_jya = healthcare_plan.id,
             has_disability_certificate = form.has_disability_certificate.data,
             diagnosis = form.diagnosis.data,
             other_diagnosis = form.other_diagnosis.data,
@@ -290,7 +335,8 @@ def add_horseman():
             family_allowance = form.family_allowance.data,
             is_beneficiary_of_pension = form.is_beneficiary_of_pension.data,
             pension = form.pension.data,
-            school_id = form.school.data,
+            attends_school = form.attends_school.data,
+            school_id = school.id,
         )
 
         flash("El jinete se ha creado correctamente", "success")
@@ -329,8 +375,9 @@ def edit_horseman(user_id):
     emergency_contact = get_emergency_contact_by_id(horseman.emergency_contact_id_jya)
     healthcare_plan = get_healthcare_plan_by_id(horseman.healthcare_plan_id_jya)
     school = get_school_by_id(horseman.school_id)
+    address_school = find_address_by_id(school.addres_id)
 
- 
+    print(form)
     if horseman.scholarship_percentage is None:
         form.scholarship_percentage.data = " "
     if horseman.other_diagnosis is None:
@@ -339,6 +386,53 @@ def edit_horseman(user_id):
     app.logger.info("El formulario del archivo es valido: %s", form.validate_on_submit())
     if (form.validate_on_submit()):
         
+        for field in form:
+            print(f"{field.label.text}: {field.data}")
+
+        update_address(
+                address,
+                street=form.new_address.street.data,
+                number=form.new_address.number.data,
+                department=form.new_address.department.data,
+                locality=form.new_address.locality.data,
+                province=form.new_address.province.data,
+                phone_number=form.new_address.phone_number.data
+            )
+
+       
+        update_emergency_contact(
+                emergency_contact,
+                name=form.new_emergency_contact.name_emergency_contact.data,
+                phone_number=form.new_emergency_contact.phone_number.data,
+            )
+
+        update_address(
+            address_school,
+            street=form.school.address_school_id.street.data,
+            number=form.school.address_school_id.number.data,
+            department=form.school.address_school_id.department.data,
+            locality=form.school.address_school_id.locality.data,
+            province=form.school.address_school_id.province.data,
+            phone_number= " ",
+        )
+
+        update_school(
+            school,
+            name = form.school.name_school.data,
+            addres_id = address_school.id,
+            phone_number = form.school.phone_number.data,
+            current_year = form.school.current_year.data,
+            observation = form.school.observation.data,
+        )
+
+        updated_healthcare_plan(
+            healthcare_plan,
+            social_security = form.healthcare_plan.social_security.data,
+            affiliate_number = form.healthcare_plan.affiliate_number.data,
+            has_guardianship = form.healthcare_plan.has_guardianship.data,
+            observation = form.healthcare_plan.observation.data,
+        )
+
         updated_jya(
             horseman,
             name = form.name.data,
@@ -346,15 +440,15 @@ def edit_horseman(user_id):
             DNI = form.DNI.data,
             age = form.age.data,
             phone_number = form.phone_number.data,
-            address_id = form.address.data,
+            address_id = address.id,
             birthdate = form.birthdate.data,
             birth_place = form.birth_place.data,
             current_phone = form.current_phone.data,
-            emergency_contact_id_jya = form.emergency_contact_id_jya.data,
+            emergency_contact_id_jya = emergency_contact.id,
             is_scholarshipped = form.is_scholarshipped.data,
             scholarship_percentage = form.scholarship_percentage.data,
             attending_professionals = form.attending_professionals.data,
-            healthcare_plan_id_jya = form.healthcare_plan_id_jya.data,
+            healthcare_plan_id_jya = healthcare_plan.id,
             has_disability_certificate = form.has_disability_certificate.data,
             diagnosis = form.diagnosis.data,
             other_diagnosis = form.other_diagnosis.data,
@@ -363,7 +457,7 @@ def edit_horseman(user_id):
             family_allowance = form.family_allowance.data,
             is_beneficiary_of_pension = form.is_beneficiary_of_pension.data,
             pension = form.pension.data,
-            school_id = form.school.data,
+            school_id = school.id,
         )
 
         flash("Jinete editado correctamente", "success")
@@ -374,7 +468,7 @@ def edit_horseman(user_id):
             for error in errors:
                 flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
             
-    return render_template("horsemen_and_amazons/edit_horseman.html", form=form, user_id=user_id, horseman=horseman, address=address, healthcare_plan=healthcare_plan, emergency_contact=emergency_contact, school=school)
+    return render_template("horsemen_and_amazons/edit_horseman.html", form=form, user_id=user_id, horseman=horseman, address=address, healthcare_plan=healthcare_plan, emergency_contact=emergency_contact, school=school, address_school=address_school)
 
 @bp.route("/delete_horseman/<int:user_id>", methods=['POST', 'GET'])
 @permission_required('jya_destroy')

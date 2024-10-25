@@ -127,6 +127,7 @@ class JyA(Person):
                                          nullable=True)
     is_beneficiary_of_pension = db.Column(db.Boolean, default=False)
     pension = db.Column(db.Enum("No recibe pensión", "Nacional", "Provincial", name="pension"), default="No recibe pensión", nullable=True)
+    attends_school = db.Column(db.Boolean, default=False)
     school_id = db.Column(db.Integer, db.ForeignKey("schools.id"), nullable=True)
 
     # emergency_contact = db.relationship("EmergencyContact", backref="emergency_contact") Creo que no seria necesario porque ya tengo el id
@@ -144,7 +145,7 @@ class JyA(Person):
                        birthdate=None, birth_place=None, current_phone=None, emergency_contact_id_jya=None, is_scholarshipped=None, 
                        scholarship_percentage=None, attending_professionals=None, healthcare_plan_id_jya=None, 
                        has_disability_certificate=None, diagnosis=None, other_diagnosis=None, type_of_disability=None,
-                       receives_family_allowance=None, family_allowance=None, is_beneficiary_of_pension=None,pension=None, school_id=None):
+                       receives_family_allowance=None, family_allowance=None, is_beneficiary_of_pension=None,pension=None, attends_school=None, school_id=None):
         
         super().__init__(name=name, last_name=last_name, DNI=DNI, age=age, phone_number=phone_number, address_id=address_id, user_id=user_id)
         self.birthdate = birthdate
@@ -163,6 +164,7 @@ class JyA(Person):
         self.family_allowance = family_allowance
         self.is_beneficiary_of_pension = is_beneficiary_of_pension
         self.pension = pension
+        self.attends_school = attends_school
         self.school_id = school_id
     
     def to_dict(self, addres):

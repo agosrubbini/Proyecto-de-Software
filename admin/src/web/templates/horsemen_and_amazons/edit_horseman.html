@@ -13,6 +13,12 @@
 <form method="POST" action="{{ url_for('horsemen_and_amazons.edit_horseman', user_id=user_id) }}">
     
     {{ form.csrf_token }}
+    {{ form.new_address.csrf_token }}
+    {{ form.new_emergency_contact.csrf_token }}
+    {{ form.healthcare_plan.csrf_token }}
+    {{ form.school.csrf_token }}
+    {{ form.school.address_school_id.csrf_token }}
+
     <div class="div-titulo">
         <h1 class="label">Editar Jinete</h1>
         <hr class="linea-titulo">
@@ -36,12 +42,12 @@
     </div>
     <hr>
 
-    <label class="label">DNI</label>
+    <label class="label">DNI (sin puntos) </label>
     <div class="control has-icons-left">
         <span class="icon is-small is-left">
             <i class="fas fa-id-card"></i>
         </span>
-        {{ form.DNI(class="input", placeholder="Ingrese el dni del jinete", value=horseman.DNI, required=True) }}
+        {{ form.DNI(class="input", placeholder="Ingrese el dni del jinete", value=horseman.DNI, maxlength=9, required=True) }}
     </div>
     <hr>
 
@@ -63,15 +69,52 @@
     </div>
     <hr>
 
-    <label class="label">Ingrese la dirección del jinete</label>
-    <div class="control">
-        <select name="address">
-            {% for value, label in form.address.choices %}
-                <option value="{{ value }}" {% if horseman.address_id == value %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-    </div>
+    <label class="label" for="address-street">Dirección del jinete</label>
     <hr>
+
+        <label class="label" for="address-street">Calle</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-road"></i>
+            </span>
+            <input class="input" type="text" name="address-street" id="address-street" value="{{ address.street }}">
+        </div>
+        <label class="label " for="address-number">Numero</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-hashtag"></i>
+            </span>
+            <input class="input " type="text" name="address-number" id="address-number" value="{{ address.number }}">
+        </div>
+        <label class="label" for="address-department">Piso</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-building"></i>
+            </span>
+            <input class="input " type="text" name="address-department" id="address-department" value="{{ address.department }}">
+        </div>
+        <label class="label" for="address-locality">Localidad</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-city"></i>
+            </span>
+            <input class="input" type="text" name="address-locality" id="address-locality" value="{{ address.locality }}">
+        </div>
+        <label class="label" for="address-province">Provincia</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-map"></i>
+            </span>
+            <input class="input" type="text" name="address-province" id="address-province" value="{{ address.province }}">
+        </div>
+        <label class="label" for="address-phone_number">Telefono</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-phone"></i>
+            </span>
+            <input class="input " type="text" name="address-phone_number" id="address-phone_number" value="{{ address.phone_number}}">
+        </div>
+
 
     <label class="label">Fecha de nacimiento</label>
     <div class="control has-icons-left">
@@ -97,15 +140,21 @@
     </div>
     <hr>
 
-    <label class="label">Contacto de Emergencia</label>
-    <div class="control">
-        <select name="emergency_contact_id_jya">
-            {% for value, label in form.emergency_contact_id_jya.choices %}
-                <option value="{{ value }}" {% if horseman.emergency_contact_id_jya == value %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <hr>
+    <label class="label" for="emergency_contact-name">Nombre</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-user"></i>
+            </span>
+            <input class="input" type="text" name="emergency_contact-name" id="emergency_contact-name" value="{{ emergency_contact.name }}">
+        </div>
+        <label class="label" for="emergency_contact-phone_number">Numero</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-phone"></i>
+            </span>
+            <input class="input" type="text" name="emergency_contact-phone_number" id="emergency_contact-phone_number" value="{{ emergency_contact.phone_number }}">
+        </div>
+    
 
     <div class="custom-checkbox">
         <input type="checkbox" id="checkbox-beca" name="is_scholarshipped" value="True" {% if horseman.is_scholarshipped %}checked{% endif %}>
@@ -131,12 +180,33 @@
         {{ form.attending_professionals(class="input", required=True, value=horseman.attending_professionals, placeholder="Ingreso los profesionales que lo atienden") }}
     </div>
 
-    <label class="label">Obra Social</label>
-    <select name="healthcare_plan_id_jya">
-        {% for value, label in form.healthcare_plan_id_jya.choices %}
-            <option value="{{ value }}" {% if horseman.healthcare_plan_id_jya == value %}selected{% endif %}>{{ label }}</option>
-        {% endfor %}
-    </select>
+    <label class="label healthcare_plan_social_security" for="healthcare_plan_social_security">Nombre de la obra social</label>
+    <div class="control has-icons-left">
+        <span class="icon is-small is-left">
+            <i class="fas fa-hospital-alt"></i>
+        </span>
+        <input class="input healthcare_plan-social_security" type="text" name="healthcare_plan-social_security" id="healthcare_plan-social_security" value="{{ healthcare_plan.social_security}}">
+    </div>
+    <hr>
+
+    <label class="label healthcare_plan_affiliate_number" for="healthcare_plan-affiliate_number">Numero de afiliado</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-id-card"></i>
+            </span>
+            <input class="input healthcare_plan-affiliate_number" type="text" name="healthcare_plan-affiliate_number" id="healthcare_plan-affiliate_number" value="{{ healthcare_plan.affiliate_number}}">
+        </div>
+    <hr>
+    
+    <div class="custom-checkbox">
+        <input type="checkbox" name="healthcare_plan-has_guardianship" id="healthcare_plan-has_guardianship"  value="True" {% if healthcare_plan.has_guardianship %}checked{% endif %}>
+        <label class="label" for="healthcare_plan-has_guardianship">¿Tiene tutela?</label>
+    </div>
+    <hr>
+
+    <label class="label healthcare_plan_observation" for="healthcare_plan-observation">Observaciones</label>
+    <input class="input healthcare_plan-observation" type="textarea" name="healthcare_plan-observation" id="healthcare_plan-observation" value="{{ healthcare_plan.observation}}">
+    <hr>
 
     <div class="custom-checkbox">
         <input type="checkbox" id="checkbox-discapacidad" name="has_disability_certificate" value="True" {% if horseman.has_disability_certificate %}checked{% endif %}>
@@ -207,13 +277,81 @@
         <hr>
     </div>
 
-    <label class="label">Institución escolar a la que concurre actualmente</label>
-        <select name="school">
-            {% for value, label in form.school.choices %}
-                <option value="{{ value }}" {% if horseman.school_id == value %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
+    
+    <div class="custom-checkbox">
+        <input type="checkbox" id="checkbox-escuela" name="attends_school" value="True" {% if horseman.attends_school %}checked{% endif %}>
+        <label class="label" for="checkbox-escuela">¿Asiste a la escuela?</label>
+    </div>
     <hr>
+    
+
+    <div id="contenedor-escuela" class="hidden">
+        <label class="label">Nombre de la escuela</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-school"></i>
+            </span>
+            <input class="input" type="text" name="school-name_school" id="school-name_school" value="{{ school.name }}">
+        </div>
+        <hr>
+
+        <label class="label" for="address_school-street">Calle de la escuela</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-road"></i>
+            </span>
+            <input class="input" type="text" name="school-address_school_id-street" id="address_school_id-street" value="{{ address_school.street }}">
+        </div>
+        <label class="label" for="address_school-number">Número del edificio de la escuela</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-hashtag"></i>
+            </span>
+            <input class="input" type="text" name="school-address_school_id--number" id="address_school-number" value="{{ address_school.number }}">
+        </div>
+        <label class="label" for="address_school-department">Piso de la escuela</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-building"></i>
+            </span>
+            <input class="input" type="text" name="school-address_school_id--department" id="address_school-department" value="{{ address_school.department }}">
+        </div>
+        <label class="label" for="address_school-locality">Localidad donde se encuentra la escuela</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-city"></i>
+            </span>
+            <input class="input" type="text" name="school-address_school_id--locality" id="address_school-locality" value="{{ address_school.locality }}">
+        </div>
+        <label class="label" for="address_school-province">Provincia donde se encuentra la escuela</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-map"></i>
+            </span>
+            <input class="input" type="text" name="school-address_school_id--province" id="address_school-province" value="{{ address_school.province }}">
+        </div>
+    
+        <label class="label" for="address_school-phone_number">Teléfono de la escuela</label>
+        <div class="control has-icons-left">
+            <span class="icon is-small is-left">
+                <i class="fas fa-phone"></i>
+            </span>
+            <input class="input" type="text" name="school-phone_number" id="school-phone_number" value="{{ school.phone_number }}">
+        </div>
+        <hr>
+
+        <label class="label">Año actual que está cursando</label>
+            <select name="school-current_year" id="school-current_year" value="{{ form.school.current_year.data or '' }}">
+                {% for year in form.school.current_year.choices %}
+                    <option value="{{ year }}"{% if school.current_year == value %}selected{% endif%}>{{ year }}</option>
+                {% endfor %}
+            </select>
+        <hr>
+
+        <label class="label">Observaciones</label>
+        <input class="input" type="text" name="school-observation" id="school-observation" value="{{ school.observation or ''}}">
+        <hr>
+    </div>
 
     <div class="buttons">
         <button type="submit">Editar Jinete</button>
@@ -232,6 +370,7 @@
                 'checkbox-discapacidad': 'contenedor-cerficado-discapacidad',
                 'checkbox-asignacion': 'contenedor-asignacion',
                 'checkbox-pension': 'contenedor-pension',
+                'checkbox-escuela': 'contenedor-escuela',
             };
 
             // Función para manejar el cambio en los checkboxes
@@ -239,9 +378,11 @@
                 const checkbox = document.getElementById(checkboxId);
                 const contenedor = document.getElementById(containerId);
 
+                print(checkbox);
+                print(checkbox.checked);
 
                 if (checkbox.checked) {
-                contenedor.classList.remove('hidden');
+                    contenedor.classList.remove('hidden');
                 } else {
                     contenedor.classList.add('hidden');
                 }

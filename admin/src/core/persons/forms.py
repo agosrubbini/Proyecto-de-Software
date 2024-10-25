@@ -20,36 +20,65 @@ class registryFileForm(FlaskForm):
     )
     title = StringField("title", validators=[InputRequired(), Length(max=60)])
 
+   
+class EmployeeFileForm(FlaskForm):
+    title = StringField("Title", validators=[InputRequired(), Length(max=255)])
+    document_type = SelectField("Document Type", validators=[InputRequired()], choices=["Título", "Copia DNI", "CV Actualizado"])
+    file_url = FileField("File", validators=[InputRequired()])
 
+class AddressForm(FlaskForm):
+    street = StringField("Street", validators=[Optional(), Length(max=255)])
+    number = StringField("Number", validators=[Optional(), Length(max=255)])
+    department = StringField("Department", validators=[Optional(), Length(max=255)])
+    locality = StringField("Locality", validators=[Optional(), Length(max=255)])
+    province = StringField("Province", validators=[Optional(), Length(max=255)])
+    phone_number = StringField("Phone Number", validators=[Optional(), Length(max=255)])
+
+class EmergencyContactForm(FlaskForm):
+    name_emergency_contact = StringField("Name", validators=[Optional(), Length(max=255)])
+    phone_number = StringField("Phone Number", validators=[Optional(), Length(max=255)])
+
+class HealthcarePlanForm(FlaskForm):
+    social_security = StringField("Social Security", validators=[InputRequired(), Length(max=255)])
+    affiliate_number = StringField("Affiliate Number", validators=[InputRequired(), Length(max=255)])
+    has_guardianship = BooleanField("Has Guardianship", default=False)
+    observation = StringField("Observation", validators=[Optional()])
+
+class SchoolForm(FlaskForm):
+    
+    name_school = StringField("name", validators=[InputRequired(), Length(max=60)])
+    address_school_id =  FormField(AddressForm)
+    phone_number = StringField("phone_number", validators=[InputRequired(), Length(max=60)])
+    current_year = SelectField("current_year", validators=[InputRequired()], choices=["Primero", "Segundo", "Tercero", "Cuarto", "Quinto", "Sexto"])
+    observation = StringField("observation", validators=[Optional(), Length(max=60)])
 class registryHorsemanForm(FlaskForm):
 
-    
     name = StringField("name", validators=[InputRequired(), Length(max=60)])
     last_name = StringField("last_name", validators=[InputRequired(), Length(max=60)])
     DNI = StringField("dni", validators=[InputRequired(), Length(max=60)])
     age = IntegerField("age", validators=[InputRequired()])
     phone_number = StringField("phone_number", validators=[InputRequired(), Length(max=60)])
-    address = SelectField(
+    address_id = SelectField(
         "address",
-        validators=[InputRequired()],
+        validators=[Optional()],
+        coerce=int,
         choices=[],
     )
+    new_address = FormField(AddressForm)
     birthdate = DateField("birthdate", validators=[InputRequired()])
     birth_place = StringField("birth_place", validators=[InputRequired(), Length(max=60)])
     current_phone = StringField("current_phone", validators=[InputRequired(), Length(max=60)])
     emergency_contact_id_jya = SelectField(
         "emergency_contact_id_jya",
-        validators=[InputRequired()],
+        validators=[Optional()],
+        coerce=int,
         choices=[],
     )
+    new_emergency_contact = FormField(EmergencyContactForm)
     is_scholarshipped = BooleanField("is_scholarshipped", validators=[Optional()])
     scholarship_percentage = StringField("scholarship_percentage", validators=[Optional(), Length(max=60)])
     attending_professionals = StringField("attending_professionals", validators=[InputRequired(), Length(max=60)])
-    healthcare_plan_id_jya = SelectField(
-        "healthcare_plan_id_jya",
-        validators=[InputRequired()],
-        choices=[],
-    )
+    healthcare_plan = FormField(HealthcarePlanForm)
     has_disability_certificate =  BooleanField("has_disability_certificate", validators=[Optional()])
     diagnosis = SelectField(
         "diagnosis",
@@ -81,13 +110,11 @@ class registryHorsemanForm(FlaskForm):
         validators=[Optional()],
         choices=[("No recibe pensión","Selecciona una pensión"),("Nacional","Nacional"), ("Provincial","Provincial")],
     )
-    school = SelectField(
-        "school",
-        validators=[InputRequired()],
-        choices=[],
-    )
+    attends_school = BooleanField("attends_school", validators=[Optional()])
+    school = FormField(SchoolForm)
 
     def validate(self, extra_validators=None):
+
         # Llama a la validación predeterminada, pasando extra_validators
         rv = FlaskForm.validate(self, extra_validators=extra_validators)
         if not rv:
@@ -130,29 +157,6 @@ class registryHorsemanForm(FlaskForm):
                 return False
 
         return True
-   
-class EmployeeFileForm(FlaskForm):
-    title = StringField("Title", validators=[InputRequired(), Length(max=255)])
-    document_type = SelectField("Document Type", validators=[InputRequired()], choices=["Título", "Copia DNI", "CV Actualizado"])
-    file_url = FileField("File", validators=[InputRequired()])
-
-class AddressForm(FlaskForm):
-    street = StringField("Street", validators=[Optional(), Length(max=255)])
-    number = StringField("Number", validators=[Optional(), Length(max=255)])
-    department = StringField("Department", validators=[Optional(), Length(max=255)])
-    locality = StringField("Locality", validators=[Optional(), Length(max=255)])
-    province = StringField("Province", validators=[Optional(), Length(max=255)])
-    phone_number = StringField("Phone Number", validators=[Optional(), Length(max=255)])
-
-class EmergencyContactForm(FlaskForm):
-    name = StringField("Name", validators=[Optional(), Length(max=255)])
-    phone_number = StringField("Phone Number", validators=[Optional(), Length(max=255)])
-
-class HealthcarePlanForm(FlaskForm):
-    social_security = StringField("Social Security", validators=[InputRequired(), Length(max=255)])
-    affiliate_number = StringField("Affiliate Number", validators=[InputRequired(), Length(max=255)])
-    has_guardianship = BooleanField("Has Guardianship", default=False)
-    observation = StringField("Observation", validators=[Optional()])
 
 class EmployeeForm(FlaskForm):
     # Campos de Person

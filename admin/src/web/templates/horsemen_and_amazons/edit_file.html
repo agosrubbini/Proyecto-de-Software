@@ -79,19 +79,23 @@
     </div>
 </form>
 
+<div id="customAlert" class="modal">
+    <div class="modal-content">
+        <p id="alertMessage">Este es un mensaje de alerta personalizado.</p>
+        <button id="closeAlert">Cerrar</button>
+    </div>
+</div>
+
 <script>    
 
 document.addEventListener('DOMContentLoaded', () => {
 
     const contenedor = document.getElementById("contenedor");
 
-    // Aquí estableces los valores iniciales al cargar la página
     document.addEventListener('change', (e) => {
 
         if (e.target.classList.contains('file_type')) {
             const selectedValue = e.target.value;
-
-            console.log(selectedValue);
 
             const input = document.getElementById('file_url');
             
@@ -121,25 +125,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    document.getElementById('fileForm').addEventListener('submit', function(event) {
-        const fileInput = document.getElementById('fileInput');
-        const file = fileInput.files[0];
-        
-        if (file) {
-        const allowedExtensions = ['pdf', 'jpg', 'png']; // Extensiones permitidas
-        const fileExtension = file.name.split('.').pop().toLowerCase();
-        
-        if (!allowedExtensions.includes(fileExtension)) {
-            event.preventDefault();
-            alert('Solo se permiten archivos con las extensiones: ' + allowedExtensions.join(', '));
-        } else {
-            alert('Archivo válido, se procederá con el envío.');
-        }
-        } else {
-        event.preventDefault();
-        alert('Por favor, selecciona un archivo.');
-        }
-    });
+            function showCustomAlert(message) {
+                    document.getElementById('alertMessage').innerText = message;
+                    document.getElementById('customAlert').style.display = 'flex';
+                }
+
+                    // Función para cerrar el modal
+                document.getElementById('closeAlert').addEventListener('click', function() {
+                    document.getElementById('customAlert').style.display = 'none';
+                });
+
+                document.getElementById('fileForm').addEventListener('submit', function(event) {
+                const fileInput = document.getElementById('fileInput');
+                const linkInput = document.getElementById('link_url');
+                const file = fileInput.files[0];
+                const link = linkInput ? linkInput.value.trim() : '';
+
+                if (file) {
+                    const allowedExtensions = ['pdf', 'jpeg', 'doc', 'xls']; // Extensiones permitidas
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                
+                    if (!allowedExtensions.includes(fileExtension)) {
+                        event.preventDefault();
+                        showCustomAlert('Solo se permiten archivos con las extensiones: ' + allowedExtensions.join(', '));
+                    } else {
+                        showCustomAlert('Archivo válido, se procederá con el envío.');
+                    }
+                } else if (link) {
+                    // Validar el formato del enlace
+                    const urlPattern = /^(https?:\/\/)[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
+                    if (!urlPattern.test(link)) {
+                        event.preventDefault();
+                        showCustomAlert('Por favor, ingresa una URL válida que comience con http:// o https://.');
+                    } else {
+                        showCustomAlert('URL válida, se procederá con el envío.');
+                    }
+                } else {
+                    event.preventDefault();
+                    showCustomAlert('Por favor, selecciona un archivo o ingresa una URL.');
+                }
+            });
 });
 </script>
 {% endblock %}
