@@ -13,6 +13,7 @@ from src.core.database import db
 
 bp = Blueprint('team', __name__, url_prefix='/empleados')
 
+
 @bp.route('/')
 @permission_required('team_index')
 @inject_user_permissions
@@ -28,11 +29,11 @@ def list_team():
         job_position: Filtro de posición laboral seleccionado.
         form: Formulario de empleado.
     """
-    order=request.args.get('order', 'last_name_asc')
-    q=request.args.get('q', None)
-    page=request.args.get('page', 1, type=int)
-    per_page=request.args.get('per_page', 25, type=int)
-    job_position=request.args.get('job_position', None)
+    order = request.args.get('order', 'last_name_asc')
+    q = request.args.get('q', None)
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 25, type=int)
+    job_position = request.args.get('job_position', None)
 
     # Ordeno según el parámetro seleccionado
     if order == 'last_name_asc':
@@ -52,20 +53,24 @@ def list_team():
     employees = employees.filter(Employee.email.notlike('*%'))
 
     # Aplico paginación al query
-    employees_pagination = employees.paginate(page=page, per_page=per_page, error_out=False)
+    employees_pagination = employees.paginate(
+        page=page, per_page=per_page, error_out=False)
 
     # Me quedo con los objetos resultantes de la paginación
     employees = employees_pagination.items
 
     # Si se realizo una búsqueda, busco si "q" está presente en alguno de los campos
     if q:
-        employees = [employee for employee in employees if q.lower() in employee.name.lower() or q.lower() in employee.last_name.lower() or q.lower() in employee.email.lower() or q in employee.DNI]
+        employees = [employee for employee in employees if q.lower() in employee.name.lower() or q.lower(
+        ) in employee.last_name.lower() or q.lower() in employee.email.lower() or q in employee.DNI]
 
     # Si se aplico un filtro según la posición, me quedo solo con los que apliquen
     if job_position:
-        employees = [employee for employee in employees if job_position == employee.job_position]
+        employees = [
+            employee for employee in employees if job_position == employee.job_position]
 
-    return render_template('team/team_list.html', employees=employees, order=order, q=q, pagination=employees_pagination, job_position=job_position,form=EmployeeForm())
+    return render_template('team/team_list.html', employees=employees, order=order, q=q, pagination=employees_pagination, job_position=job_position, form=EmployeeForm())
+
 
 @bp.route('/crear', methods=['GET', 'POST'])
 @permission_required('team_new')
@@ -80,11 +85,14 @@ def new_employee():
         redirect: Redirige a la vista de listado de empleados si el formulario es válido.
     """
     form = EmployeeForm()
-    form.address_id.choices = [(address.id, address.string()) for address in Address.query.all()]
-    form.emergency_contact.choices = [(emergency_contact.id, emergency_contact.name, emergency_contact.phone_number) for emergency_contact in EmergencyContact.query.all()]
+    form.address_id.choices = [(address.id, address.string())
+                               for address in Address.query.all()]
+    form.emergency_contact.choices = [(emergency_contact.id, emergency_contact.name,
+                                       emergency_contact.phone_number) for emergency_contact in EmergencyContact.query.all()]
     form.user_id.choices = [(user.id, user.email) for user in User.query.all()]
-    professions = ["Psicólogo", "Psicomotricista", "Médico", "Kinesiólogo", "Terapista Ocupacional", "Psicopedagogo", "Docente", "Profesor", "Fonoaudiólogo", "Veterinario", "Otro"]
-    
+    professions = ["Psicólogo", "Psicomotricista", "Médico", "Kinesiólogo", "Terapista Ocupacional",
+                   "Psicopedagogo", "Docente", "Profesor", "Fonoaudiólogo", "Veterinario", "Otro"]
+
     if form.validate_on_submit():
         if form.address_id.data:
             address = Address.query.get(form.address_id.data)
@@ -99,7 +107,7 @@ def new_employee():
             )
             db.session.add(address)
             db.session.commit()
-        
+
         healthcare_plan = HealthcarePlan(
             social_security=form.healthcare_plan.social_security.data,
             affiliate_number=form.healthcare_plan.affiliate_number.data,
@@ -108,9 +116,10 @@ def new_employee():
         )
         db.session.add(healthcare_plan)
         db.session.commit()
-        
+
         if form.emergency_contact.data:
-            emergency_contact = EmergencyContact.query.get(form.emergency_contact.data)
+            emergency_contact = EmergencyContact.query.get(
+                form.emergency_contact.data)
         else:
             emergency_contact = EmergencyContact(
                 name=form.new_emergency_contact.name.data,
@@ -144,6 +153,7 @@ def new_employee():
 
     return render_template('team/team_new.html', form=form, professions=professions)
 
+
 @bp.route('/empleado/<int:id>')
 @permission_required('team_show')
 @inject_user_permissions
@@ -157,26 +167,29 @@ def show_employee(id):
         render_template: Renderiza la vista de detalle de empleado con los archivos asociados al empleado.
         context: Contexto con los archivos asociados al empleado.
     """
-    
+
     app.logger.info("Call to index function")
 
     employee = find_employee_by_id(id)
-    
+
     # Quita el asterisco si el empleado fue eliminado logicamente
     if employee.email.startswith('*'):
         employee.email = employee.email[1:]
 
     employee_address = find_address_by_id(employee.address_id).string()
-    employee_healthcare_plan = get_healthcare_plan_by_id(employee.healthcare_plan_id_employee)
-    employee_emergency_contact = get_emergency_contact_by_id(employee.emergency_contact_id_employee)
+    employee_healthcare_plan = get_healthcare_plan_by_id(
+        employee.healthcare_plan_id_employee)
+    employee_emergency_contact = get_emergency_contact_by_id(
+        employee.emergency_contact_id_employee)
     employee_user = get_employee_user_by_id(employee.user_id)
     files = get_files_by_employee_id(employee.id)
-    employee_json = employee.to_dict(employee_address, employee_healthcare_plan, employee_emergency_contact, employee_user.email if employee_user else None)
+    employee_json = employee.to_dict(employee_address, employee_healthcare_plan,
+                                     employee_emergency_contact, employee_user.email if employee_user else None)
     employee_json['active'] = 'Activo' if employee.active else 'Inactivo'
 
     files_json = []
     if files:
-        for file in files:    
+        for file in files:
             files_json.append(file.to_dict())
 
     if not employee_json['user']:
@@ -192,6 +205,7 @@ def show_employee(id):
 
     return render_template('team/team_show.html', context=context)
 
+
 @bp.route('/empleado/editar/<int:id>', methods=['GET', 'POST'])
 @permission_required('team_update')
 @inject_user_permissions
@@ -200,7 +214,7 @@ def edit_employee(id):
 
     Args:
         id (int): ID del empleado.
-    
+
     Returns:
         render_template: Renderiza la vista de edición de empleado con el formulario de empleado y los campos de dirección, contacto de emergencia y obra social cargados.
         professions: Lista de profesiones.
@@ -209,13 +223,17 @@ def edit_employee(id):
     """
 
     employee = Employee.query.get(id)
-    employee.healthcare_plan = HealthcarePlan.query.get(employee.healthcare_plan_id_employee)
+    employee.healthcare_plan = HealthcarePlan.query.get(
+        employee.healthcare_plan_id_employee)
     employee.start_date = employee.start_date.strftime('%Y-%m-%d')
     employee.birth_date = employee.birth_date.strftime('%Y-%m-%d')
     form = EmployeeForm()
-    form.address_id.choices = [(address.id, address.string()) for address in Address.query.all()]
-    form.emergency_contact.choices = [(emergency_contact.id, emergency_contact.name, emergency_contact.phone_number) for emergency_contact in EmergencyContact.query.all()]
-    professions = ["Psicólogo", "Psicomotricista", "Médico", "Kinesiólogo", "Terapista Ocupacional", "Psicopedagogo", "Docente", "Profesor", "Fonoaudiólogo", "Veterinario", "Otro"]
+    form.address_id.choices = [(address.id, address.string())
+                               for address in Address.query.all()]
+    form.emergency_contact.choices = [(emergency_contact.id, emergency_contact.name,
+                                       emergency_contact.phone_number) for emergency_contact in EmergencyContact.query.all()]
+    professions = ["Psicólogo", "Psicomotricista", "Médico", "Kinesiólogo", "Terapista Ocupacional",
+                   "Psicopedagogo", "Docente", "Profesor", "Fonoaudiólogo", "Veterinario", "Otro"]
 
     if form.validate_on_submit():
         # Campos de address
@@ -240,14 +258,15 @@ def edit_employee(id):
         employee.healthcare_plan.affiliate_number = form.healthcare_plan.affiliate_number.data
         employee.healthcare_plan.has_guardianship = form.healthcare_plan.has_guardianship.data
         employee.healthcare_plan.observation = form.healthcare_plan.observation.data
-        
+
         print(form.emergency_contact.data)
         print(form.new_emergency_contact.name)
         print(form.new_emergency_contact.phone_number)
 
         # Campos de emergency_contact
         if employee.emergency_contact_id_employee != form.emergency_contact.data:
-            emergency_contact = EmergencyContact.query.get(form.emergency_contact.data)
+            emergency_contact = EmergencyContact.query.get(
+                form.emergency_contact.data)
             employee.emergency_contact_id_employee = emergency_contact.id
         elif form.new_emergency_contact.name != "":
             emergency_contact = EmergencyContact(
@@ -275,8 +294,9 @@ def edit_employee(id):
         db.session.commit()
         flash('Employee updated successfully!', 'success')
         return redirect(url_for('team.list_team'))
-    
+
     return render_template('team/team_edit.html', form=form, employee=employee, professions=professions)
+
 
 @bp.route('/eliminar/<int:id>', methods=['POST'])
 @permission_required('team_destroy')
@@ -301,9 +321,10 @@ def delete_employee(id):
         flash('Employee not found.', 'error')
     return redirect(url_for('team.list_team'))
 
+
 @bp.route('/empleado/<int:id>/add_file', methods=['POST', 'GET'])
 @permission_required('team_update')
-@inject_user_permissions    
+@inject_user_permissions
 def add_file(id):
     """Redirige a la vista de registro de archivo, además valida los parametros, y guarda al archivo en la base de datos si se recibió el formulario y el mismo es válido.
 
@@ -321,12 +342,14 @@ def add_file(id):
 
     minio_client = app.storage.client
     bucket_name = app.config['BUCKET_NAME']
-    
-    app.logger.info("El formulario del archivo es valido: %s", form.validate_on_submit())
+
+    app.logger.info("El formulario del archivo es valido: %s",
+                    form.validate_on_submit())
     if (form.validate_on_submit()):
-            #Tengo que hacer esto pero para empleado        
+        # Tengo que hacer esto pero para empleado
         if (find_employee_file_by_title(form.title.data)):
-            app.logger.error("The following title is already registered: %s ", form.title.data)
+            app.logger.error(
+                "The following title is already registered: %s ", form.title.data)
             flash("Ya existe un archivo con el titutlo ingresado", "error")
             return redirect(url_for("team.add_file", id=id))
 
@@ -335,24 +358,27 @@ def add_file(id):
 
         size = fstat(file.fileno()).st_size
 
-        minio_client.put_object(bucket_name,file.filename,file,size,content_type=file.content_type)
+        minio_client.put_object(
+            bucket_name, file.filename, file, size, content_type=file.content_type)
 
         create_employee_file(
-            file_url = file.filename,
-            title = form.title.data,
-            document_type = form.document_type.data,
-            employee_id = id,
+            file_url=file.filename,
+            title=form.title.data,
+            document_type=form.document_type.data,
+            employee_id=id,
         )
 
         flash("El archivo se ha creado correctamente", "success")
         return redirect(url_for('team.show_employee', id=id))
-    
+
     else:
         for field, errors in form.errors.items():
             for error in errors:
-                flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
+                flash(f"El formulario no es válido, error en el/los campos {
+                      getattr(form, field).label.text}: {error}", "error")
 
     return render_template("team/file_new.html", form=form, id=id)
+
 
 @bp.route('/empleado/<int:id>/archivo/<int:file_id>/eliminar', methods=['POST', 'GET'])
 @permission_required('team_update')
@@ -378,6 +404,7 @@ def delete_file(id, file_id):
     # Redirigir a la vista order_by pasando el user_id y la opción de orden como query parameters
     return redirect(url_for('team.show_employee', id=id))
 
+
 @bp.route('/empleado/<int:user_id>/archivo/<int:file_id>/descargar', methods=['GET'])
 @permission_required('team_update')
 @inject_user_permissions
@@ -393,7 +420,8 @@ def download_file(user_id, file_id):
     """
 
     # Obtener el archivo de la base de datos usando el ID
-    file = find_employee_file_by_id(file_id)  # Función que obtenga el archivo desde la base de datos
+    # Función que obtenga el archivo desde la base de datos
+    file = find_employee_file_by_id(file_id)
 
     # Configurar MinIO
     minio_client = app.storage.client
@@ -404,10 +432,12 @@ def download_file(user_id, file_id):
         'response-content-disposition': f'attachment; filename="{file.file_url}"'
     }
 
-    presigned_url = minio_client.presigned_get_object(bucket_name, file.file_url, expires=timedelta(hours=1), response_headers=download_headers)
+    presigned_url = minio_client.presigned_get_object(
+        bucket_name, file.file_url, expires=timedelta(hours=1), response_headers=download_headers)
 
-        # Redirigir al usuario al enlace de descarga
+    # Redirigir al usuario al enlace de descarga
     return redirect(presigned_url)
+
 
 @bp.route('/empleado/<int:user_id>/archivo/<int:file_id>/editar', methods=['GET', 'POST'])
 @permission_required('team_update')
@@ -429,18 +459,19 @@ def edit_file(user_id, file_id):
 
     app.logger.info("Call to add_file")
     file = find_employee_file_by_id(file_id)
-    
+
     form = EmployeeFileForm()
 
     minio_client = app.storage.client
     bucket_name = app.config['BUCKET_NAME']
-    
-    app.logger.info("El formulario del archivo es valido: %s", form.validate_on_submit())
+
+    app.logger.info("El formulario del archivo es valido: %s",
+                    form.validate_on_submit())
     if (form.validate_on_submit()):
 
         # Manejar el archivo
         new_file = request.files['file_url']
-        
+
         if new_file:
 
             # Obtener el tamaño del archivo
@@ -448,18 +479,20 @@ def edit_file(user_id, file_id):
             size = new_file.tell()
             new_file.seek(0)
 
-            minio_client.put_object(bucket_name,new_file.filename,new_file,size,content_type=new_file.content_type)
+            minio_client.put_object(
+                bucket_name, new_file.filename, new_file, size, content_type=new_file.content_type)
 
             updated_employee_file(
-                file, 
-                file_url = new_file.filename, 
-                title = form.title.data,
-                document_type = form.document_type.data,
-                employee_id = user_id,
+                file,
+                file_url=new_file.filename,
+                title=form.title.data,
+                document_type=form.document_type.data,
+                employee_id=user_id,
             )
-            
+
         else:
-            flash("No se actualizo el contenido del documento, porque no se ingreso un nuevo archivo", "info")
+            flash(
+                "No se actualizo el contenido del documento, porque no se ingreso un nuevo archivo", "info")
 
         flash("Archivo editado correctamente", "success")
         return redirect(url_for('team.show_employee', id=user_id))
@@ -467,6 +500,7 @@ def edit_file(user_id, file_id):
     else:
         for field, errors in form.errors.items():
             for error in errors:
-                flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
-            
+                flash(f"El formulario no es válido, error en el/los campos {
+                      getattr(form, field).label.text}: {error}", "error")
+
     return render_template("team/file_edit.html", form=form, user_id=user_id, file=file)
