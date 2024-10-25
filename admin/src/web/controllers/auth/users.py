@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, request,url_for
 from flask import render_template
-from core.auth import create_user, edit_user, find_role_id_by_name, find_user_by_id, get_all_roles
+from core.auth import edit_user, find_role_id_by_name, find_user_by_id, get_all_roles, create_user as create_new_user
 from core.auth.forms import registryForm
 from src.core.auth.models.user import User
 from flask import current_app as app
@@ -118,7 +118,7 @@ def create_user():
             flash(valid_from_errors, "error")
             return redirect(url_for("users.new_user"))
         
-        create_user(
+        create_new_user(
             email = form.email.data,
             alias = form.alias.data,
             password = form.password.data,

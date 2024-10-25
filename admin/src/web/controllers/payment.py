@@ -1,5 +1,5 @@
 from datetime import datetime
-from src.core.payments import create_payment
+from src.core.payments import create_payment as create_new_payment
 from src.core.database import db 
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 from src.core.auth import find_user_by_email
@@ -107,7 +107,7 @@ def create_payment():
         return redirect(url_for('payment.create_payment'))  
 
     if form.validate_on_submit():
-        create_payment(
+        create_new_payment(
             beneficiary=form.beneficiary.data,
             amount=form.amount.data,
             payment_date=form.payment_date.data,
