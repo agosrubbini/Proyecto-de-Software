@@ -26,7 +26,7 @@ class create_horse_Form(FlaskForm):
 
     date_of_entry = DateField('Fecha de ingreso', format='%Y-%m-%d', validators=[InputRequired()])
 
-    sede = StringField("Sede", validators=[InputRequired(), Length(max=255)])
+    sede = StringField("Sede", validators=[InputRequired(), Length(max=25)])
 
     type_jya_hipoterapia = BooleanField (default=False) 
     type_jya_monta_terapeutica = BooleanField (default=False) 
