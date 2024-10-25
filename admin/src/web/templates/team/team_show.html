@@ -24,7 +24,7 @@
                 <div class="modal-background"></div>
                 <div class="modal-content">
                     <div class="box">
-                        <p>¿Estás seguro que quieres eliminar este empleado?</p>
+                        <p>¿Estás seguro que quieres eliminar este archivo?</p>
                         <button id="confirmDelete" class="button is-danger">Eliminar</button>
                         <button id="cancelDelete" class="button">Cancelar</button>
                     </div>
@@ -44,6 +44,31 @@
             const confirmButton = document.getElementById('confirmDelete');
             const cancelButton = document.getElementById('cancelDelete');
             let fileIdToDelete = null;
+
+            /*function ajustarLayout() {
+                const tabla = document.querySelector('.table-docs');
+                const boton = document.querySelector('.add-file');
+                const options = document.querySelector('.order_options_docs');
+                const boton_next = document.querySelector('.pagination-next.docs');
+                const boton_previous = document.querySelector('.pagination-previous.docs');
+
+                // Ocultar elementos mientras se ajustan
+                if (tabla) {
+                    tabla.style.visibility = 'hidden';
+                    if (boton) boton.style.visibility = 'hidden';
+
+                    // Realizar ajustes
+                    if (boton) {
+                        boton.style.width = tabla.offsetWidth + 'px';
+                    }
+
+                    // Mostrar elementos después de ajustarlos
+                    requestAnimationFrame(() => {
+                        tabla.style.visibility = 'visible';
+                        if (boton) boton.style.visibility = 'visible';
+                    });
+                }
+            }*/
 
             // Función para cargar la información del usuario
             function cargarInformacion() {
@@ -74,6 +99,7 @@
                                         <tr><td>Condicion</td><td>${user.condition}</td></tr>
                                         <tr><td>Actividad</td><td>${user.active}</td></tr>
                                         <tr><td>Obra social</td><td>${user.healthcare_plan}</td></tr>
+                                        <tr><td>Usuario en el sistema</td><td>${user.user}</td></tr>
                                     </tbody>
                                 </table>`;
 
@@ -90,6 +116,7 @@
                 contenedor.innerHTML += boton;
 
                 if (files.length > 0) {
+
                     let table_docs = `
                         <table class="table is-striped">
                             <thead>
@@ -124,7 +151,7 @@
         
                 }
                 else{
-                    contenedor.innerHTML += `<p style="text-align: center">No hay archivos asociados al jinete</p>`;
+                    contenedor.innerHTML += `<p style="text-align: center">No hay archivos asociados al empleado</p>`;
                 }
             }
 
@@ -166,13 +193,7 @@
                         window.location.href = deleteUrl;
                     }
 
-                    // Si la opción seleccionada es "Ir al documento"
-                    if (selectedValue === 'open' && fileType === 'Link') {
-                        const selectedFile = files.find(file => file.id === parseInt(fileId));
-                        window.open(selectedFile.file_url, '_blank'); // Abre el enlace en una nueva pestaña
-                    }
-
-                    if (selectedValue === 'download' && fileType !== 'Link') {
+                    if (selectedValue === 'download') {
                         const downloadUrl = "{{ url_for('team.download_file', user_id=context.id, file_id=0) }}".replace('/0', `/${fileId}`);
                         window.location.href = downloadUrl;
                     }
@@ -185,4 +206,9 @@
             });
         });
     </script>
+    <style>
+        .docs {
+            visibility: visible !important;
+        }
+    </style>
 {% endblock %}

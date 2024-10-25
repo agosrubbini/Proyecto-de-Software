@@ -1,0 +1,162 @@
+* {
+    box-sizing: border-box; 
+    max-width: 100%;
+}
+
+.table {
+    margin: 0 auto !important;
+    border-collapse: collapse;
+  }
+
+.table th, .table td {
+    padding: 8px;
+}
+
+.table th {
+    text-align: left;
+}
+
+.separador{
+    margin: auto;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-bottom: solid 2px black;
+    max-width: 400px;
+}
+
+.encabezado {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    padding: 0 10px;
+    width: 100%;
+}
+
+.boton-busqueda{
+    width: 100% !important;
+    padding: 0px 10px 0px 10px;
+}
+
+.boton-filtrado {
+    padding: 0px 20px 0px 20px;
+}
+
+div.field.is-grouped {
+    margin: auto;
+    justify-content: center !important;
+    width: 80%;
+}
+
+@media (max-width: 426px){
+
+    div.field.is-grouped {
+        flex-wrap: wrap;
+    }
+
+    div.field {
+        width: 100%;
+    }
+
+    div.control {
+        width: 100%;
+    }
+
+    th, td {
+        text-overflow: ellipsis; /* Muestra '...' si el texto es muy largo */
+        white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    }
+    
+    th {
+        font-size: 14px; /* Reduce el tamaño de fuente de los encabezados */
+    }
+
+    td {
+        font-size: 12px; /* Reduce el tamaño de fuente de las celdas */
+    }
+
+    .add-horseman, .add-file{
+        width: 90% !important;
+        margin: auto !important;
+    }
+
+    .pagination-previous.docs, .pagination-next.docs{
+        width: 10px !important;
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+    }
+  
+}
+
+.order_options, 
+.pagination-next, 
+.pagination-previous {
+    visibility: hidden;
+}
+
+h1 {
+    font-size: 2rem;
+    text-align: center;
+}
+
+p {
+    padding-left: 10px;
+    margin-bottom: -2px ;
+}
+
+.label {
+    margin-bottom: 0px !important;
+    margin-left: 5px !important;
+}
+
+.boton {
+    background-color: var(--primary-color);
+    width: auto;
+    height: 40px;
+    color: white;
+    font-weight: bold;
+    display: block;
+    margin: 23px auto;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+}
+
+
+i {
+    color: black !important;
+}
+
+input:focus {
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2) !important;
+    border-color: hsl(221, 14%, 50%) !important;
+    outline: none !important;
+}
+
+select:hover {
+    background-color: hsl(221, 14%, 88%);
+}
+
+.pagination-previous, .pagination-next {
+    width: 10%;
+}
+
+
+.box{
+    background-color: white !important;
+    text-align: center;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.box p {
+    margin-bottom: 10px;
+    color: black;
+}
+
+.box button{
+    color: white !important;
+}
+
+

@@ -83,7 +83,7 @@ class Employee(Person):
         self.email = email
         self.birth_date = birth_date
 
-    def to_dict(self, addres, healthcare_plan, emergency_contact):
+    def to_dict(self, addres, healthcare_plan, emergency_contact, employee_user_mail):
         return {
             "id": self.id,
             "name": self.name,
@@ -101,6 +101,7 @@ class Employee(Person):
             "active": self.active,
             "healthcare_plan": healthcare_plan.string(),
             "email": self.email,
+            "user": employee_user_mail
         }
 
 class JyA(Person):
