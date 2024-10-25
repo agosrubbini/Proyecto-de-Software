@@ -23,7 +23,20 @@ bp = Blueprint('horses', __name__, url_prefix='/horses')
 def list_horses():
 
     """
-        Esta función retorna el listado con los caballos registrados en el sistema, aplicando filtros de busqueda y realizando la paginacion.
+    Esta función retorna el listado de los caballos registrados en el sistema, 
+    aplicando filtros de búsqueda, ordenación y paginación. 
+    Permite filtrar por nombre y tipo de jinete/amazona asignado, y 
+    ordenar por nombre, fecha de nacimiento o fecha de entrada de forma ascendente o descendente.
+
+
+    Returns:
+        render_template: Renderiza la plantilla 'ecuestre/horses.html' con los siguientes parámetros:
+            - horses (list): Lista de objetos Horse correspondientes a la página actual, filtrados según los criterios aplicados.
+            - order (str): El criterio de ordenamiento seleccionado.
+            - q (str): Parámetro de búsqueda seleccionado.
+            - pagination (Pagination): Objeto de paginación con información de la página actual, total de páginas y registros.
+            - type_jya_assigned (str): El tipo de jinete/amazona aplicado como filtro (si corresponde).
+            - form (Form): El formulario para crear un nuevo caballo.
     """
 
     order = request.args.get('order', 'name_asc') #orden default por nombre ascendente 
@@ -66,13 +79,37 @@ def list_horses():
 @permission_required('horse_new')
 @inject_user_permissions
 def create_horse_view():
+    """
+    Muestra el formulario para crear un nuevo caballo y maneja la creación del mismo al enviar el formulario.
+
+    Esta función carga un formulario para ingresar los datos del caballo y los empleados relacionados. 
+    Al enviar el formulario, se valida la información ingresada y, si es correcta, se registra un nuevo 
+    caballo en la base de datos, junto con los empleados asignados y los tipos de jinetes y amazonas seleccionados.
+
+    En caso de error durante el proceso de creación del caballo, la función recarga la plantilla con el 
+    contexto necesario para mantener el estado del formulario y los datos.
+
+    Returns:
+        redirect
+            - Si el formulario es válido y el caballo se crea correctamente, redirige a la lista de caballos.
+        render_template: 
+           - Si la validación falla o hay un error, renderiza 'ecuestre/create_horse.html' con las 
+              variables `form` y `horses` en el contexto para recargar el formulario con los datos 
+              existentes y mostrar información adicional en la vista.
+
+    Raises:
+        Exception: 
+            - Si ocurre un error durante la creación del caballo, se muestra un mensaje de error mediante 
+              `flash` y se recarga la plantilla para que el usuario pueda intentar nuevamente.
+        
+    """
     form = create_horse_Form()
 
-    form.employees.choices = [(e.id, e.name) for e in Employee.query.all()]  # Cargar empleados
+    form.employees.choices = [(e.id, e.name) for e in Employee.query.all()]  # Cargar empleados previamente para que el usuario pueda ver y seleccionar los empleados disponibles al crear el caballo
     
     if form.validate_on_submit():
         try:
-            type_jya_assigned=[]
+            type_jya_assigned=[] #Array de tipos de jinete/amazonas asignados
             if form.type_jya_hipoterapia.data:
                 type_jya_assigned.append ("Hipoterapia")
             if form.type_jya_monta_terapeutica.data:
@@ -98,7 +135,7 @@ def create_horse_view():
             )
 
 
-            for empleado_id in form.employees.data:
+            for empleado_id in form.employees.data: # Asignar los empleados al caballo
                 empleado = Employee.query.get(empleado_id)
                 new_horse.employees.append(empleado)
 
@@ -106,7 +143,7 @@ def create_horse_view():
             db.session.add(new_horse)
             db.session.commit()
             
-            app.logger.info("Caballo creado exitosamente: %s", form.name.data)#controlar
+            app.logger.info("Caballo creado exitosamente: %s", form.name.data)
             flash("Caballo creado exitosamente", "success")
             return redirect(url_for('horses.list_horses'))  # Redirigir a la lista de caballos
         except Exception as e:
@@ -114,9 +151,9 @@ def create_horse_view():
             flash("Ocurrió un error al crear el caballo", "error")
 
  
-    context = {
-        'form': form,  # Pasa el formulario para que esté disponible en la plantilla
-        'horses': Horse.query.order_by(Horse.name).all()  # Puedes cargar los caballos aquí si deseas
+    context = { #diccionario de datos que se pasa hacia las plantillas HTML 
+        'form': form,  #Permitir que el formulario se renderice y mantenga su estado si ocurre un error.
+        'horses': Horse.query.order_by(Horse.name).all() 
     }
 
     return render_template('ecuestre/create_horse.html', context=context)  # Renderizar el formulario
@@ -128,7 +165,24 @@ def create_horse_view():
 def edit_horse(horse_id):
 
     """
-        Esta funcion se encarga de editar un cobro en especifico asociado a un id.
+        Edita la información de un caballo específico asociado a su ID.
+
+    Esta función maneja la edición de los detalles de un caballo, permitiendo
+    actualizar su nombre, fecha de nacimiento, género, raza, tipo de pelaje,
+    método de adquisición, fecha de ingreso, sede, tipos de JYA asignados y
+    empleados asociados. Los cambios se guardan en la base de datos.
+
+    Args:
+        horse_id (int): ID del caballo que se desea editar.
+
+    Returns:
+        redirect
+            - Redirige a la lista de información del caballo actualizado si 
+              el formulario se valida correctamente.
+        render_template
+            - Renderiza la plantilla 'ecuestre/edit_horse.html' con el formulario,
+              la lista de empleados y el caballo si la solicitud es GET o si 
+              el formulario no es válido.
     """
 
     employee_list = Employee.query.all()
@@ -179,7 +233,20 @@ def edit_horse(horse_id):
 def delete_horse(horse_id):
 
     """
-    Esta funcion se encarga de eliminar un caballo de forma logica asociado a un id.
+    Elimina de forma lógica un caballo específico asociado a su ID.
+
+    Esta función marca un caballo como eliminado al modificar su nombre, 
+    anteponiendo un asterisco (*) al mismo. Esto permite realizar eliminaciones 
+    lógicas sin borrar el registro de la base de datos.
+
+    Args:
+        horse_id (int): ID del caballo que se desea eliminar.
+
+    Returns:
+        redirect
+            - Redirige a la lista de caballos después de intentar la eliminación.
+            - Muestra un mensaje de éxito si la eliminación fue exitosa.
+            - Muestra un mensaje de error si el caballo no fue encontrado.
     """
 
     horse = Horse.query.get(horse_id)
@@ -237,7 +304,27 @@ def show_files(horse_id, request):
 def list_info_by_id(horse_id):
 
     """
-        Esta función retorna la información del caballo asociado al id pasado por parámetro en la url.
+    Muestra archivos asociados a un caballo específico, permitiendo la 
+    ordenación y filtrado de los resultados.
+
+    Esta función construye una consulta para recuperar archivos relacionados
+    con un caballo, con opciones para ordenar por título o fecha, así como
+    filtrar por título y tipo de documento. También implementa paginación
+    para gestionar la visualización de archivos.
+
+    Args:
+        horse_id (int): ID del caballo cuyos archivos se desean mostrar.
+        request: El objeto de solicitud que contiene parámetros de consulta para la ordenación y filtrado.
+
+    Returns:
+        tuple: 
+            - pagination (Pagination): Objeto de paginación que contiene 
+              los archivos filtrados y ordenados.
+            - page (int): El número de la página actual.
+            - order_by (str): La opción de ordenación seleccionada.
+            - title (str): El título proporcionado para filtrar archivos.
+            - document_type (str): El tipo de documento proporcionado para 
+              filtrar archivos.
     """
 
     horse = find_horse_by_id(horse_id)
@@ -265,6 +352,26 @@ def list_info_by_id(horse_id):
 @inject_user_permissions
 def delete_file(horse_id, file_id):
 
+    """
+    Elimina un archivo asociado a un caballo específico dado su ID.
+
+    Este método maneja la eliminación de un archivo almacenado en un
+    servicio de almacenamiento (MinIO) y realiza una eliminación lógica 
+    en la base de datos. Dependiendo del tipo de archivo, se elimina el 
+    archivo correspondiente en el almacenamiento externo.
+
+    Args:
+        horse_id (int): ID del caballo al que está asociado el archivo que 
+            se desea eliminar.
+        file_id (int): ID del archivo que se desea eliminar.
+
+    Returns:
+        redirect: Redirige a la lista de archivos del caballo 
+            correspondiente después de la eliminación del archivo.
+
+
+    """
+
     print("Este es el file id", file_id)
     file = find_file_by_id(file_id)
     minio_client = app.storage.client
@@ -287,8 +394,23 @@ def delete_file(horse_id, file_id):
 def add_file(horse_id):
 
     """
-    Muestra la vista del registro,  valida los parametros, y guarda al archivo en la base de datos si
-    se recibió el formulario y el mismo es válido.
+    Muestra la vista para agregar un archivo asociado a un caballo y 
+    valida los parámetros antes de guardar el archivo.
+
+    Este método maneja la subida de archivos y enlaces, realizando
+    validaciones para asegurar que no se dupliquen títulos. Si se recibe
+    un formulario válido, se guarda el archivo en el almacenamiento (MinIO)
+    y se registran los metadatos en la base de datos.
+
+    Args:
+        horse_id (int): ID del caballo al que se asociará el archivo.
+
+    Returns:
+        - Redirige a la lista de información del caballo correspondiente 
+          después de agregar el archivo si el formulario es válido.
+        - Renderiza la plantilla de registro de archivo si la solicitud 
+          es GET o si el formulario no es válido.
+
     """
 
     form = registryFileForm()
@@ -363,6 +485,23 @@ def add_file(horse_id):
 @permission_required('horse_update')
 @inject_user_permissions
 def download_file(horse_id, file_id):
+
+    """
+    Permite la descarga de un archivo asociado a un caballo específico 
+    dado su ID.
+
+    Este método recupera un archivo de la base de datos utilizando su ID,
+    genera una URL firmada en MinIO para permitir la descarga del archivo 
+    y redirige al usuario a esa URL.
+
+    Args:
+        horse_id (int): ID del caballo al que está asociado el archivo a 
+            descargar.
+        file_id (int): ID del archivo que se desea descargar.
+
+    Returns:
+        Redirige al usuario a la URL firmada para la descarga del archivo.
+    """
     # Obtener el archivo de la base de datos usando el ID
     file = find_file_by_id(file_id)
 
@@ -386,8 +525,24 @@ def download_file(horse_id, file_id):
 def edit_file(horse_id, file_id):
 
     """
-    Muestra la vista del registro, además valida los parametros, y guarda al archivo en la base de datos si
-    se recibió el formulario y el mismo es válido.
+    Muestra la vista para editar un archivo asociado a un caballo y 
+    valida los parámetros antes de actualizar el archivo en la base de datos.
+
+    Este método permite modificar un archivo existente, ya sea un 
+    documento o un enlace. Si se recibe un formulario válido, el archivo 
+    se actualiza en el almacenamiento (MinIO) y se registran los nuevos 
+    metadatos en la base de datos.
+
+    Args:
+        horse_id (int): ID del caballo al que está asociado el archivo.
+        file_id (int): ID del archivo que se desea editar.
+
+    Returns:
+        - Redirige a la lista de información del caballo correspondiente 
+          después de editar el archivo si el formulario es válido.
+        - Renderiza la plantilla de edición de archivo si la solicitud 
+          es GET o si el formulario no es válido.
+
     """
 
     file = find_file_by_id(file_id)

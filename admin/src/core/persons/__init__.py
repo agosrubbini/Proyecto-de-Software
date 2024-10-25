@@ -1,4 +1,5 @@
 from src.core.database import db
+from src.core.auth.models.user import User
 from src.core.persons.models.person import Person, Employee, JyA, FamilyMemberOrTutor
 from src.core.persons.models.address import Address
 from src.core.persons.models.emergency_contact import EmergencyContact
@@ -195,6 +196,12 @@ def find_employee_by_id(id):
     """Devuelve el empleado con el id pasado por parámetro"""
 
     return Employee.query.filter_by(id=id).first()
+
+def get_employee_user_by_id(id):
+    
+        """Devuelve el usuario del empleado con el id pasado por parámetro"""
+    
+        return User.query.filter_by(id=id).first()
 
 def get_files_by_employee_id(id):
     
