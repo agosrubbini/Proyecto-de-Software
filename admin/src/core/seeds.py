@@ -126,7 +126,7 @@ def run():
         name = "Sagrado Corazon",
         addres_id = address1.id,
         phone_number = "2241548363",
-        current_year = "1ero",
+        current_year = "Primero",
         observation = "La primer escuela",
     )
 
@@ -134,7 +134,7 @@ def run():
         name = "Jesus de Nazaret",
         addres_id = address2.id,
         phone_number = "44332251",
-        current_year = "4to",
+        current_year = "Cuarto",
         observation = "La segunda escuela",
     )
 
@@ -183,6 +183,14 @@ def run():
         type_jya_assigned = ["Hipoterapia","Equitacion"]
     )
 
+    school1 = create_school (
+        name = "Colegio Sagrado Corazon",
+        addres_id = address1.id,
+        phone_number = "222",
+        current_year = "Tercero",
+        observation = "Muy buena escuela",
+    )
+
     JyA1 = create_JyA(
         name="Joaquina",
         last_name="Saadi",
@@ -197,11 +205,13 @@ def run():
         attending_professionals = "Lucia",
         healthcare_plan_id_jya = healthcare_plan1.id,
         diagnosis = "Esclerosis múltiple",
-        type_of_disability = "Mental"
+        type_of_disability = "Mental",
+        attends_school = True,
+        school_id = school1.id,
     )
 
     file1 = create_file(
-        file_url = "hola",
+        file_url = "https://www.python.org/",
         file_type = "Link",
         document_type = "Entrevista",
         horsemen_and_amazons_id = JyA1.id,

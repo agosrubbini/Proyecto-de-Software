@@ -9,5 +9,19 @@
 }
 
 
+td.botones{
+    display: flex;
+    justify-content: space-between;
+}
 
+.boton-filtrado {
+    width: 100% !important;
+}
 
+/* Agregar al archivo jya_info.css */
+.docs {
+    visibility: hidden;
+}
+.docs.loaded {
+    visibility: visible;
+}

@@ -110,7 +110,7 @@ p {
 
 .boton {
     background-color: var(--primary-color);
-    width: 30%;
+    width: auto;
     height: 40px;
     color: white;
     font-weight: bold;

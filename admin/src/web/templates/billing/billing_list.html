@@ -75,8 +75,8 @@
                     {% for billing in billings %}
                     <tr>
                         <td>{{ billing.pos }}</td>
-                        <td><a href="#">{{ billing.employee_name }}</a></td>
-                        <td><a href="#">{{ billing.jya_name }}</a></td>
+                        <td><a href="{{ url_for('team.show_employee', id=billing.employee_id) }}">{{ billing.employee_name }}</a></td>
+                        <td><a href="{{ url_for('horsemen_and_amazons.list_info_by_jya', user_id=billing.jya_id) }}">{{ billing.jya_name }}</a></td>
                         <td>{{ billing.amount }}</td>
                         <td>{{ billing.payment_date.strftime('%d-%m-%Y') }}</td>
                         <td>{{ billing.payment_method }}</td>

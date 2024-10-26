@@ -3,8 +3,6 @@
 {% block head %}
     {{ super() }}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
 {% endblock %}
 {% block content%}
 <form method="POST" action="{{ url_for('team.new_employee') }}">
@@ -72,6 +70,20 @@
     </div>
     {% endif %}
     <hr>
+
+    <div class="has-user-div">
+        <label class="label" for="user-checkbox">Posee usuario en el sistema</label>
+        <input class="user-checkbox" type="checkbox" name="user-checkbox" id="user-checkbox">
+    </div>
+
+    <label class="label has-user-id" for="user_id">Usuario</label>
+    <div class="control has-user-id">
+        <select disabled name="user_id" id="user_id" value="{{ form.user_id.data or '' }}">
+            {% for id, mail in form.user_id.choices %}
+            <option value="{{ id }}">{{ mail }}</option>
+            {% endfor %}
+        </select>
+    </div>
 
     <label class="label" for="birth_date">Fecha de nacimiento</label>
     <input class="input" type="date" name="birth_date" id="birth_date" value="{{ form.birth_date.data or '' }}">
@@ -159,10 +171,10 @@
     </div>
 
     <label class="label new-contact" for="new_emergency_contact-name">Nombre</label>
-    <input class="input new-contact" type="text" name="new_emergency_contact-name" id="new_emergency_contact-name" value="{{ form.new_emergency_contact.name.data or '' }}">
-    {% if form.new_emergency_contact.name.errors %}
+    <input class="input new-contact" type="text" name="new_emergency_contact-name_emergency_contact" id="new_emergency_contact-name" value="{{ form.new_emergency_contact.name_emergency_contact.data or '' }}">
+    {% if form.new_emergency_contact.name_emergency_contact.errors %}
         <div class="alert alert-danger">
-            {% for error in form.new_emergency_contact.name.errors %}
+            {% for error in form.new_emergency_contact.name_emergency_contact.errors %}
                 <span>{{ error }}</span>
             {% endfor %}
         </div>
@@ -183,12 +195,12 @@
     <label class="label" for="condition">Condicion</label>
     <div class="condition-div">
         <div class="condition-option">
-            <input class="condition-radio" type="radio" name="condition" id="condition-v" value="Voluntario">
+            <input class="condition-radio" type="radio" name="condition" id="condition-v" value="Voluntario" {% if form.condition.data == "Voluntario" %}checked{% endif %}>
             <label for="condition-v">Voluntario</label> 
         </div>
         <div class="condition-option">
-            <input class="condition-radio" type="radio" name="condition" id="condition-p" value="Personal rentado">
-            <label for="condition-p">Personal rentado</label>
+            <input class="condition-radio" type="radio" name="condition" id="condition-p" value="Personal Rentado" {% if form.condition.data == "Personal Rentado" %}checked{% endif %}>
+            <label for="condition-p">Personal Rentado</label>
         </div>
     </div>
 
@@ -310,10 +322,6 @@
 
 <script>
     $(document).ready(function () {
-        //Script para el select
-        $('select').selectize({
-            sortField: 'text'
-        });
 
         // Oculta los campos de nueva dirección inicialmente
         $('.new_address').hide();
@@ -340,6 +348,20 @@
             } else {
                 $('.new-contact').hide();
                 $('.emergency-contact-div').show();
+            }
+        });
+
+        const user_select = $('#user_id');
+        $('.has-user-id').hide();
+
+        // Detecta cuando se selecciona o deselecciona el checkbox
+        $('#user-checkbox').change(function () {
+            if ($(this).is(':checked')) {
+                user_select.prop('disabled', false);
+                $('.has-user-id').show();
+            } else {
+                user_select.prop('disabled', true);
+                $('.has-user-id').hide();
             }
         });
     });

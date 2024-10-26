@@ -56,56 +56,60 @@
                 </div>
             </div>
         </form>    
-        <form method="GET" action="{{ url_for('horsemen_and_amazons.list_jya_users') }}">
-            <div class="control order_options" >
-                <select id="order-option" name="order_option" onchange="this.form.submit()">
-                    <option value="default">Selecciona un orden</option>
-                    <option value="name_asc">Nombre: A-Z</option>
-                    <option value="name_desc">Nombre: Z-A</option>
-                    <option value="last_name_asc">Apellido: Menor-Mayor</option>
-                    <option value="last_name_desc">Apellido: Mayor-Menor</option>
-                </select>
-            </div>
-        </form>
 
-        <div class="table-container">
-            <table class="table is-striped users">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>DNI</th>
-                        <th>Edad</th>
-                        <th>Operaciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                                <tr onclick="window.location.href='{{ url_for('horsemen_and_amazons.list_info_by_jya', user_id=user.id) }}'">
-                                    <td> {{user.name}} </td>
-                                    <td> {{user.last_name}} </td>
-                                    <td> {{user.DNI}} </td>
-                                    <td> {{user.age}} </td>
-                                    <td>
-                                        <select class="operations" data-user-id="{{ user.id }}" onclick="event.stopPropagation();">
-                                            <option value="default">Selecciona la operación</option>
-                                            <option value="edit">Editar</option>
-                                            <option value="delete">Eliminar</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                        {% endfor %}
-                </tbody>
-            </table>
-            <nav class="pagination" role="navigation" aria-label="pagination">
-                <a class="boton pagination-previous" {% if not users.has_prev %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_jya_users', page=page-1,  order_option=order_by, name=name, last_name=last_name, dni=dni, professionals=professionals)}}"{% endif %}>Anterior</a>
-                <a class="boton pagination-next" {% if not users.has_next %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_jya_users', page=page+1,  order_option=order_by, name=name, last_name=last_name, dni=dni, professionals=professionals)}}"{% endif %}>Siguiente</a>
-            </nav>
+   
+                <form method="GET" action="{{ url_for('horsemen_and_amazons.list_jya_users') }}">
+                        <div class="control order_options">
+                            <select id="order-option" name="order_option" onchange="this.form.submit()">
+                                <option value="default">Selecciona un orden</option>
+                                <option value="name_asc">Nombre: A-Z</option>
+                                <option value="name_desc">Nombre: Z-A</option>
+                                <option value="last_name_asc">Apellido: Menor-Mayor</option>
+                                <option value="last_name_desc">Apellido: Mayor-Menor</option>
+                            </select>
+                        </div>
+                </form>
+            
+
+                <div class="table-container">
+                    <table class="table is-striped">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>DNI</th>
+                                <th>Edad</th>
+                                <th>Operaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                        <tr onclick="window.location.href='{{ url_for('horsemen_and_amazons.list_info_by_jya', user_id=user.id) }}'">
+                                            <td> {{user.name}} </td>
+                                            <td> {{user.last_name}} </td>
+                                            <td> {{user.DNI}} </td>
+                                            <td> {{user.age}} </td>
+                                            <div class="buttons">
+                                                <td>
+                                                    <a href="{{ url_for('horsemen_and_amazons.edit_horseman', user_id= user.id) }}" class="button is-small is-white"><i class="fas fa-edit" title="Editar"></i></a>
+                                                    <a onclick="event.stopPropagation()" class="button is-small is-white delete-button" data-user-id="{{ user.id }}"><i class="fas fa-trash" title="Eliminar"></i></a>
+                                                </td>
+                                            </div>
+                                        </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                    <nav class="pagination" role="navigation" aria-label="pagination">
+                        <a class="boton pagination-previous" {% if not users.has_prev %}disabled{% else %} href="{{ url_for('horsemen_and_amazons.list_jya_users', page=page-1,  order_option=order_by, name=name, last_name=last_name, dni=dni, professionals=professionals) }}"{% endif %}>Anterior</a>
+                        <a class="boton pagination-next" {% if not users.has_next %}disabled{% else %} href="{{ url_for('horsemen_and_amazons.list_jya_users', page=page+1,  order_option=order_by, name=name, last_name=last_name, dni=dni, professionals=professionals) }}"{% endif %}>Siguiente</a>
+                    </nav>
+            </div>
         {% else %}
             <p style="text-align: center;">No hay jinetes registrados en el sistema</p>
         {% endif %}
         <a href="{{ url_for('horsemen_and_amazons.add_horseman') }}"><button class="boton add-horseman">Registrar jinete</button></a>
-    </div>
+    
 
     <div id="deleteModal" class="modal">
         <div class="modal-background"></div>
@@ -122,32 +126,39 @@
 <script>
         document.addEventListener('DOMContentLoaded', function () {
             const tabla = document.querySelector('.table');
-            const boton = document.querySelector('.add-horseman');
             const options = document.querySelector('.order_options');
             const boton_next = document.querySelector('.pagination-next');
             const boton_previous = document.querySelector('.pagination-previous');
 
             const anchoTabla = tabla.offsetWidth;
             
-            boton.style.width = anchoTabla + 'px';
 
-            // Función para ajustar el margen del select
+            // Ocultar elementos inicialmente
+            if (options) options.style.visibility = 'hidden';
+            if (boton_next) boton_next.style.visibility = 'hidden';
+            if (boton_previous) boton_previous.style.visibility = 'hidden';
+
             const ajustarPosicionOptions = () => {
-                const estilos = window.getComputedStyle(tabla);
-                const marginLeft = estilos.marginLeft;
-                const marginRight = estilos.marginRight;
+                requestAnimationFrame(() => {
+                    if (tabla && options && boton_next && boton_previous) {
+                        const estilos = window.getComputedStyle(tabla);
+                        const marginLeft = estilos.marginLeft;
+                        const marginRight = estilos.marginRight;
 
-                console.log(marginLeft);
-                // Ajustar el margin-left del select
-                options.style.marginLeft = marginLeft;
-                boton_previous.style.marginLeft = marginLeft;
-                boton_next.style.marginRight = marginRight;
+                        options.style.marginLeft = marginLeft;
+                        boton_previous.style.marginLeft = marginLeft;
+                        boton_next.style.marginRight = marginRight;
+
+                        // Mostrar elementos después de ajustarlos
+                        options.style.visibility = 'visible';
+                        boton_next.style.visibility = 'visible';
+                        boton_previous.style.visibility = 'visible';
+                    }
+                });
             };
 
-            // Llama a la función inicialmente para ajustar la posición
+            // Llama a la función inicialmente y en cada resize
             ajustarPosicionOptions();
-
-            // Escuchar el evento 'resize' para ajustar el select al redimensionar la ventana
             window.addEventListener('resize', ajustarPosicionOptions);
 
             const modal = document.getElementById('deleteModal');
@@ -170,6 +181,16 @@
                 selectElement.selectedIndex = 0; // Vuelve a seleccionar la primera opción ("Selecciona la operación")
             }
 
+            // Manejar el clic en los botones de eliminar
+            const deleteButtons = document.querySelectorAll('.delete-button');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();  // Evita el comportamiento predeterminado del enlace
+                    userIdToDelete = this.dataset.userId;  // Obtener el ID del jinete a eliminar
+                    openModal();  // Mostrar el modal
+                });
+            });
+
             // Manejar la confirmación de eliminación
             confirmButton.addEventListener('click', function () {
                 if (userIdToDelete) {
@@ -181,30 +202,7 @@
             // Cancelar y cerrar el modal
             cancelButton.addEventListener('click', closeModal);
             document.querySelector('.modal-close').addEventListener('click', closeModal);
-
-            // Manejo de cambios en las operaciones
-            document.addEventListener('change', (e) => {
-                if (e.target.classList.contains('operations')) {
-                    const selectedValue = e.target.value;
-                    
-                    const userId = e.target.dataset.userId;
-
-                    const selectElement = e.target;
-                    
-                    if (selectedValue === 'delete'){
-                        userIdToDelete = userId; // Almacenar el ID del jinete a eliminar
-                        openModal(); // Mostrar el modal
-                    }
-
-                    if (selectedValue === 'edit'){
-                        const editUrl = "{{ url_for('horsemen_and_amazons.edit_horseman', user_id=0) }}".replace('/0', `/${userId}`);
-                        window.location.href = editUrl;
-                    }
-
-                    resetSelect(selectElement);
-                }
             });
-    });
 
 </script>
 {% endblock %}

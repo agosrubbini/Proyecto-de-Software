@@ -159,10 +159,10 @@
     </div>
 
     <label class="label new-contact" for="new_emergency_contact-name">Nombre</label>
-    <input class="input new-contact" type="text" name="new_emergency_contact-name" id="new_emergency_contact-name" value="{{ form.new_emergency_contact.name.data or '' }}">
-    {% if form.new_emergency_contact.name.errors %}
+    <input class="input new-contact" type="text" name="new_emergency_contact-name_emergency_contact" id="new_emergency_contact-name" value="{{ form.new_emergency_contact.name_emergency_contact.data or '' }}">
+    {% if form.new_emergency_contact.name_emergency_contact.errors %}
         <div class="alert alert-danger">
-            {% for error in form.new_emergency_contact.name.errors %}
+            {% for error in form.new_emergency_contact.name_emergency_contact.errors %}
                 <span>{{ error }}</span>
             {% endfor %}
         </div>

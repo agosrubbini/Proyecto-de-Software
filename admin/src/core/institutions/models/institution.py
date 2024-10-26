@@ -36,8 +36,8 @@ class School(db.Model):
     name = db.Column(db.String(255), nullable=False)
     addres_id = db.Column(db.Integer, db.ForeignKey("address.id"))
     phone_number = db.Column(db.String(255), nullable=False)
-    current_year = db.Column(db.Enum("1ero", "2do", "3ero", "4to", "5to", "6to", name="current_year"), nullable=False)
-    observation = db.Column(db.String(255), nullable=False)
+    current_year = db.Column(db.Enum("Primero", "Segundo", "Tercero", "Cuarto", "Quinto", "Sexto", name="current_year"), nullable=False)
+    observation = db.Column(db.String(255), nullable=True)
 
     def __init__(self, id=None, name=None, addres_id=None, phone_number=None, current_year=None, observation=None):
         

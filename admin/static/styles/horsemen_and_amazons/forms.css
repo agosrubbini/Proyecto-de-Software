@@ -217,3 +217,10 @@ i {
 .modal-content button:hover {
     background-color: var(--primary-color);
 }
+
+@media (max-width: 1441px) and (min-width: 426px) {
+    
+    form {
+        width: 70%;
+    }
+}

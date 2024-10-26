@@ -78,7 +78,7 @@
 
     <label class="label" for="role">Rol</label>
     <select name="role" id="role"{% if context.user.system_admin %}disabled{% endif %}>
-        <option value="">Selecciona un rol:</option>
+        <option value="Selecciona un rol:">Selecciona un rol:</option>
         <option value="Administración" {% if context.user.role.name == 'Administración' %}selected{% endif %}>Administración</option>
         <option value="Técnica" {% if context.user.role.name == 'Técnica' %}selected{% endif %}>Técnica</option>
         <option value="Voluntariado" {% if context.user.role.name == 'Voluntariado' %}selected{% endif %}>Voluntariado</option>

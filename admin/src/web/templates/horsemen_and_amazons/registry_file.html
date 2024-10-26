@@ -63,7 +63,6 @@
 
 </form>
 
-      <!-- Modal personalizado -->
     <div id="customAlert" class="modal">
         <div class="modal-content">
             <p id="alertMessage">Este es un mensaje de alerta personalizado.</p>
@@ -80,8 +79,6 @@
 
                     if (e.target.classList.contains('file_type')) {
                         const selectedValue = e.target.value;
-
-                        console.log(selectedValue);
 
                         const input = document.getElementById('file_url')
                         
@@ -126,25 +123,35 @@
                 });
 
                 document.getElementById('fileForm').addEventListener('submit', function(event) {
-                    const fileInput = document.getElementById('fileInput');
-                    const file = fileInput.files[0];
-                    
-                    if (file) {
-                        const allowedExtensions = ['pdf', 'jpeg', 'doc', 'xls']; // Extensiones permitidas
-                        const fileExtension = file.name.split('.').pop().toLowerCase();
-                    
-                        if (!allowedExtensions.includes(fileExtension)) {
-                            event.preventDefault();
-                            showCustomAlert('Solo se permiten archivos con las extensiones: ' + allowedExtensions.join(', '));
-                        } else {
-                            // Archivo válido, puede continuar con el envío
-                            showCustomAlert('Archivo válido, se procederá con el envío.');
-                        }
-                    } else {
+                const fileInput = document.getElementById('fileInput');
+                const linkInput = document.getElementById('link_url');
+                const file = fileInput.files[0];
+                const link = linkInput ? linkInput.value.trim() : '';
+
+                if (file) {
+                    const allowedExtensions = ['pdf', 'jpeg', 'doc', 'xls']; // Extensiones permitidas
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                
+                    if (!allowedExtensions.includes(fileExtension)) {
                         event.preventDefault();
-                        showCustomAlert('Por favor, selecciona un archivo.');
+                        showCustomAlert('Solo se permiten archivos con las extensiones: ' + allowedExtensions.join(', '));
+                    } else {
+                        showCustomAlert('Archivo válido, se procederá con el envío.');
                     }
-                });
+                } else if (link) {
+                    // Validar el formato del enlace
+                    const urlPattern = /^(https?:\/\/)[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
+                    if (!urlPattern.test(link)) {
+                        event.preventDefault();
+                        showCustomAlert('Por favor, ingresa una URL válida que comience con http:// o https://.');
+                    } else {
+                        showCustomAlert('URL válida, se procederá con el envío.');
+                    }
+                } else {
+                    event.preventDefault();
+                    showCustomAlert('Por favor, selecciona un archivo o ingresa una URL.');
+                }
+            });
         });
 </script>
 {% endblock %}

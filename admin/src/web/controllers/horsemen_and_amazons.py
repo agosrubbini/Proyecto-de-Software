@@ -1,14 +1,16 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from src.core.persons import (get_jya_users, find_address_by_id, find_jya_by_id, delete_jya_by_id, get_files_by_horseman_id, delete_file_by_id, 
-                              create_JyA, create_file, updated_jya, find_file_by_title, find_file_by_id, updated_file, get_emergency_contacts, get_address, 
-                              get_healthcare_plans, get_emergency_contact_by_id, get_healthcare_plan_by_id)
-from src.core.institutions import get_schools, get_school_by_id
+from src.core.persons import (find_address_by_id, find_jya_by_id, delete_jya_by_id, get_files_by_horseman_id, delete_file_by_id, 
+                              create_JyA, create_file, create_address, create_emergency_contact, create_healthcare_plan, updated_jya, find_file_by_title, find_file_by_id, updated_file, get_emergency_contacts, get_address,
+                              get_emergency_contact_by_id, get_healthcare_plan_by_id, find_jya_by_dni, updated_healthcare_plan, update_address, update_emergency_contact)
+from src.core.institutions import get_school_by_id, create_school, update_school
 from src.core.persons.forms import registryFileForm, registryHorsemanForm
-from src.core.auth.auth import inject_user_permissions
+from src.core.auth.auth import inject_user_permissions, permission_required
 from flask import current_app as app
 from datetime import timedelta
 from src.core.persons.models.file import File
 from src.core.persons.models.person import JyA
+from src.core.persons.models.emergency_contact import EmergencyContact
+from web.validations import validate_horseman_form, validate_unique_fields_horseman
 from sqlalchemy import desc
 import json
 import io
@@ -97,7 +99,7 @@ def showHorsemen(request):
 
 def obtenerChoices(form):
 
-    """ Esta función recibe el formulario de jinetes y amazonas y devuelve las instituciones, los contactos de emergencia, las obras sociales y las direcciones, 
+    """ Esta función recibe el formulario de jinetes y amazonas y devuelve las instituciones, los contactos de emergencia, y las direcciones, 
         utilizadas como opciones de los distintos campos del formulario.
 
 
@@ -105,27 +107,22 @@ def obtenerChoices(form):
             - form (FlaskForm): Formulario de jinetes y amazonas.
         
     """
-       
-    schools = get_schools()
 
     emergency_contacts = get_emergency_contacts()
-
-    healthcare_plans = get_healthcare_plans()
 
     addresses = get_address()
 
     # Asignar el id como value y la representación amigable como label
-    form.address.choices = [(address.id, address.string()) for address in addresses]
-    form.school.choices = [(school.id, school.name) for school in schools]
-    form.emergency_contact_id_jya.choices = [(emergency_contact.id, emergency_contact.name) for emergency_contact in emergency_contacts]
-    form.healthcare_plan_id_jya.choices = [(healthcare_plan.id, healthcare_plan.social_security) for healthcare_plan in healthcare_plans]
+    form.address_id.choices = [(address.id, address.string()) for address in addresses]
+    form.emergency_contact_id_jya.choices = [(emergency_contact.id, emergency_contact.name, emergency_contact.phone_number) for emergency_contact in emergency_contacts]
 
 @bp.get("/")
+@permission_required('jya_index')
 @inject_user_permissions
 def list_jya_users():
 
     """ 
-        Muestra la vista del del listado de los jinetes y amazonas registrados en el sistema    
+        Muestra la vista del listado de los jinetes y amazonas registrados en el sistema    
     """
 
     horsemen, page, order_by, name, last_name, dni, attending_professionals = showHorsemen(request)
@@ -133,7 +130,35 @@ def list_jya_users():
     return render_template("horsemen_and_amazons/jya_users_list.html", users = horsemen, page=page, order_by=order_by, name=name, last_name=last_name, dni=dni, professionals=attending_professionals)
 
 def showFiles(request):
-   
+
+    """
+         Obtiene una lista paginada de archivos con opciones de filtrado y ordenación.
+
+        Esta función recupera archivos de la base de datos basándose en varios parámetros de consulta opcionales: términos de búsqueda, tipo de documento, 
+        orden de clasificación y paginación. Si no se proporcionan parámetros, se ordena de forma predeterminada por título en orden ascendente.
+
+        Parámetros:
+            request (flask.Request): El objeto de solicitud de Flask que contiene posibles parámetros de consulta para el filtrado, ordenación y paginación.
+
+        Parámetros de consulta:
+            - order_option (str): Define el orden de clasificación de los archivos.
+                Valores posibles:
+                * 'title_asc' (predeterminado): Ordena por título en orden ascendente.
+                * 'title_desc': Ordena por título en orden descendente.
+                * 'date_asc': Ordena por fecha de subida en orden ascendente.
+                * 'date_desc': Ordena por fecha de subida en orden descendente.
+            - search (str): Un término de búsqueda usado para filtrar archivos por título (predeterminado: '').
+            - document_type (str): Filtra por tipo de documento específico (predeterminado: '').
+            - page (int): El número de página actual para la paginación (predeterminado: 1).
+
+        Retorna:
+            tuple: Una tupla que contiene lo siguiente:
+                - files (Pagination): Una lista paginada de archivos.
+                - page (int): El número de página actual.
+                - order_by (str): La opción de orden seleccionada para la clasificación.
+                - search (str): El término de búsqueda usado para filtrar.
+                - document_type (str): El filtro aplicado por tipo de documento.
+    """
     # Determine the order option
     if request.method == 'POST':
         order_by = request.args.get('order_option', 'title_asc', type=str)
@@ -178,11 +203,15 @@ def showFiles(request):
 
 
 @bp.get("/<int:user_id>")
+@permission_required('jya_show')
 @inject_user_permissions
 def list_info_by_jya(user_id):
 
     """
         Esta función retorna la información del jinete o amazona asociado al id pasado por parámetro en la url.
+
+        Parámetros:
+            user_id (int): Id del jinete del cual se necesita la información.
     """
     
     app.logger.info("Call to index function")
@@ -211,12 +240,13 @@ def list_info_by_jya(user_id):
     return render_template('horsemen_and_amazons/jya_user_info.html', context=context, page=page, order_by=order_by, search=search, document_type=document_type)
 
 @bp.route("/add_jya", methods=['POST', 'GET'])
+@permission_required('jya_new')
 @inject_user_permissions
 def add_horseman():
 
     """
-    Muestra la vista del registro, además valida los parametros, y guarda al archivo en la base de datos si
-    se recibió el formulario y el mismo es válido.
+        Muestra la vista del registro de un jinete o amazona, además valida los parametros, y guarda al mismo en la base de datos si se recibió el formulario y 
+        el mismo es válido.
     """
 
     app.logger.info("Call to add_horseman")
@@ -224,30 +254,81 @@ def add_horseman():
 
     obtenerChoices(form)
 
+    errors = validate_horseman_form(form)
+    if errors:
+        flash(errors, "error")
+        return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
+    
+
     app.logger.info("El formulario del jinete es valido: %s", form.validate_on_submit())
     if (form.validate_on_submit()):
         
-        """if (find_jya_by_id(user_id)):
-            app.logger.error("The following jinete is already registered: %s ", form.title.data)
-            flash("Ya existe un jinete con el id ingresado registrado en el sistema", "error")
-            return redirect(url_for("horsemen_and_amazons.add_file", user_id=user_id)) """
+        valid_from_errors = validate_unique_fields_horseman(form)
+        if valid_from_errors:
+            flash(valid_from_errors, "error")
+            return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
+    
+
+        if form.address_id.data:
+            address_id = form.address_id.data
+        else:
+            address_id = create_address(
+                street=form.new_address.street.data,
+                number=form.new_address.number.data,
+                department=form.new_address.department.data,
+                locality=form.new_address.locality.data,
+                province=form.new_address.province.data,
+                phone_number=form.new_address.phone_number.data
+            )
+
+        if form.emergency_contact_id_jya.data:
+            emergency_contact_id_jya = get_emergency_contact_by_id(form.emergency_contact_id_jya.data).id
+        else:
+            emergency_contact = create_emergency_contact(
+                name=form.new_emergency_contact.name.data,
+                phone_number=form.new_emergency_contact.phone_number.data,
+            )
+
+        healthcare_plan = create_healthcare_plan(
+            social_security = form.healthcare_plan.social_security.data,
+            affiliate_number = form.healthcare_plan.affiliate_number.data,
+            has_guardianship = form.healthcare_plan.has_guardianship.data,
+            observation = form.healthcare_plan.observation.data,
+        )
+
+        address_school_id = create_address(
+            street=form.school.address_school_id.street.data,
+            number=form.school.address_school_id.number.data,
+            department=form.school.address_school_id.department.data,
+            locality=form.school.address_school_id.locality.data,
+            province=form.school.address_school_id.province.data,
+            phone_number= " ",
+        )
+
+        school = create_school(
+            name = form.school.name_school.data,
+            addres_id = address_school_id.id,
+            phone_number = form.school.phone_number.data,
+            current_year = form.school.current_year.data,
+            observation = form.school.observation.data,
+        )
+
 
         create_JyA(
-            
             name = form.name.data,
             last_name = form.last_name.data,
             DNI = form.DNI.data,
             age = form.age.data,
             phone_number = form.phone_number.data,
-            address_id = form.address.data,
+            address_id = address_id,
             birthdate = form.birthdate.data,
             birth_place = form.birth_place.data,
             current_phone = form.current_phone.data,
-            emergency_contact_id_jya = form.emergency_contact_id_jya.data,
+            emergency_contact_id_jya = emergency_contact_id_jya,
             is_scholarshipped = form.is_scholarshipped.data,
             scholarship_percentage = form.scholarship_percentage.data,
             attending_professionals = form.attending_professionals.data,
-            healthcare_plan_id_jya = form.healthcare_plan_id_jya.data,
+            healthcare_plan_id_jya = healthcare_plan.id,
             has_disability_certificate = form.has_disability_certificate.data,
             diagnosis = form.diagnosis.data,
             other_diagnosis = form.other_diagnosis.data,
@@ -256,7 +337,8 @@ def add_horseman():
             family_allowance = form.family_allowance.data,
             is_beneficiary_of_pension = form.is_beneficiary_of_pension.data,
             pension = form.pension.data,
-            school_id = form.school.data,
+            attends_school = form.attends_school.data,
+            school_id = school.id,
         )
 
         flash("El jinete se ha creado correctamente", "success")
@@ -272,12 +354,16 @@ def add_horseman():
     return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
 
 @bp.route("/edit_horseman/<user_id>", methods=['POST', 'GET'])
+@permission_required('jya_update')
 @inject_user_permissions
 def edit_horseman(user_id):
 
     """
-    Muestra la vista de edición del jinete, además valida los parametros, y guarda al jinete con los datos editados en la base de datos si
-    se recibió el formulario y el mismo es válido.
+        Muestra la vista de edición del jinete, además valida los parametros, y guarda al jinete con los datos editados en la base de datos si se recibió el formulario 
+        y el mismo es válido.
+
+        Parámetros:
+            user_id (int): Id del jinete del cual se quiere editar su información.
     """
 
     app.logger.info("Call to edit_horseman")
@@ -291,8 +377,13 @@ def edit_horseman(user_id):
     emergency_contact = get_emergency_contact_by_id(horseman.emergency_contact_id_jya)
     healthcare_plan = get_healthcare_plan_by_id(horseman.healthcare_plan_id_jya)
     school = get_school_by_id(horseman.school_id)
+    address_school = find_address_by_id(school.addres_id)
 
- 
+    errors = validate_horseman_form(form)
+    if errors:
+        flash(errors, "error")
+        return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
+    
     if horseman.scholarship_percentage is None:
         form.scholarship_percentage.data = " "
     if horseman.other_diagnosis is None:
@@ -301,6 +392,55 @@ def edit_horseman(user_id):
     app.logger.info("El formulario del archivo es valido: %s", form.validate_on_submit())
     if (form.validate_on_submit()):
         
+        valid_from_errors = validate_unique_fields_horseman(form)
+        if valid_from_errors:
+            flash(valid_from_errors, "error")
+            return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
+
+        update_address(
+                address,
+                street=form.new_address.street.data,
+                number=form.new_address.number.data,
+                department=form.new_address.department.data,
+                locality=form.new_address.locality.data,
+                province=form.new_address.province.data,
+                phone_number=form.new_address.phone_number.data
+            )
+
+       
+        update_emergency_contact(
+                emergency_contact,
+                name=form.new_emergency_contact.name_emergency_contact.data,
+                phone_number=form.new_emergency_contact.phone_number.data,
+            )
+
+        update_address(
+            address_school,
+            street=form.school.address_school_id.street.data,
+            number=form.school.address_school_id.number.data,
+            department=form.school.address_school_id.department.data,
+            locality=form.school.address_school_id.locality.data,
+            province=form.school.address_school_id.province.data,
+            phone_number= " ",
+        )
+
+        update_school(
+            school,
+            name = form.school.name_school.data,
+            addres_id = address_school.id,
+            phone_number = form.school.phone_number.data,
+            current_year = form.school.current_year.data,
+            observation = form.school.observation.data,
+        )
+
+        updated_healthcare_plan(
+            healthcare_plan,
+            social_security = form.healthcare_plan.social_security.data,
+            affiliate_number = form.healthcare_plan.affiliate_number.data,
+            has_guardianship = form.healthcare_plan.has_guardianship.data,
+            observation = form.healthcare_plan.observation.data,
+        )
+
         updated_jya(
             horseman,
             name = form.name.data,
@@ -308,15 +448,15 @@ def edit_horseman(user_id):
             DNI = form.DNI.data,
             age = form.age.data,
             phone_number = form.phone_number.data,
-            address_id = form.address.data,
+            address_id = address.id,
             birthdate = form.birthdate.data,
             birth_place = form.birth_place.data,
             current_phone = form.current_phone.data,
-            emergency_contact_id_jya = form.emergency_contact_id_jya.data,
+            emergency_contact_id_jya = emergency_contact.id,
             is_scholarshipped = form.is_scholarshipped.data,
             scholarship_percentage = form.scholarship_percentage.data,
             attending_professionals = form.attending_professionals.data,
-            healthcare_plan_id_jya = form.healthcare_plan_id_jya.data,
+            healthcare_plan_id_jya = healthcare_plan.id,
             has_disability_certificate = form.has_disability_certificate.data,
             diagnosis = form.diagnosis.data,
             other_diagnosis = form.other_diagnosis.data,
@@ -325,7 +465,7 @@ def edit_horseman(user_id):
             family_allowance = form.family_allowance.data,
             is_beneficiary_of_pension = form.is_beneficiary_of_pension.data,
             pension = form.pension.data,
-            school_id = form.school.data,
+            school_id = school.id,
         )
 
         flash("Jinete editado correctamente", "success")
@@ -336,11 +476,19 @@ def edit_horseman(user_id):
             for error in errors:
                 flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
             
-    return render_template("horsemen_and_amazons/edit_horseman.html", form=form, user_id=user_id, horseman=horseman, address=address, healthcare_plan=healthcare_plan, emergency_contact=emergency_contact, school=school)
+    return render_template("horsemen_and_amazons/edit_horseman.html", form=form, user_id=user_id, horseman=horseman, address=address, healthcare_plan=healthcare_plan, emergency_contact=emergency_contact, school=school, address_school=address_school)
 
 @bp.route("/delete_horseman/<int:user_id>", methods=['POST', 'GET'])
+@permission_required('jya_destroy')
 @inject_user_permissions
 def delete_horseman(user_id):
+
+    """ 
+        Elimina el jinete con el id pasado como parámetro en la url, de la base de datos y retorna a la vista que muestra la lista de los mismos
+
+        Parámetros:
+            user_id (int): Id del jinete que se va a eliminar.
+    """
 
     horseman = find_jya_by_id(user_id)
     delete_jya_by_id(user_id)
@@ -351,8 +499,17 @@ def delete_horseman(user_id):
     return redirect(url_for('horsemen_and_amazons.list_jya_users'))
 
 @bp.route("/<int:user_id>/delete_file/<int:file_id>", methods=['POST', 'GET'])
+@permission_required('jya_destroy')
 @inject_user_permissions
 def delete_file(user_id, file_id):
+
+    """ Elimina de la base de datos el archivo con el id pasado como parámetro, asociado al jinete con el id pasado como parámetro 
+
+        Parámetros:
+            user_id (int): Id del jinete al que pertenece el archivo a eliminar.
+            file_id (int): Id del archivo que se va a eliminar.
+    """
+
 
     file = find_file_by_id(file_id)
     minio_client = app.storage.client
@@ -365,16 +522,19 @@ def delete_file(user_id, file_id):
     delete_file_by_id(file_id)
     flash('Archivo eliminado correctamente', 'success')
 
-    # Redirigir a la vista order_by pasando el user_id y la opción de orden como query parameters
     return redirect(url_for('horsemen_and_amazons.list_info_by_jya', user_id=user_id))
    
 @bp.route("/<int:user_id>/add_file", methods=['POST', 'GET'])
+@permission_required('jya_new')
 @inject_user_permissions
 def add_file(user_id):
 
     """
-    Muestra la vista del registro, además valida los parametros, y guarda al archivo en la base de datos si
-    se recibió el formulario y el mismo es válido.
+        Muestra la vista del registro de un archivo, además valida los parametros, y guarda al archivo en la base de datos si se recibió el formulario y el mismo es válido,
+        asociandolo al jinete con el id pasado como parámetro.
+
+        Parámetros:
+            user_id (int): Id del jinete al cual se le va a asociar un nuevo archivo.
     """
 
     app.logger.info("Call to add_file")
@@ -416,7 +576,7 @@ def add_file(user_id):
             link_filename = f"{form.title.data}_link.txt"
             link_content = link.encode('utf-8')  # Convertir el enlace a bytes
 
-                    # Subir a MinIO
+            # Subir a MinIO
             minio_client.put_object(
             bucket_name,
             link_filename,
@@ -445,8 +605,17 @@ def add_file(user_id):
     return render_template("horsemen_and_amazons/registry_file.html", form=form, user_id=user_id)
 
 @bp.route("/<int:user_id>/download_file/<file_id>", methods=['GET'])
+@permission_required('jya_new')
 @inject_user_permissions
 def download_file(user_id, file_id):
+
+    """
+        Descarga el archivo con el id pasado como parámetro, el cuál está asociado al jinete con el id pasado como parámetro.
+
+        Parámetros:
+            user_id (int): Id del jinete al que pertenece el archivo que se quiere descargar.
+            file_id (int): Id del archivo que se quiere descargar.
+    """
     # Obtener el archivo de la base de datos usando el ID
     file = find_file_by_id(file_id)  # Función que obtenga el archivo desde la base de datos
     
@@ -455,14 +624,12 @@ def download_file(user_id, file_id):
     minio_client = app.storage.client
     bucket_name = app.config['BUCKET_NAME']
 
-    # Parámetros adicionales para forzar la descarga
     download_headers = {
         'response-content-disposition': f'attachment; filename="{file.file_url}"'
     }
 
     presigned_url = minio_client.presigned_get_object(bucket_name, file.file_url, expires=timedelta(hours=1), response_headers=download_headers)
 
-        # Redirigir al usuario al enlace de descarga
     return redirect(presigned_url)
 
 @bp.route("/<int:user_id>/edit_file/<file_id>", methods=['POST', 'GET'])
@@ -470,8 +637,12 @@ def download_file(user_id, file_id):
 def edit_file(user_id, file_id):
 
     """
-    Muestra la vista del registro, además valida los parametros, y guarda al archivo en la base de datos si
-    se recibió el formulario y el mismo es válido.
+        Muestra la vista de edición del archivo, además valida los parametros, y guarda al archivo con los datos editados en la base de datos si se recibió el formulario 
+        y el mismo es válido.
+
+        Parámetros:
+            user_id (int): Id del jinete al cual está asociado el archivo que se quiere editar.
+            file_id (int): Id del archivo que se quiere editar.
     """
 
     app.logger.info("Call to add_file")
