@@ -105,6 +105,45 @@ def updated_jya(horseman, **kwargs):
 
     return horseman
 
+def updated_healthcare_plan(healthcare_plan, **kwargs):
+
+    """Edita la obra social pasada como parámetro, con los valores pasados como parámetro en los kwargs"""
+    
+    for key, value in kwargs.items():
+        if value is not None:
+            setattr(healthcare_plan, key, value)
+            
+    db.session.add(healthcare_plan)
+    db.session.commit()
+
+    return healthcare_plan
+
+def update_address(address, **kwargs):
+
+    """Edita la dirección pasada como parámetro, con los valores pasados como parámetro en los kwargs"""
+    
+    for key, value in kwargs.items():
+        if value is not None:
+            setattr(address, key, value)
+            
+    db.session.add(address)
+    db.session.commit()
+
+    return address
+
+def update_emergency_contact(emergency_contact, **kwargs):
+
+    """Edita el contacto de emergencia pasado como parámetro, con los valores pasados como parámetro en los kwargs"""
+    
+    for key, value in kwargs.items():
+        if value is not None:
+            setattr(emergency_contact, key, value)
+            
+    db.session.add(emergency_contact)
+    db.session.commit()
+
+    return emergency_contact
+
 def delete_jya_by_id(jya_id):
     """Elimina de la base de datos el jinete con el id pasado como parámetro """
 

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from src.core.persons import (find_address_by_id, find_jya_by_id, delete_jya_by_id, get_files_by_horseman_id, delete_file_by_id, 
-                              create_JyA, create_file, create_address, create_emergency_contact, create_healthcare_plan, updated_jya, find_file_by_title, find_file_by_id, updated_file, get_emergency_contacts, get_address, get_address_by_id,
+                              create_JyA, create_file, create_address, create_emergency_contact, create_healthcare_plan, updated_jya, find_file_by_title, find_file_by_id, updated_file, get_emergency_contacts, get_address,
                               get_emergency_contact_by_id, get_healthcare_plan_by_id, find_jya_by_dni, updated_healthcare_plan, update_address, update_emergency_contact)
 from src.core.institutions import get_school_by_id, create_school, update_school
 from src.core.persons.forms import registryFileForm, registryHorsemanForm
@@ -10,6 +10,7 @@ from datetime import timedelta
 from src.core.persons.models.file import File
 from src.core.persons.models.person import JyA
 from src.core.persons.models.emergency_contact import EmergencyContact
+from web.validations import validate_horseman_form, validate_unique_fields_horseman
 from sqlalchemy import desc
 import json
 import io
@@ -253,17 +254,18 @@ def add_horseman():
 
     obtenerChoices(form)
 
-    print(form.healthcare_plan.social_security.data)
-    print(form.healthcare_plan.affiliate_number.data)
-    print(form.healthcare_plan.has_guardianship.data)
-    print(form.school.name_school.data)
+    errors = validate_horseman_form(form)
+    if errors:
+        flash(errors, "error")
+        return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
+    
 
     app.logger.info("El formulario del jinete es valido: %s", form.validate_on_submit())
     if (form.validate_on_submit()):
         
-        if (find_jya_by_dni(form.DNI.data)):
-            app.logger.error("The following jinete is already registered: %s ", form.DNI.data)
-            flash("Ya existe un jinete con el dni ingresado registrado en el sistema", "info")
+        valid_from_errors = validate_unique_fields_horseman(form)
+        if valid_from_errors:
+            flash(valid_from_errors, "error")
             return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
     
 
@@ -377,7 +379,11 @@ def edit_horseman(user_id):
     school = get_school_by_id(horseman.school_id)
     address_school = find_address_by_id(school.addres_id)
 
-    print(form)
+    errors = validate_horseman_form(form)
+    if errors:
+        flash(errors, "error")
+        return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
+    
     if horseman.scholarship_percentage is None:
         form.scholarship_percentage.data = " "
     if horseman.other_diagnosis is None:
@@ -386,8 +392,10 @@ def edit_horseman(user_id):
     app.logger.info("El formulario del archivo es valido: %s", form.validate_on_submit())
     if (form.validate_on_submit()):
         
-        for field in form:
-            print(f"{field.label.text}: {field.data}")
+        valid_from_errors = validate_unique_fields_horseman(form)
+        if valid_from_errors:
+            flash(valid_from_errors, "error")
+            return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
 
         update_address(
                 address,
