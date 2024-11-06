@@ -2,8 +2,7 @@ from datetime import datetime, date as dt_date
 import re
 from flask import current_app as app
 from core.auth import find_user_by_alias, find_user_by_email, get_all_roles
-from core.persons import find_jya_by_dni, get_healthcare_plan_by_social_security_and_affiliate_number
-from core.payments import validate_beneficiary
+from core.persons import find_employee_by_id, find_jya_by_dni, get_healthcare_plan_by_social_security_and_affiliate_number
 
 def validate_role(role):
     '''
@@ -86,14 +85,11 @@ def validate_amount(amount):
     
 def validate_payment_form(form):
     errors = []
-
-    #TODO fix this validation
-    '''
+    
     if form.payment_type.data != 'Honorarios' and form.beneficiary.data:
         errors.append("No se puede ingresar una beneficiario si el tipo de pago no es 'Honorarios'")
         app.logger.error("You cannot enter a beneficiary if the payment type is not 'Honorarios'") 
-    '''
-
+    
     if form.payment_type.data == 'Honorarios' and not form.beneficiary.data:
         errors.append("Debe ingresar un beneficiario")
         app.logger.error("You must enter a beneficiary")    
@@ -103,7 +99,7 @@ def validate_payment_form(form):
         app.logger.error("The entered amount is not valid")
 
     if form.beneficiary.data:
-        if not validate_beneficiary(form.beneficiary.data):
+        if not find_employee_by_id(form.beneficiary.data):
             errors.append("El beneficiario ingresado no es valido")
             app.logger.error("The entered beneficiary is not valid")
 
