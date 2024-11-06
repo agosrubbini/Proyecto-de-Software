@@ -168,15 +168,14 @@ def edit_payment(id):
     payment = Payment.query.get(id)
     form = PaymentForm(obj=payment)
     employee_list = Employee.query.all()
-    beneficiary = form.beneficiary.data
+    if form.payment_type.data != "Honorarios":
+        form.beneficiary.data = None
     errors = validate_payment_form(form)
     if errors:
         flash(errors, "error")
         return redirect(url_for('payment.edit_payment', id=payment.id))
-    if form.payment_type.data != "Honorarios":
-        beneficiary = None
     if form.validate_on_submit():
-        payment.beneficiary = beneficiary
+        payment.beneficiary = form.beneficiary.data
         payment.amount = form.amount.data
         payment.payment_date = form.payment_date.data
         payment.payment_type = form.payment_type.data
