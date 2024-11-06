@@ -481,11 +481,6 @@ def edit_horseman(user_id):
 
         flash("Jinete editado correctamente", "success")
         return redirect(url_for('horsemen_and_amazons.list_jya_users', user_id=user_id))
-
-    else:
-        for field, errors in form.errors.items():
-            for error in errors:
-                flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
             
     return render_template("horsemen_and_amazons/edit_horseman.html", form=form, user_id=user_id, horseman=horseman, address=address, healthcare_plan=healthcare_plan, emergency_contact=emergency_contact, school=school, address_school=address_school)
 
