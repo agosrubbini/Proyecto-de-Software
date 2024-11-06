@@ -5,7 +5,6 @@ from wtforms.validators import InputRequired, Length, Optional
 
 class registryFileForm(FlaskForm):
 
-    file_url = StringField("file_url", validators=[InputRequired(), Length(max=60)])
     file_type = SelectField(
         "File_type",
         validators=[InputRequired()],
@@ -46,9 +45,9 @@ class HealthcarePlanForm(FlaskForm):
 
 class SchoolForm(FlaskForm):
     
-    name_school = StringField("name", validators=[InputRequired(), Length(max=60)])
+    name_school = StringField("name", validators=[Optional(), Length(max=60)])
     address_school_id =  FormField(AddressForm)
-    phone_number = StringField("phone_number", validators=[InputRequired(), Length(max=60)])
+    phone_number = StringField("phone_number", validators=[Optional(), Length(max=60)])
     current_year = SelectField("current_year", validators=[InputRequired()], choices=["Primero", "Segundo", "Tercero", "Cuarto", "Quinto", "Sexto"])
     observation = StringField("observation", validators=[Optional(), Length(max=60)])
 class registryHorsemanForm(FlaskForm):
@@ -64,6 +63,7 @@ class registryHorsemanForm(FlaskForm):
         coerce=int,
         choices=[],
     )
+    is_new_address = BooleanField("is_new_address", validators=[Optional()])
     new_address = FormField(AddressForm)
     birthdate = DateField("birthdate", validators=[InputRequired()])
     birth_place = StringField("birth_place", validators=[InputRequired(), Length(max=60)])
@@ -74,6 +74,7 @@ class registryHorsemanForm(FlaskForm):
         coerce=int,
         choices=[],
     )
+    is_new_emergency_contact = BooleanField("is_new_emergency_contact", validators=[Optional()])
     new_emergency_contact = FormField(EmergencyContactForm)
     is_scholarshipped = BooleanField("is_scholarshipped", validators=[Optional()])
     scholarship_percentage = StringField("scholarship_percentage", validators=[Optional(), Length(max=60)])
@@ -156,6 +157,37 @@ class registryHorsemanForm(FlaskForm):
                 self.is_beneficiary_of_pension.errors.append("Este campo es obligatorio cuando el jinete recibe alguna pensión")
                 return False
 
+        if self.attends_school:
+
+            if not self.school.name_school:
+                self.attends_school.errors.append("El nombre de la escuela es obligatorio cuando el jinete asiste a una escuela")
+                return False
+            
+            if not self.school.phone_number:
+                self.attends_school.errors.append("El teléfono celular de la escuela es obligatorio cuando el jinete asiste a una escuela")
+                return False
+            
+        if self.new_address.street:
+
+            if not self.new_address.number:
+                self.attends_school.errors.append("El número es obligatorio")
+                return False
+            
+            if not self.new_address.department:
+                self.attends_school.errors.append("El departamento es obligatorio")
+                return False
+            
+            if not self.new_address.locality:
+                self.attends_school.errors.append("La localidad es obligatoria")
+                return False
+            
+            if not self.new_address.province:
+                self.attends_school.errors.append("La provincia es obligatoria")
+                return False
+            
+            if not self.new_address.phone_number:
+                self.attends_school.errors.append("El teléfono celular de la dirección es obligatorio")
+                return False
         return True
 
 class EmployeeForm(FlaskForm):

@@ -238,6 +238,11 @@ def get_healthcare_plan_by_id(healthcare_plan_id):
 
     return HealthcarePlan.query.filter_by(id=healthcare_plan_id).first()
 
+def get_healthcare_plan_by_social_security_and_affiliate_number(healthcare_plan_social_security, healthcare_plan_affiliate_number):
+
+    """Devuelve el plan de salud con el nombre y número de afiliado pasado por parámetro"""
+
+    return  HealthcarePlan.query.filter_by(social_security=healthcare_plan_social_security, affiliate_number=healthcare_plan_affiliate_number).first()
 
 def get_active_employees():
     """Devuelve todos los empleados que no han sido eliminados logicamente"""

@@ -81,7 +81,7 @@
     </div>
 
     <div class="custom-checkbox">
-        <input class="checkbox-nueva-direccion" type="checkbox" name="checkbox-nueva-direccion" id="checkbox-nueva-direccion">
+            {{ form.is_new_address(id="checkbox-nueva-direccion") }}
         <label class="label" for="checkbox-nueva-direccion">Agregar nueva dirección</label>
     </div>
     <hr>
@@ -168,18 +168,18 @@
     </div>
 
     <div class="custom-checkbox">
-        <input class="checkbox-nuevo-contacto" type="checkbox" name="checkbox-nuevo-contacto" id="checkbox-nuevo-contacto">
+        {{ form.is_new_emergency_contact(id="checkbox-nuevo-contacto") }}
         <label class="label" for="checkbox-nuevo-contacto">Nuevo contacto</label>
     </div>
     <hr>
 
     <div id="contenedor-nuevo-contacto" class="hidden">
-        <label class="label new-contact" for="new_emergency_contact-name">Nombre</label>
+        <label class="label new-contact" for="new_emergency_contact-name_emergency_contact">Nombre</label>
         <div class="control has-icons-left">
             <span class="icon is-small is-left">
                 <i class="fas fa-user"></i>
             </span>
-            <input class="input new-contact" type="text" name="new_emergency_contact-name" id="new_emergency_contact-name" value="{{ form.new_emergency_contact.name.data or '' }}">
+            <input class="input new-contact" type="text" name="new_emergency_contact-name_emergency_contact" id="new_emergency_contact-name_emergency_contact" value="{{ form.new_emergency_contact.name_emergency_contact.data or '' }}">
         </div>
         <label class="label new-contact" for="new_emergency_contact-phone_number">Numero</label>
         <div class="control has-icons-left">

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from src.core.persons import (find_address_by_id, find_jya_by_id, delete_jya_by_id, get_files_by_horseman_id, delete_file_by_id, 
-                              create_JyA, create_file, create_address, create_emergency_contact, create_healthcare_plan, updated_jya, find_file_by_title, find_file_by_id, updated_file, get_emergency_contacts, get_address,
-                              get_emergency_contact_by_id, get_healthcare_plan_by_id, find_jya_by_dni, updated_healthcare_plan, update_address, update_emergency_contact)
+                              create_JyA, create_file, create_address, create_emergency_contact, create_healthcare_plan, updated_jya, find_file_by_title, find_file_by_id, updated_file, 
+                              get_emergency_contacts, get_address,get_emergency_contact_by_id, get_healthcare_plan_by_id, updated_healthcare_plan, update_address, update_emergency_contact)
 from src.core.institutions import get_school_by_id, create_school, update_school
 from src.core.persons.forms import registryFileForm, registryHorsemanForm
 from src.core.auth.auth import inject_user_permissions, permission_required
@@ -12,7 +12,6 @@ from src.core.persons.models.person import JyA
 from src.core.persons.models.emergency_contact import EmergencyContact
 from web.validations import validate_horseman_form, validate_unique_fields_horseman
 from sqlalchemy import desc
-import json
 import io
 from os import fstat
 
@@ -80,13 +79,13 @@ def showHorsemen(request):
     query = JyA.query
     
     if name:
-        query = query.filter(JyA.name.like(f'%{name}%'))
+        query = query.filter(JyA.name.ilike(f'%{name}%'))
     if last_name:
-        query = query.filter(JyA.last_name.like(f'%{last_name}%'))
+        query = query.filter(JyA.last_name.ilike(f'%{last_name}%'))
     if dni:
-        query = query.filter(JyA.DNI.like(f'%{dni}%'))
+        query = query.filter(JyA.DNI.ilike(f'%{dni}%'))
     if attending_professionals:
-        query = query.filter(JyA.attending_professionals.like(f'%{attending_professionals}%'))
+        query = query.filter(JyA.attending_professionals.ilike(f'%{attending_professionals}%'))
 
     
     
@@ -129,7 +128,7 @@ def list_jya_users():
 
     return render_template("horsemen_and_amazons/jya_users_list.html", users = horsemen, page=page, order_by=order_by, name=name, last_name=last_name, dni=dni, professionals=attending_professionals)
 
-def showFiles(request):
+def showFiles(request, horseman_id):
 
     """
          Obtiene una lista paginada de archivos con opciones de filtrado y ordenación.
@@ -159,11 +158,9 @@ def showFiles(request):
                 - search (str): El término de búsqueda usado para filtrar.
                 - document_type (str): El filtro aplicado por tipo de documento.
     """
-    # Determine the order option
-    if request.method == 'POST':
-        order_by = request.args.get('order_option', 'title_asc', type=str)
-    else:
-        order_by = request.args.get('order_option', 'title_asc', type=str)
+    
+    order_by = request.args.get('order_option', 'title_asc', type=str)
+
 
     app.logger.info("Call to order_by function with order_option: %s", order_by)
     
@@ -187,15 +184,18 @@ def showFiles(request):
     app.logger.info("Search: %s, Document_Type: %s", search, document_type)
 
     # Build the query
-    query = File.query
+    query = File.query.filter(File.horsemen_and_amazons_id == horseman_id)
     
     if search:
-        query = query.filter(File.title.like(f'%{search}%'))
+        query = query.filter(File.title.ilike(f'%{search}%'))
     if document_type and document_type != 'Selecciona un tipo':
         query = query.filter(File.document_type == document_type)
     
     # Apply ordering and pagination
-    files = query.order_by(order_criteria).paginate(page=page, per_page=2)
+    files = query.order_by(order_criteria).paginate(page=page, per_page=2, error_out=False)
+
+    app.logger.info("Total files found: %d", query.count())
+    app.logger.info("Page: %d", page)
 
     app.logger.info("End of call to order_by function")
 
@@ -218,18 +218,16 @@ def list_info_by_jya(user_id):
 
     jya = find_jya_by_id(user_id)
     jya_address = find_address_by_id(jya.address_id).string()
-    files = get_files_by_horseman_id(jya.id)
     jya_json = jya.to_dict(jya_address)
     files_json = []
 
-    pagination, page, order_by, search, document_type = showFiles(request)
+    pagination, page, order_by, search, document_type = showFiles(request, user_id)
 
-    if files:
-        for file in files:    
+    if pagination:
+        for file in pagination.items:    
             files_json.append(file.to_dict())
 
     context = {
-        'pagination': pagination,
         'files': files_json,
         'user': jya_json,
         'id': user_id,
@@ -237,7 +235,7 @@ def list_info_by_jya(user_id):
 
     app.logger.info("End of call to index function")
 
-    return render_template('horsemen_and_amazons/jya_user_info.html', context=context, page=page, order_by=order_by, search=search, document_type=document_type)
+    return render_template('horsemen_and_amazons/jya_user_info.html', context=context, pagination = pagination, page=page, order_by=order_by, search=search, document_type=document_type)
 
 @bp.route("/add_jya", methods=['POST', 'GET'])
 @permission_required('jya_new')
@@ -254,13 +252,21 @@ def add_horseman():
 
     obtenerChoices(form)
 
-    errors = validate_horseman_form(form)
-    if errors:
-        flash(errors, "error")
-        return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
+    for field in form:
+        print(field.label)
+        print(field.data)
+
+
+    if request.method == 'POST':  
+        errors = validate_horseman_form(form)
+        if errors:
+            flash(errors, "error")
+            return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
     
 
+
     app.logger.info("El formulario del jinete es valido: %s", form.validate_on_submit())
+
     if (form.validate_on_submit()):
         
         valid_from_errors = validate_unique_fields_horseman(form)
@@ -268,11 +274,8 @@ def add_horseman():
             flash(valid_from_errors, "error")
             return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
     
-
-        if form.address_id.data:
-            address_id = form.address_id.data
-        else:
-            address_id = create_address(
+        if form.is_new_address.data:
+            address = create_address(
                 street=form.new_address.street.data,
                 number=form.new_address.number.data,
                 department=form.new_address.department.data,
@@ -280,14 +283,18 @@ def add_horseman():
                 province=form.new_address.province.data,
                 phone_number=form.new_address.phone_number.data
             )
-
-        if form.emergency_contact_id_jya.data:
-            emergency_contact_id_jya = get_emergency_contact_by_id(form.emergency_contact_id_jya.data).id
+            address_id = address.id
         else:
+            address_id = form.address_id.data
+        
+        if form.is_new_emergency_contact.data:
             emergency_contact = create_emergency_contact(
-                name=form.new_emergency_contact.name.data,
+                name=form.new_emergency_contact.name_emergency_contact.data,
                 phone_number=form.new_emergency_contact.phone_number.data,
             )
+            emergency_contact_id_jya = emergency_contact.id
+        else:
+            emergency_contact_id_jya = get_emergency_contact_by_id(form.emergency_contact_id_jya.data).id            
 
         healthcare_plan = create_healthcare_plan(
             social_security = form.healthcare_plan.social_security.data,
@@ -296,22 +303,23 @@ def add_horseman():
             observation = form.healthcare_plan.observation.data,
         )
 
-        address_school_id = create_address(
-            street=form.school.address_school_id.street.data,
-            number=form.school.address_school_id.number.data,
-            department=form.school.address_school_id.department.data,
-            locality=form.school.address_school_id.locality.data,
-            province=form.school.address_school_id.province.data,
-            phone_number= " ",
-        )
+        if form.attends_school.data:
+            address_school_id = create_address(
+                street=form.school.address_school_id.street.data,
+                number=form.school.address_school_id.number.data,
+                department=form.school.address_school_id.department.data,
+                locality=form.school.address_school_id.locality.data,
+                province=form.school.address_school_id.province.data,
+                phone_number= " ",
+            )
 
-        school = create_school(
-            name = form.school.name_school.data,
-            addres_id = address_school_id.id,
-            phone_number = form.school.phone_number.data,
-            current_year = form.school.current_year.data,
-            observation = form.school.observation.data,
-        )
+            school = create_school(
+                name = form.school.name_school.data,
+                addres_id = address_school_id.id,
+                phone_number = form.school.phone_number.data,
+                current_year = form.school.current_year.data,
+                observation = form.school.observation.data,
+            )
 
 
         create_JyA(
@@ -338,17 +346,15 @@ def add_horseman():
             is_beneficiary_of_pension = form.is_beneficiary_of_pension.data,
             pension = form.pension.data,
             attends_school = form.attends_school.data,
-            school_id = school.id,
+            school_id = school.id if form.attends_school.data else None,
         )
 
         flash("El jinete se ha creado correctamente", "success")
         return redirect(url_for('horsemen_and_amazons.list_jya_users'))
     
     else:
-        print("Entre al false")
         for field, errors in form.errors.items():
             for error in errors:
-                print(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
                 flash(f"El formulario no es válido, error en el/los campos {getattr(form, field).label.text}: {error}", "error")
 
     return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
@@ -379,10 +385,11 @@ def edit_horseman(user_id):
     school = get_school_by_id(horseman.school_id)
     address_school = find_address_by_id(school.addres_id)
 
-    errors = validate_horseman_form(form)
-    if errors:
-        flash(errors, "error")
-        return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
+    if request.method == 'POST':  
+        errors = validate_horseman_form(form)
+        if errors:
+            flash(errors, "error")
+            return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
     
     if horseman.scholarship_percentage is None:
         form.scholarship_percentage.data = " "
@@ -391,11 +398,6 @@ def edit_horseman(user_id):
 
     app.logger.info("El formulario del archivo es valido: %s", form.validate_on_submit())
     if (form.validate_on_submit()):
-        
-        valid_from_errors = validate_unique_fields_horseman(form)
-        if valid_from_errors:
-            flash(valid_from_errors, "error")
-            return render_template("horsemen_and_amazons/registry_horseman.html", form=form)
 
         update_address(
                 address,
@@ -573,6 +575,8 @@ def add_file(user_id):
             # Manejar el enlace
             link = form.link_url.data
 
+            print(link)
+            
             link_filename = f"{form.title.data}_link.txt"
             link_content = link.encode('utf-8')  # Convertir el enlace a bytes
 

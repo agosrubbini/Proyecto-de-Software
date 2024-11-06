@@ -104,11 +104,13 @@
                         <a class="boton pagination-previous" {% if not users.has_prev %}disabled{% else %} href="{{ url_for('horsemen_and_amazons.list_jya_users', page=page-1,  order_option=order_by, name=name, last_name=last_name, dni=dni, professionals=professionals) }}"{% endif %}>Anterior</a>
                         <a class="boton pagination-next" {% if not users.has_next %}disabled{% else %} href="{{ url_for('horsemen_and_amazons.list_jya_users', page=page+1,  order_option=order_by, name=name, last_name=last_name, dni=dni, professionals=professionals) }}"{% endif %}>Siguiente</a>
                     </nav>
-            </div>
         {% else %}
             <p style="text-align: center;">No hay jinetes registrados en el sistema</p>
         {% endif %}
-        <a href="{{ url_for('horsemen_and_amazons.add_horseman') }}"><button class="boton add-horseman">Registrar jinete</button></a>
+        <div class="botones-listado">
+            <a href="{{ url_for('horsemen_and_amazons.add_horseman') }}"><button class="boton add-horseman">Registrar jinete</button></a>
+            <a href="{{ url_for('home') }}"><button class="boton volver-inicio">Volver al Inicio</button></a>
+        </div>
     
 
     <div id="deleteModal" class="modal">

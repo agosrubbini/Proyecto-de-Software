@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+            
             function showCustomAlert(message) {
                     document.getElementById('alertMessage').innerText = message;
                     document.getElementById('customAlert').style.display = 'flex';
@@ -136,34 +137,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 document.getElementById('fileForm').addEventListener('submit', function(event) {
-                const fileInput = document.getElementById('fileInput');
-                const linkInput = document.getElementById('link_url');
-                const file = fileInput.files[0];
-                const link = linkInput ? linkInput.value.trim() : '';
+                    
+                    const fileInput = document.getElementById('fileInput');
+                    const linkInput = document.getElementById('link_url');
+                    const file = fileInput && fileInput.files.length > 0 ? fileInput.files[0] : "";
+                    const url = linkInput ? linkInput.value.trim() : '';
+                    
+                    let validURL = /https?:\/\/[\w\-\.]+\.\w{2,5}\/?\S*/;
 
-                if (file) {
-                    const allowedExtensions = ['pdf', 'jpeg', 'doc', 'xls']; // Extensiones permitidas
-                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    if (file) {
+                        const allowedExtensions = ['pdf', 'jpeg', 'doc', 'xls']; // Extensiones permitidas
+                        const fileExtension = file.name.split('.').pop().toLowerCase();
+                    
+                        if (!allowedExtensions.includes(fileExtension)) {
+                            event.preventDefault();
+                            showCustomAlert('Solo se permiten archivos con las extensiones: ' + allowedExtensions.join(', '));
+                        } else {
+                            showCustomAlert('Archivo válido, se procederá con el envío.');
+                        }
+                    } 
+
+                    if (url){
+                        if(validURL.test(url)){
+                            showCustomAlert('URL válido, se procederá con el envío.');
+                        }
+                        else{
+                            event.preventDefault();
+                            showCustomAlert('Por favor, ingresa una URL válida');
+                        }
+                    }
                 
-                    if (!allowedExtensions.includes(fileExtension)) {
-                        event.preventDefault();
-                        showCustomAlert('Solo se permiten archivos con las extensiones: ' + allowedExtensions.join(', '));
-                    } else {
-                        showCustomAlert('Archivo válido, se procederá con el envío.');
-                    }
-                } else if (link) {
-                    // Validar el formato del enlace
-                    const urlPattern = /^(https?:\/\/)[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
-                    if (!urlPattern.test(link)) {
-                        event.preventDefault();
-                        showCustomAlert('Por favor, ingresa una URL válida que comience con http:// o https://.');
-                    } else {
-                        showCustomAlert('URL válida, se procederá con el envío.');
-                    }
-                } else {
-                    event.preventDefault();
-                    showCustomAlert('Por favor, selecciona un archivo o ingresa una URL.');
-                }
             });
 });
 </script>

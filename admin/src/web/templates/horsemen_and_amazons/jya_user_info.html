@@ -114,6 +114,10 @@
                                 </div>`;
 
                 contenedor.innerHTML = table_users;
+
+                let botonVolverListado = ` <a href="{{ url_for('horsemen_and_amazons.list_jya_users') }}"><button class="boton add-file">Volver al Listado</button></a>`;
+
+                contenedor.innerHTML += botonVolverListado;
             }
 
             // Función para cargar los documentos
@@ -214,8 +218,8 @@
                                             </table>
                                         </div>
                                         <nav class="pagination" role="navigation" aria-label="pagination">
-                                            <a class="boton pagination-previous docs" {% if not context.pagination.has_prev %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id, page=page-1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Anterior</a>
-                                            <a class="boton pagination-next docs" {% if not context.pagination.has_next %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id, page=page+1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Siguiente</a>
+                                            <a class="boton pagination-previous docs" {% if not pagination.has_prev %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id, page=page-1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Anterior</a>
+                                            <a class="boton pagination-next docs" {% if not pagination.has_next %}disabled{% else %} href="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id, page=page+1,  order_option=order_by, search=search, document_type=document_type)}}"{% endif %}>Siguiente</a>
                                         </nav>
                                     `;
 
@@ -227,9 +231,14 @@
                     contenedor.innerHTML += `<p style="text-align: center">No hay archivos asociados al jinete</p>`;
                 }
 
-                let boton = ` <a href="{{ url_for('horsemen_and_amazons.add_file', user_id=context.id) }}"><button class="boton add-file">Añadir archivo</button></a>`;
+                let botones = `  <div class="botones-docs">
+                                    <a href="{{ url_for('horsemen_and_amazons.add_file', user_id=context.id) }}"><button class="boton add-file">Añadir archivo</button></a>
+                                    <a href="{{ url_for('horsemen_and_amazons.list_jya_users') }}"><button class="boton volver-listado">Volver al Listado</button></a>
+                                </div>`;
 
-                contenedor.innerHTML += boton;
+                contenedor.innerHTML += botones;
+                
+
                  // Ocultar el contenedor mientras se carga
                 contenedor.style.visibility = 'hidden';
                 
