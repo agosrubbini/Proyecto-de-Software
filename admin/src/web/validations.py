@@ -2,7 +2,7 @@ from datetime import datetime, date as dt_date
 import re
 from flask import current_app as app
 from core.auth import find_user_by_alias, find_user_by_email, get_all_roles
-from core.persons import find_jya_by_dni 
+from core.persons import find_jya_by_dni, get_healthcare_plan_by_social_security_and_affiliate_number
 from core.payments import validate_beneficiary
 
 def validate_role(role):
@@ -84,16 +84,6 @@ def validate_amount(amount):
     except ValueError:
         return False
     
-def validate_date(date):
-    if isinstance(date, (datetime, dt_date)):
-        # Convertir a datetime si el parámetro es solo una fecha
-        if isinstance(date, dt_date):
-            date = datetime.combine(date, datetime.min.time())
-        # Asegúrate de llamar a datetime.now() con paréntesis
-        return date <= datetime.now()
-    else:
-        return False
-    
 def validate_payment_form(form):
     errors = []
 
@@ -117,30 +107,26 @@ def validate_payment_form(form):
             errors.append("El beneficiario ingresado no es valido")
             app.logger.error("The entered beneficiary is not valid")
 
-    if not validate_date(form.payment_date.data):
-        errors.append("La fecha ingresada no es válida o no es menor al día de hoy")
-        app.logger.error("The entered date is not valid or is not earlier than today")
-
     return " ".join(errors)
 
 def validate_horseman_name(name):
     '''
         Valida que el nombre no esté vacío y contenga solo letras
     '''
-    return bool(name) and name.isalpha()
+    return bool(name) and all(char.isalpha() or char.isspace() for char in name)
 
 def validate_horseman_name_new_contact(name):
     '''
         Valida que el nombre no esté vacío y contenga solo letras
     '''
-    return bool(name) and name.isalpha()
+    return bool(name) and all(char.isalpha() or char.isspace() for char in name)
 
 def validate_attending_professionals(attending_professionals):
     '''
         Valida que los nombres de los profesionales no tengan números
     '''
 
-    return bool(attending_professionals) and attending_professionals.isalpha()
+    return bool(attending_professionals) and all(char.isalpha() or char.isspace() for char in attending_professionals)
 
 def validate_healthcare_plan_name(healthcare_plan_name):
     '''
@@ -150,13 +136,13 @@ def validate_healthcare_plan_name(healthcare_plan_name):
     if hasattr(healthcare_plan_name, 'data'):
         healthcare_plan_name = healthcare_plan_name.data  # Obtiene el valor del campo
 
-    return bool(healthcare_plan_name) and healthcare_plan_name.isalpha()
+    return bool(healthcare_plan_name) and all(char.isalpha() or char.isspace() for char in healthcare_plan_name)
 
 def validate_horseman_last_name(last_name):
     '''
         Valida que el apellido no esté vacío y contenga solo letras
     '''
-    return bool(last_name) and last_name.isalpha()
+    return bool(last_name) and all(char.isalpha() or char.isspace() for char in last_name)
 
 def validate_numeric(value):
     '''
@@ -176,19 +162,9 @@ def validate_age(age):
     age_number = int(age)
     return 0 < age_number <= 150
 
-def validate_birthdate(birthdate):
-    '''
-        Valida que la fecha de nacimiento no sea mayor a la actual
-    '''
-    if isinstance(birthdate, datetime):
-        birthdate = birthdate.date()  # Convierte a date
-    # Compara con la fecha actual
-    return birthdate <= datetime.now().date()  # Asegúrate de comparar con date también
+def validate_new_address(form, errors):
 
-def validate_new_address(form):
-    errors = []
-
-    if form.new_address.data:  
+    if form.is_new_address.data:
         
         if not form.new_address.street.data:
             errors.append("La calle es obligatoria")
@@ -209,36 +185,35 @@ def validate_new_address(form):
             if not validate_numeric(form.new_address.phone_number.data):
                 errors.append("El número de teléfono de la  dirección debe contener solo números")
         
-      
 
-    return " ".join(errors)
+def validate_new_emergency_contact(form, errors):
+   
 
-def validate_new_emergency_contact(form):
-    errors = []
-
-    if form.new_emergency_contact.data:  
+    if form.is_new_emergency_contact.data:
         if not form.new_emergency_contact.name_emergency_contact.data:
             errors.append("El nombre del contacto de emergencia es obligatorio")
         else:
             if not validate_horseman_name_new_contact(form.new_emergency_contact.name_emergency_contact.data):
-                errors.append("El nombre del de emergencia no debe contener números")
+                errors.append("El nombre del contacto de emergencia no debe contener números")
         if not validate_numeric(form.new_emergency_contact.phone_number.data):
             errors.append("El número de teléfono del contacto de emergencia debe contener solo números")
-
-    return " ".join(errors)
 
 def validate_unique_fields_horseman(form):
     errors = []
 
     if find_jya_by_dni(form.DNI.data):
         errors.append("Ya existe un jinete con el dni ingresado")
-        app.logger.error("The following alias is already registered: %s", form.alias.data)
+        app.logger.error("The following alias is already registered: %s", form.DNI.data)
+    
+    return "\n".join(errors)
 
-    if find_user_by_email(form.email.data):
-        errors.append("Ya existe un usuario con el mail ingresado")
-        app.logger.error("The following email is already registered: %s", form.email.data)
+def validate_healthcare_plan(form, errors):
 
-    return " ".join(errors)
+    healthcare_plan = get_healthcare_plan_by_social_security_and_affiliate_number(form.healthcare_plan.social_security.data, form.healthcare_plan.affiliate_number.data)
+
+    if healthcare_plan:
+        errors.append("Ya existe un jinete con esa obra social y ese número de afiliado")
+        app.logger.error("The following healthcare plan is already registered: %s", form.DNI.data)
 
 def validate_horseman_form(form):
     errors = []
@@ -254,10 +229,6 @@ def validate_horseman_form(form):
     if not validate_age(form.age.data):
         errors.append("La edad debe ser un número entre 1 y 150")
         app.logger.error("La edad ingresada no es válida")
-
-    if not validate_birthdate(form.birthdate.data):
-        errors.append("La fecha de nacimiento no puede ser futura")
-        app.logger.error("La fecha de nacimiento ingresada no es válida")
     
     if not validate_numeric(form.current_phone.data):
         errors.append("El número de teléfono actual debe contener solo números")
@@ -276,19 +247,10 @@ def validate_horseman_form(form):
             errors.append("La fecha de nacimiento no puede ser futura")
             app.logger.error("La fecha de nacimiento ingresada no es válida")
 
-    validate_new_address(form)
-    validate_new_emergency_contact(form)
+    validate_new_address(form, errors)
+    validate_new_emergency_contact(form, errors)
+    validate_healthcare_plan(form, errors)
 
+    return "\n".join([f"{i+1}. {error}" for i, error in enumerate(errors)])
 
-    # Aquí puedes agregar otras validaciones que necesites
-
-    return " ".join(errors)
-
-
-def validate_horseman_update_form(form, id):
-    errors = []
-    
-    # Aquí puedes agregar validaciones específicas para la actualización de jinete
-    
-    return " ".join(errors)
 

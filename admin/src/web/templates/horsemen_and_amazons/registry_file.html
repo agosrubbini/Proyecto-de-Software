@@ -56,6 +56,8 @@
     </div>
     <hr>
     
+    {{ form.link_url.value }}
+
     <div class="buttons">
         <button type="submit">Agregar Archivo</button>
         <a href="{{ url_for('horsemen_and_amazons.list_info_by_jya', user_id=user_id) }}"><button type="button" class="boton-cancelar">Cancelar</button></a>
@@ -89,7 +91,7 @@
                                 <span class="icon is-small is-left">
                                     <i class="fas fa-file-upload"></i>
                                 </span>
-                                <input class="input" type="file" id="fileInput" required name="{{ form.file_url.name}}" placeholder="Copie la url" value="{{ form.file_url.value }}">
+                                <input class="input" type="file" id="fileInput" required name="{{ form.file_url.name}}" placeholder="Seleccione el archivo value="{{ form.file_url.value }}">
                             </div>  
                             <hr>`;
 
@@ -103,7 +105,7 @@
                                 <span class="icon is-small is-left">
                                     <i class="fas fa-link"></i>
                                 </span>
-                                <input class="input" type="text" id="link_url" required name="{{ form.link_url.name}}" placeholder="Seleccione el archivo" value="{{ form.link_url.value }}">
+                                <input class="input" type="text" id="link_url" required name="{{ form.link_url.name}}" placeholder="Copie la url" value="{{ form.link_url.value }}">
                             </div>  
                             <hr>`;
 
@@ -123,35 +125,39 @@
                 });
 
                 document.getElementById('fileForm').addEventListener('submit', function(event) {
-                const fileInput = document.getElementById('fileInput');
-                const linkInput = document.getElementById('link_url');
-                const file = fileInput.files[0];
-                const link = linkInput ? linkInput.value.trim() : '';
+                    const fileInput = document.getElementById('fileInput');
+                    const linkInput = document.getElementById('link_url');
+                    const file = fileInput && fileInput.files.length > 0 ? fileInput.files[0] : "";
+                    const url = linkInput ? linkInput.value.trim() : '';
+                   
 
-                if (file) {
-                    const allowedExtensions = ['pdf', 'jpeg', 'doc', 'xls']; // Extensiones permitidas
-                    const fileExtension = file.name.split('.').pop().toLowerCase();
-                
-                    if (!allowedExtensions.includes(fileExtension)) {
-                        event.preventDefault();
-                        showCustomAlert('Solo se permiten archivos con las extensiones: ' + allowedExtensions.join(', '));
-                    } else {
-                        showCustomAlert('Archivo válido, se procederá con el envío.');
+                    let validURL = /https?:\/\/[\w\-\.]+\.\w{2,5}\/?\S*/;
+
+                    if (file) { 
+                        const allowedExtensions = ['pdf', 'jpeg', 'doc', 'xls']; // Extensiones permitidas
+                        const fileExtension = file.name.split('.').pop().toLowerCase();
+                    
+                        if (!allowedExtensions.includes(fileExtension)) {
+                            event.preventDefault();
+                            showCustomAlert('Solo se permiten archivos con las extensiones: ' + allowedExtensions.join(', '));
+                        } else {
+                            showCustomAlert('Archivo válido, se procederá con el envío.');
+                        }
+                    } 
+                    
+                    if (url){
+                        if(validURL.test(url)){
+                            showCustomAlert('URL válido, se procederá con el envío.');
+                        }
+                        else{
+                            event.preventDefault();
+                            showCustomAlert('Por favor, ingresa una URL válida');
+                        }
                     }
-                } else if (link) {
-                    // Validar el formato del enlace
-                    const urlPattern = /^(https?:\/\/)[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
-                    if (!urlPattern.test(link)) {
-                        event.preventDefault();
-                        showCustomAlert('Por favor, ingresa una URL válida que comience con http:// o https://.');
-                    } else {
-                        showCustomAlert('URL válida, se procederá con el envío.');
-                    }
-                } else {
-                    event.preventDefault();
-                    showCustomAlert('Por favor, selecciona un archivo o ingresa una URL.');
-                }
+                    
             });
+
+      
         });
 </script>
 {% endblock %}
