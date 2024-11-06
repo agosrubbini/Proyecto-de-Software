@@ -35,7 +35,7 @@
     <label class="label" for="beneficiary">Beneficiario</label>
     <div class="control">
         <select name="beneficiary" id="beneficiary">
-            <option value=""></option>
+            <option value="">Elegir Beneficiario:</option>
             {% for employee in employee_list %}
             <option value="{{ employee.id }}" {% if employee.id == payment.beneficiary %}selected{% endif %}>{{ employee.name }} {{ employee.last_name }}</option>
             {% endfor %}
@@ -100,12 +100,13 @@
 
         function toggleBeneficiary() {
             if (paymentTypeSelect.value != 'Honorarios') {
-                beneficiarySelect.value = '';
+                beneficiarySelect.value = "";
                 beneficiarySelect.disabled = true;
             } else {
                 beneficiarySelect.disabled = false;
             }
         }
+
 
         toggleBeneficiary();
 

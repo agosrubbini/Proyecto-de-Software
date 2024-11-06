@@ -87,13 +87,25 @@ def validate_amount(amount):
 def validate_payment_form(form):
     errors = []
 
+    #TODO fix this validation
+    '''
+    if form.payment_type.data != 'Honorarios' and form.beneficiary.data:
+        errors.append("No se puede ingresar una beneficiario si el tipo de pago no es 'Honorarios'")
+        app.logger.error("You cannot enter a beneficiary if the payment type is not 'Honorarios'") 
+    '''
+
+    if form.payment_type.data == 'Honorarios' and not form.beneficiary.data:
+        errors.append("Debe ingresar un beneficiario")
+        app.logger.error("You must enter a beneficiary")    
+
     if not validate_amount(form.amount.data):
         errors.append("El monto ingresado no es valido")
         app.logger.error("The entered amount is not valid")
 
-    if not validate_beneficiary(form.beneficiary.data):
-        errors.append("El beneficiario ingresado no es valido")
-        app.logger.error("The entered beneficiary is not valid")
+    if form.beneficiary.data:
+        if not validate_beneficiary(form.beneficiary.data):
+            errors.append("El beneficiario ingresado no es valido")
+            app.logger.error("The entered beneficiary is not valid")
 
     return " ".join(errors)
 

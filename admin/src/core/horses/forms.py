@@ -36,11 +36,6 @@ class create_horse_Form(FlaskForm):
     type_jya_equitacion = BooleanField (default=False) 
     employees = SelectMultipleField('Empleados', coerce=int)
 
-    def validate_date_of_birth(self, field):
-        """Validación personalizada para la fecha de nacimiento"""
-        max_date = datetime.today() - datetime.timedelta(days=40 * 365)
-        if field.data < max_date.date():
-            raise ValidationError('El caballo no puede tener más de 40 años.')
 
 class registryFileForm(FlaskForm):
     """Formulario para la creacion de un archivo"""
