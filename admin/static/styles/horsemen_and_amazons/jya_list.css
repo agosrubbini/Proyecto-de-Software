@@ -1,6 +1,6 @@
 * {
     box-sizing: border-box; 
-    max-width: 100%;
+
 }
 
 .table {
@@ -30,6 +30,19 @@
     justify-content: center;
     padding: 0 10px;
     width: 100%;
+}
+
+.botones-listado{
+    display: flex;               /* Usa Flexbox para alinear los elementos en fila */
+    justify-content: center;     /* Centra los botones horizontalmente */
+    align-items: center;
+    gap: 20px;         /* Alinea los botones verticalmente al centro */
+}
+
+.botones-listado .boton{
+    width: 100% !important;
+    padding: 0px 10px;
+    white-space: nowrap;
 }
 
 .boton-busqueda{
@@ -79,19 +92,29 @@ div.field.is-grouped {
         margin: auto !important;
     }
 
+    .order_options, 
+    .pagination-next, 
+    .pagination-previous {
+        visibility: visible;
+        margin: 10px auto;
+    }
+
     .pagination-previous.docs, .pagination-next.docs{
         width: 10px !important;
         margin-left: 10px !important;
         margin-right: 10px !important;
+        padding: 0px;
     }
-  
+    
+    .boton.add-file, .boton.volver-listado{
+        padding: 0;
+    }
 }
 
-.order_options, 
-.pagination-next, 
-.pagination-previous {
-    visibility: hidden;
+div.control.order_options{
+    width: 50%;
 }
+
 
 h1 {
     font-size: 2rem;
@@ -121,8 +144,14 @@ p {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease, transform 0.3s ease;
     white-space: nowrap;
+    text-align: center;
+    padding: 10px 15px;
 }
 
+.boton:hover {
+    background-color: hsl(221, 14%, 40%);
+    transform: scale(1.05);
+} 
 
 i {
     color: black !important;
@@ -142,6 +171,10 @@ select:hover {
     width: 10%;
 }
 
+
+.pagination {
+    width: 100%;
+}
 
 .box{
     background-color: white !important;

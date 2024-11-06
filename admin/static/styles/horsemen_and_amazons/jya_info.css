@@ -25,3 +25,16 @@ td.botones{
 .docs.loaded {
     visibility: visible;
 }
+
+.botones-docs{
+    display: flex;               /* Usa Flexbox para alinear los elementos en fila */
+    justify-content: center;     /* Centra los botones horizontalmente */
+    align-items: center;
+    gap: 20px;         /* Alinea los botones verticalmente al centro */
+}
+
+.botones-docs .boton{
+    width: 100% !important;
+    padding: 0px 10px;
+    white-space: nowrap;
+}
