@@ -36,6 +36,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const user = {{ context.user | tojson | safe }};
             const files = {{ context.files | tojson | safe }};
+            is_filter_active = {{ is_filter_active | tojson | safe }};
             const buttonInfo = document.getElementById('info');
             const buttonDocs = document.getElementById('docs');
             const contenedor = document.getElementById('contenedor');
@@ -228,7 +229,56 @@
         
                 }
                 else{
-                    contenedor.innerHTML += `<p style="text-align: center">No hay archivos asociados al jinete</p>`;
+                    if(is_filter_active){
+                            let inputs = `  
+                            <form id="form-search" method="GET" action="{{url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id)}}">
+                                <div class="field is-grouped">
+                                    <div class="field">
+                                        <label class="label">Nombre</label>
+                                        <div class="control has-icons-left">
+                                            <span class="icon is-small is-left">
+                                                <i class="fa-solid fa-magnifying-glass"></i>
+                                            </span>
+                                            <input class="input" type="text" name="search" placeholder="Nombre del documento" value="{{ search }}" />
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label class="label">Tipo</label>
+                                        <div class="control">
+                                            <select name="document_type">
+                                                <option>Selecciona un tipo</option>
+                                                <option>Entrevista</option>
+                                                <option>Evaluación</option>
+                                                <option>Planificación</option>
+                                                <option>Evolución</option>
+                                                <option>Crónicas</option>
+                                                <option>Documental</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="field ">
+                                        <button class="boton boton-filtrado" type="submit">Filtrar</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <form method="GET" action="{{ url_for('horsemen_and_amazons.list_info_by_jya', user_id=context.id) }}">
+                                <div class="control order_options_docs">
+                                    <select id="order-option" name="order_option" onchange="this.form.submit()">
+                                        <option value="default">Selecciona un orden</option>
+                                        <option value="title_asc">Nombre: A-Z</option>
+                                        <option value="title_desc">Nombre: Z-A</option>
+                                        <option value="date_asc">Fecha: Menor-Mayor</option>
+                                        <option value="date_desc">Fecha: Mayor-Menor</option>
+                                    </select>
+                                </div>
+                            </form>
+                        `;
+                        contenedor.innerHTML = inputs;
+                        contenedor.innerHTML += `<p style="text-align: center">No hay archivos con los filtros ingresados asociados al jinete</p>`;
+                    }
+                    else{
+                        contenedor.innerHTML += `<p style="text-align: center">No hay archivos asociados al jinete</p>`;
+                    }
                 }
 
                 let botones = `  <div class="botones-docs">

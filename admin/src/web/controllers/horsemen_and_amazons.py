@@ -5,11 +5,11 @@ from src.core.persons import (find_address_by_id, find_jya_by_id, delete_jya_by_
 from src.core.institutions import get_school_by_id, create_school, update_school
 from src.core.persons.forms import registryFileForm, registryHorsemanForm
 from src.core.auth.auth import inject_user_permissions, permission_required
+from web.handlers.storage import get_bucket_and_server_minio
 from flask import current_app as app
 from datetime import timedelta
 from src.core.persons.models.file import File
 from src.core.persons.models.person import JyA
-from src.core.persons.models.emergency_contact import EmergencyContact
 from web.validations import validate_horseman_form, validate_unique_fields_horseman
 from sqlalchemy import desc
 import io
@@ -67,11 +67,16 @@ def showHorsemen(request):
     # Pagination
     page = request.args.get('page', 1, type=int)
     
+    is_filter_active = False
+    
     # Filtering options
     name = request.args.get('name', '', type=str)
     last_name = request.args.get('last_name', '', type=str)
     dni = request.args.get('dni', '', type=str)
     attending_professionals = request.args.get('professionals', '', type=str)
+
+    if name or last_name or dni or attending_professionals:
+        is_filter_active = True
 
     app.logger.info("Name: %s,  Last Name: %s, DNI: %s, Profesionales: %s", name, last_name, dni, attending_professionals)
 
@@ -94,7 +99,7 @@ def showHorsemen(request):
 
     app.logger.info("End of call to showHorsemen function")
 
-    return horsemen, page, order_by, name, last_name, dni, attending_professionals
+    return horsemen, page, order_criteria , name, last_name, dni, attending_professionals, is_filter_active
 
 def obtenerChoices(form):
 
@@ -124,9 +129,9 @@ def list_jya_users():
         Muestra la vista del listado de los jinetes y amazonas registrados en el sistema    
     """
 
-    horsemen, page, order_by, name, last_name, dni, attending_professionals = showHorsemen(request)
+    horsemen, page, order_criteria, name, last_name, dni, attending_professionals, is_filter_active = showHorsemen(request)
 
-    return render_template("horsemen_and_amazons/jya_users_list.html", users = horsemen, page=page, order_by=order_by, name=name, last_name=last_name, dni=dni, professionals=attending_professionals)
+    return render_template("horsemen_and_amazons/jya_users_list.html", users = horsemen, page=page, order_by=order_criteria, name=name, last_name=last_name, dni=dni, professionals=attending_professionals, is_filter_active=is_filter_active)
 
 def showFiles(request, horseman_id):
 
@@ -177,9 +182,13 @@ def showFiles(request, horseman_id):
     # Pagination
     page = request.args.get('page', 1, type=int)
     
+    is_filter_active = False
     # Filtering options
     search = request.args.get('search', '', type=str)
     document_type = request.args.get('document_type', '', type=str)
+
+    if search or document_type:
+        is_filter_active = True
 
     app.logger.info("Search: %s, Document_Type: %s", search, document_type)
 
@@ -199,7 +208,7 @@ def showFiles(request, horseman_id):
 
     app.logger.info("End of call to order_by function")
 
-    return files, page, order_by, search, document_type
+    return files, page, order_by, search, document_type, is_filter_active
 
 
 @bp.get("/<int:user_id>")
@@ -221,7 +230,7 @@ def list_info_by_jya(user_id):
     jya_json = jya.to_dict(jya_address)
     files_json = []
 
-    pagination, page, order_by, search, document_type = showFiles(request, user_id)
+    pagination, page, order_by, search, document_type, is_filter_active = showFiles(request, user_id)
 
     if pagination:
         for file in pagination.items:    
@@ -235,7 +244,7 @@ def list_info_by_jya(user_id):
 
     app.logger.info("End of call to index function")
 
-    return render_template('horsemen_and_amazons/jya_user_info.html', context=context, pagination = pagination, page=page, order_by=order_by, search=search, document_type=document_type)
+    return render_template('horsemen_and_amazons/jya_user_info.html', context=context, pagination = pagination, page=page, order_by=order_by, search=search, document_type=document_type, is_filter_active=is_filter_active)
 
 @bp.route("/add_jya", methods=['POST', 'GET'])
 @permission_required('jya_new')
@@ -514,8 +523,8 @@ def delete_file(user_id, file_id):
 
 
     file = find_file_by_id(file_id)
-    minio_client = app.storage.client
-    bucket_name = app.config['BUCKET_NAME']
+    minio_client, bucket_name = get_bucket_and_server_minio()
+    
 
     if (file.file_type == "Documento"):
         minio_client.remove_object(bucket_name, file.file_url)
@@ -542,8 +551,7 @@ def add_file(user_id):
     app.logger.info("Call to add_file")
     form = registryFileForm()
 
-    minio_client = app.storage.client
-    bucket_name = app.config['BUCKET_NAME']
+    minio_client, bucket_name = get_bucket_and_server_minio()
     
     app.logger.info("El formulario del archivo es valido: %s", form.validate_on_submit())
     if (form.validate_on_submit()):
@@ -625,8 +633,7 @@ def download_file(user_id, file_id):
     
 
     # Configurar MinIO
-    minio_client = app.storage.client
-    bucket_name = app.config['BUCKET_NAME']
+    minio_client, bucket_name = get_bucket_and_server_minio()  
 
     download_headers = {
         'response-content-disposition': f'attachment; filename="{file.file_url}"'
@@ -654,8 +661,7 @@ def edit_file(user_id, file_id):
     
     form = registryFileForm()
 
-    minio_client = app.storage.client
-    bucket_name = app.config['BUCKET_NAME']
+    minio_client, bucket_name = get_bucket_and_server_minio()
     
     app.logger.info("El formulario del archivo es valido: %s", form.validate_on_submit())
     if (form.validate_on_submit()):
