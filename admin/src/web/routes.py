@@ -13,8 +13,9 @@ def register(app):
     
     @app.route('/googlefc8a906de75f1f28.html')
     def google():
+    # Servir el archivo desde la carpeta estática pero sin /static en la URL
         return send_from_directory(os.path.join(app.root_path, 'static'), 'googlefc8a906de75f1f28.html')
-    
+
     @app.route('/login')
     def login():
         google = OAuth.create_client('google')
