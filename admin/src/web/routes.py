@@ -11,7 +11,7 @@ def register(app):
     def home():
         return render_template("home.html")
     
-    @app.route('/')
+    @app.route('/googlefc8a906de75f1f28.html')
     def google():
         return send_from_directory(os.path.join(app.root_path, 'static'), 'googlefc8a906de75f1f28.html')
     
