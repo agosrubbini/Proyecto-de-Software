@@ -6,7 +6,7 @@ from flask import send_from_directory
 import os
 
 def register(app):
-    @app.route("/home")
+    @app.route("/")
     @inject_user_permissions
     def home():
         return render_template("home.html")
