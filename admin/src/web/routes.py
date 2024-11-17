@@ -6,12 +6,12 @@ from flask import send_from_directory
 import os
 
 def register(app):
-    @app.route("/")
+    @app.route("/home")
     @inject_user_permissions
     def home():
         return render_template("home.html")
     
-    @app.route('/googlefc8a906de75f1f28.html')
+    @app.route('/')
     def google():
     # Servir el archivo desde la carpeta estática pero sin /static en la URL
         return send_from_directory(os.path.join(app.root_path, 'static'), 'googlefc8a906de75f1f28.html')
